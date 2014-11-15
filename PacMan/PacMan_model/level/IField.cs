@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using PacMan_model.level.cells;
+using PacMan_model.util;
+
+namespace PacMan_model.level {
+    public interface IField : IFieldObserverable {
+        
+        void Init(int width, int height, IList<StaticCell> cells);
+
+        int GetWidth();
+        int GetHeight();
+
+        int GetNumberOfDots();
+
+        StaticCell GetCell(int x, int y);
+        StaticCell GetCell(Point p);
+
+        IList<StaticCell> GetCells(); 
+
+        void SetCell(int x, int y, StaticCell cell);
+        void SetSell(Point p, StaticCell cell);
+
+    }
+
+    class CellOutOfField : Exception {
+
+        private readonly Point _where;
+
+        public CellOutOfField(Point where) {
+            _where = where;
+        }
+
+        public string GetMessage() {
+            return "at " + _where.GetX() + ":" + _where.GetY();
+        }
+
+    }
+
+    
+}

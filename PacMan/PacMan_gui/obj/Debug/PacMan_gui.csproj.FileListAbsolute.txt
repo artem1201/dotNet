@@ -1,0 +1,36 @@
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\bin\Debug\PacMan_gui.exe.config
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\View\MainWindow.baml
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\App.baml
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\View\MainWindow.g.cs
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\App.g.cs
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui_MarkupCompile.cache
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui.g.resources
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui.Properties.Resources.resources
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui.csproj.GenerateResource.Cache
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\bin\Debug\PacMan_gui.exe
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\bin\Debug\PacMan_gui.pdb
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\bin\Debug\PacMan_model.dll
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\bin\Debug\PacMan_model.pdb
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui.csprojResolveAssemblyReference.cache
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui.exe
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\PacMan_gui.pdb
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\View\Level\GameView.baml
+C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_gui\obj\Debug\View\Level\GameView.g.cs
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\bin\Debug\PacMan_gui.exe.config
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui.exe
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui.pdb
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\bin\Debug\PacMan_gui.exe
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\bin\Debug\PacMan_gui.pdb
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\bin\Debug\PacMan_model.dll
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\bin\Debug\PacMan_model.pdb
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui.csprojResolveAssemblyReference.cache
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\View\Level\GameView.baml
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\View\MainWindow.baml
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\App.baml
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\View\Level\GameView.g.cs
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\View\MainWindow.g.cs
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\App.g.cs
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui_MarkupCompile.cache
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui.g.resources
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui.Properties.Resources.resources
+D:\SVN\github\dotNet\.Net\PacMan\PacMan_gui\obj\Debug\PacMan_gui.csproj.GenerateResource.Cache

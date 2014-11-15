@@ -1,0 +1,13 @@
+﻿<Application x:Class="PacMan_gui.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             Startup="App_OnStartup">
+    <Application.Resources>
+        <system:String x:Key="ApplicationTitle">PacMan</system:String>
+        <system:String x:Key="ApplicationLable">My PacMan</system:String>
+
+        <system:String x:Key="LevelCanvasName">GameCanvas</system:String>
+        
+    </Application.Resources>
+</Application>
