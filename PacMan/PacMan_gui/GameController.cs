@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
@@ -16,8 +15,8 @@ using PacMan_model.util;
 namespace PacMan_gui {
     class GameController : IDirectionEventObserver {
 
-        private static readonly string ProjectDir = Directory.GetCurrentDirectory();
-        private readonly string _pathToCompany = ProjectDir + "\\Company";
+        private static readonly string RootDir = Directory.GetCurrentDirectory();
+        private readonly string _pathToCompany = RootDir + "\\Company";
 
         private static readonly IDictionary<Key, Direction> KeyToDirection;
         private static readonly ISet<Key> PauseKeys;
