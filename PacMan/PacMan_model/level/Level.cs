@@ -9,7 +9,7 @@ using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
-    sealed class Level : ILevel {
+    internal sealed class Level : ILevel {
 
         private readonly IPacMan _pacman;
 

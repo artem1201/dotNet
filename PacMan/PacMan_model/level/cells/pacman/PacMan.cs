@@ -4,10 +4,10 @@ using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
 
-    public class PacMan : IPacMan {
+    internal class PacMan : IPacMan {
 
         private const int MaxLives = 3;
-        private const int CommonSpeed = 20;
+        private const int CommonSpeed = 10;
 
         // cell with position, lives and current speed
         private readonly PacManCell _pacman;
@@ -201,48 +201,48 @@ namespace PacMan_model.level.cells.pacman {
             var e = new PacmanStateChangedEventArgs(_pacman.GetPosition(), _currentDirection, _lives, _score, true);
             OnStatementChanged(e);
         }
-    }
+
+        class PacManCell : MovingCell {
+
+            //  number of ticks per second
+            private int _currentSpeed;
 
 
-    class PacManCell : MovingCell {
+            public PacManCell(Point startPosition, int initialSpeed)
+                : base(startPosition) {
+                if (null == startPosition) {
+                    throw new ArgumentNullException("startPosition");
+                }
+                if (initialSpeed <= 0) {
+                    throw new ArgumentOutOfRangeException("initialSpeed");
+                }
 
-        //  number of ticks per second
-        private int _currentSpeed;
-
-
-        public PacManCell(Point startPosition, int initialSpeed) : base(startPosition) {
-            if (null == startPosition) {
-                throw new ArgumentNullException("startPosition");
+                _currentSpeed = initialSpeed;
             }
-            if (initialSpeed <= 0) {
-                throw new ArgumentOutOfRangeException("initialSpeed");
+
+            public void SetSpeed(int newSpeed) {
+                _currentSpeed = newSpeed;
             }
 
-            _currentSpeed = initialSpeed;
-        }
-
-        public void SetSpeed(int newSpeed) {
-            _currentSpeed = newSpeed;
-        }
-
-        /// <summary>
-        /// returns number of ticks per one movement
-        /// </summary>
-        /// <returns>number of ticks per one movement</returns>
-        public override int GetSpeed() {
-            return _currentSpeed;
-        }
-
-        public void MoveTo(Point newPosition) {
-            if (null == newPosition) {
-                throw new ArgumentNullException("newPosition");
+            /// <summary>
+            /// returns number of ticks per one movement
+            /// </summary>
+            /// <returns>number of ticks per one movement</returns>
+            public override int GetSpeed() {
+                return _currentSpeed;
             }
-            Position = newPosition;
-        }
 
-        public void MoveTo(int x, int y) {
-            Position.SetX(x);
-            Position.SetY(y);
+            public void MoveTo(Point newPosition) {
+                if (null == newPosition) {
+                    throw new ArgumentNullException("newPosition");
+                }
+                Position = newPosition;
+            }
+
+            public void MoveTo(int x, int y) {
+                Position.SetX(x);
+                Position.SetY(y);
+            }
         }
     }
 }

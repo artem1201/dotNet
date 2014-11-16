@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using PacMan_model.level.cells;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
-    class Field : IField {
+    internal class Field : IField {
 
         private int _width;
         private int _height;
@@ -146,13 +147,9 @@ namespace PacMan_model.level {
 
 
         private void CalculateDots() {
-
-            foreach (var cell in _cells) {
-                if (cell is ICellWithCost) {
-                    ++_numberOfDots;
-                }
+            foreach (ICellWithCost cell in _cells.OfType<ICellWithCost>()) {
+                ++_numberOfDots;
             }
-
         }
     }
 }

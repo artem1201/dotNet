@@ -60,7 +60,7 @@ namespace PacMan_model.level.cells {
         }
     }
 
-    public sealed class FreeSpace : StaticCell {
+    internal sealed class FreeSpace : StaticCell {
         public FreeSpace(Point position) : base(position) {}
 
         public override StaticCellFactory.StaticCellType GetCellType() {
@@ -81,7 +81,7 @@ namespace PacMan_model.level.cells {
     }
 
 
-    public sealed class Wall : StaticCell {
+    internal sealed class Wall : StaticCell {
         public Wall(Point position) : base(position) {}
 
         public override StaticCellFactory.StaticCellType GetCellType() {
@@ -109,7 +109,7 @@ namespace PacMan_model.level.cells {
     }
 
 
-    public sealed class PacDot : StaticCell, ICellWithCost {
+    internal sealed class PacDot : StaticCell, ICellWithCost {
 
 
         private const int Cost = 10;
@@ -147,7 +147,7 @@ namespace PacMan_model.level.cells {
         }
     }
 
-    public sealed class Energizer : StaticCell, ICellWithCost {
+    internal sealed class Energizer : StaticCell, ICellWithCost {
 
         private const int Cost = 50;
 

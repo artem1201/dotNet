@@ -1,8 +1,0 @@
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\obj\Debug\PacMan_model.Properties.Resources.resources
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\obj\Debug\PacMan_model.csproj.GenerateResource.Cache
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\bin\Debug\PacMan_model.dll.config
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\bin\Debug\PacMan_model.dll
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\bin\Debug\PacMan_model.pdb
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\obj\Debug\PacMan_model.dll
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\obj\Debug\PacMan_model.pdb
-C:\Users\artem\documents\visual studio 2012\Projects\PacMan\PacMan_model\obj\Debug\PacMan_model.csprojResolveAssemblyReference.cache

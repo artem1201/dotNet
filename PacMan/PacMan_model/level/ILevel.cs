@@ -1,5 +1,5 @@
 ﻿namespace PacMan_model.level {
-    public interface ILevel : ILevelObserverable {
+    internal interface ILevel : ILevelObserverable {
 
         LevelCondition GetLevelCondition();
 
