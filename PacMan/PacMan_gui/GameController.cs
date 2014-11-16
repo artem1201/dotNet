@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,8 +15,8 @@ using PacMan_model.util;
 namespace PacMan_gui {
     class GameController : IDirectionEventObserver {
 
-        //TODO: deal with paths
-        private const string PathToCompany = "C:\\Users\\artem\\Documents\\Visual Studio 2012\\Projects\\PacMan\\Company";
+        private static readonly string ProjectDir = Directory.GetCurrentDirectory();
+        private readonly string _pathToCompany = ProjectDir + "\\Company";
 
         private static readonly IDictionary<Key, Direction> KeyToDirection;
         private static readonly ISet<Key> PauseKeys;
@@ -51,7 +52,7 @@ namespace PacMan_gui {
         }
 
         public void Run() {
-            _game = new Game(PathToCompany, "", 0);
+            _game = new Game(_pathToCompany, "", 0);
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
 
@@ -77,6 +78,8 @@ namespace PacMan_gui {
             }
             else {
                 MessageBox.Show(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
+
+                _game.Stop();
 
                 //TODO: championship and go to main window
             }
