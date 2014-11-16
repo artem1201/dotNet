@@ -202,7 +202,7 @@ namespace PacMan_model.level.cells.pacman {
             OnStatementChanged(e);
         }
 
-        class PacManCell : MovingCell {
+        private class PacManCell : MovingCell {
 
             //  number of ticks per second
             private int _currentSpeed;

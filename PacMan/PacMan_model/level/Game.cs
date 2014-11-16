@@ -10,17 +10,11 @@ namespace PacMan_model.level {
         //  directory where levels are
         private string _pathToLevels;
 
-        //  directory where ghosts are
-        private string _pathToGhosts;
-
         private readonly Ticker _ticker;
 
         //  current level of company
         private ILevel _currentLevel;
         private readonly ILevelLoader _levelLoader;
-
-        //TODO: add initialization
-        private IGhostFactory _ghostFactory;
 
         //  best score of current company
         private int _bestScore;
@@ -44,11 +38,7 @@ namespace PacMan_model.level {
                 throw new ArgumentNullException("pathToGhosts");
             }
             
-            _pathToGhosts = pathToGhosts;
-
-            _ghostFactory = new GhostFactory();
-
-            _levelLoader = new LevelLoader(_ghostFactory);
+            _levelLoader = new LevelLoader(new GhostFactory(pathToGhosts));
 
 
             _ticker = new Ticker(DoATick);

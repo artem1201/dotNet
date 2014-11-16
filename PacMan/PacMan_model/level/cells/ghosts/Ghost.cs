@@ -25,6 +25,14 @@ namespace PacMan_model.level.cells.ghosts {
         private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
         private IGhostBehavior _currentBehavior;
 
+        private IGhostBehavior CurrentBehavior {
+            get { return _currentBehavior; }
+            set {
+                _currentBehavior = value;
+                _ghost.SetSpeed(_currentBehavior.GetSpeed());
+            }
+        }
+
         private IPacMan _target;
         private IField _field;
 
@@ -81,7 +89,7 @@ namespace PacMan_model.level.cells.ghosts {
         public void Move() {
 
             if (0 != _currentTick) {
-                _nextPosition = _currentBehavior.GetNextPoint();
+                _nextPosition = CurrentBehavior.GetNextPoint();
 
                 StartMoving();
             }
@@ -92,13 +100,11 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         public void MakeStalker() {
-            _ghost.SetSpeed(_ghostBehaviorFactory.GetStalkerSpeed(_name));
-            _currentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name);
+            CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name);
         }
 
         public void MakeFrighted() {
-            _ghost.SetSpeed(_ghostBehaviorFactory.GetFrightedSpeed(_name));
-            _currentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name);
+            CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name);
         }
 
         public Point GetPosition() {

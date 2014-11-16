@@ -1,0 +1,158 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+
+namespace PacMan_model.level.cells.ghosts.ghostBehavior {
+    class GhostBehaviorFactory : IGhostBehaviorFactory {
+        
+        private static readonly string[] OrderedPossibleGhostNames = { "Blinky", "Pinky", "Inky", "Clyde" };
+
+        private readonly string _pathToGhostsBehaviors;
+
+        //  key is ghost name, pair is two ghost's behaviors - staking and frightening
+        private readonly IDictionary<string, Tuple<Type, Type>> _ghostsBehaviors = new Dictionary<string, Tuple<Type, Type>>();
+
+        //  contains names of ghosts ordered by difficulty which were loaded
+        //  must be not empty
+        private string[] _orderedLoadedGhostNames;
+
+        public GhostBehaviorFactory(string pathToGhostsBehaviors) {
+
+            _pathToGhostsBehaviors = pathToGhostsBehaviors;
+
+            try {
+                LoadBehaviorsFromFiles(Directory.GetFiles(pathToGhostsBehaviors, "*.dll"));
+            }
+            catch (DirectoryNotFoundException) {
+                throw new InvalidBehaviorsDirectory(pathToGhostsBehaviors);
+            }
+
+            
+        }
+
+
+        public bool ContainsName(string name) {
+            return _ghostsBehaviors.ContainsKey(name);
+        }
+
+        public string GetGhostNameByNumber(int ghostNumber) {
+
+            if (ghostNumber < 0) {
+                throw new ArgumentOutOfRangeException("ghostNumber");
+            }
+
+            return _orderedLoadedGhostNames[ghostNumber % _orderedLoadedGhostNames.Length];
+        }
+
+        public ICollection<string> GetNames() {
+            return _ghostsBehaviors.Keys;
+        }
+
+        public IGhostBehavior GetStalkerBehavior(string name) {
+            if (null == name) {
+                throw new ArgumentNullException("name");
+            }
+            
+            if (!_ghostsBehaviors.ContainsKey(name)) {
+                throw new UnknownGhostName(name);    
+            }
+            return Activator.CreateInstance(_ghostsBehaviors[name].Item1) as IGhostBehavior;
+            
+        }
+
+        public IGhostBehavior GetFrightedBehavior(string name) {
+
+            if (null == name) {
+                throw new ArgumentNullException("name");
+            }
+
+            if (!_ghostsBehaviors.ContainsKey(name)) {
+                throw new UnknownGhostName(name);
+            }
+
+            return Activator.CreateInstance(_ghostsBehaviors[name].Item2) as IGhostBehavior;
+        }
+
+        public IGhostBehavior GetBehavior(string name, bool isFrightModeEnabled = false) {
+            if (null == name) {
+                throw new ArgumentNullException("name");
+            }
+
+            return isFrightModeEnabled ? GetFrightedBehavior(name) : GetStalkerBehavior(name);
+        }
+
+        public IGhostBehavior GetStalkerBehavior(int ghostNumber) {
+
+            return GetStalkerBehavior(GetGhostNameByNumber(ghostNumber));
+        }
+
+        public IGhostBehavior GetFrightedBehavior(int ghostNumber) {
+
+            return GetStalkerBehavior(GetGhostNameByNumber(ghostNumber));
+        }
+
+        public IGhostBehavior GetBehavior(int ghostNumber, bool isFrightModeEnabled = false) {
+            return isFrightModeEnabled ? GetFrightedBehavior(ghostNumber) : GetStalkerBehavior(ghostNumber);
+        }
+
+        private void LoadBehaviorsFromFiles(string[] behaviorFiles) {
+
+            if (0 == behaviorFiles.Length) {
+                throw new InvalidBehaviorsDirectory(_pathToGhostsBehaviors);
+            }
+
+            foreach (var behaviorFile in behaviorFiles) {
+                LoadBehaviorFromFile(behaviorFile);
+            }
+
+            //  find which ghosts were loaded
+            _orderedLoadedGhostNames = (
+                from name 
+                in OrderedPossibleGhostNames 
+                where _ghostsBehaviors.ContainsKey(name) 
+                select  name
+            ).ToArray();
+        }
+
+        private void LoadBehaviorFromFile(string path) {
+            if (null == path) {
+                throw new ArgumentNullException("path");
+            }
+
+            var dll = Assembly.LoadFile(path);
+            //TODO: verify assembly
+
+            var ghostName = dll.GetName().Name;
+            Type stalkerBehavior = null;
+            Type frightedBehavior = null;
+
+            //  load first of IGhostStaklerBehavior and IGhostFrightedBehavior in assembly
+            foreach (var exportedType in dll.GetExportedTypes()) {
+                if (exportedType.IsInstanceOfType(typeof (IGhostStalkerBehavior))) {
+                    if (null != stalkerBehavior) {
+                        continue;
+                    }
+                    stalkerBehavior = exportedType;
+
+                    if (null != frightedBehavior) {
+                        break;
+                    }
+                }
+                else if (exportedType.IsInstanceOfType(typeof (IGhostFrightedBehavior))) {
+                    if (null != frightedBehavior) {
+                        continue;
+                    }
+                    frightedBehavior = exportedType;
+
+                    if (null != stalkerBehavior) {
+                        break;
+                    }
+                }
+            }
+
+            _ghostsBehaviors.Add(ghostName, new Tuple<Type, Type>(stalkerBehavior, frightedBehavior));
+        }
+    }
+}

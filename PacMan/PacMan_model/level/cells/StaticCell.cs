@@ -14,7 +14,7 @@ namespace PacMan_model.level.cells {
         protected StaticCell(Point position) : base(position) {}
 
 
-        public abstract StaticCellFactory.StaticCellType GetCellType();
+        public abstract StaticCellType GetCellType();
 
         /// <summary>
         /// moves pacman to this cell
@@ -27,7 +27,18 @@ namespace PacMan_model.level.cells {
         public abstract bool IsFreeForMoving();
     }
 
-    public static class StaticCellFactory {
+    public enum StaticCellType {
+        FreeSpace
+        ,
+        Wall
+            ,
+        PacDot
+            ,
+        Energizer
+            , Fruit
+    }
+
+    internal static class StaticCellFactory {
 
         public static StaticCell CreateStaticCell(StaticCellType type, Point position) {
             if (null == position) {
@@ -50,21 +61,13 @@ namespace PacMan_model.level.cells {
                     throw new InvalidEnumArgumentException(Resources.StaticCellFactory_CreateStaticCell_unknown_static_cell_type__ + type.ToString());
             }
         }
-
-        public enum StaticCellType {
-            FreeSpace
-            , Wall
-            , PacDot
-            , Energizer
-            , Fruit
-        }
     }
 
     internal sealed class FreeSpace : StaticCell {
         public FreeSpace(Point position) : base(position) {}
 
-        public override StaticCellFactory.StaticCellType GetCellType() {
-            return StaticCellFactory.StaticCellType.FreeSpace;
+        public override StaticCellType GetCellType() {
+            return StaticCellType.FreeSpace;
         }
 
         public override void HandlePacmanMovement(IPacMan pacman, IField field) {
@@ -84,8 +87,8 @@ namespace PacMan_model.level.cells {
     internal sealed class Wall : StaticCell {
         public Wall(Point position) : base(position) {}
 
-        public override StaticCellFactory.StaticCellType GetCellType() {
-            return StaticCellFactory.StaticCellType.Wall;
+        public override StaticCellType GetCellType() {
+            return StaticCellType.Wall;
         }
 
         public override void HandlePacmanMovement(IPacMan pacman, IField field) {
@@ -121,8 +124,8 @@ namespace PacMan_model.level.cells {
             return Cost;
         }
 
-        public override StaticCellFactory.StaticCellType GetCellType() {
-            return StaticCellFactory.StaticCellType.PacDot;
+        public override StaticCellType GetCellType() {
+            return StaticCellType.PacDot;
         }
 
         public override void HandlePacmanMovement(IPacMan pacman, IField field) {
@@ -159,8 +162,8 @@ namespace PacMan_model.level.cells {
             return Cost;
         }
 
-        public override StaticCellFactory.StaticCellType GetCellType() {
-            return StaticCellFactory.StaticCellType.Energizer;
+        public override StaticCellType GetCellType() {
+            return StaticCellType.Energizer;
         }
 
         public override void HandlePacmanMovement(IPacMan pacman, IField field) {
