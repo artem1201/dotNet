@@ -17,6 +17,7 @@ namespace PacMan_gui {
 
         private static readonly string RootDir = Directory.GetCurrentDirectory();
         private readonly string _pathToCompany = RootDir + "\\Company";
+        private readonly string _pathToGhosts = RootDir + "\\AI";
 
         private static readonly IDictionary<Key, Direction> KeyToDirection;
         private static readonly ISet<Key> PauseKeys;
@@ -52,7 +53,7 @@ namespace PacMan_gui {
         }
 
         public void Run() {
-            _game = new Game(_pathToCompany, "", 0);
+            _game = new Game(_pathToCompany, _pathToGhosts, 0);
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
 

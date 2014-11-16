@@ -10,15 +10,15 @@ namespace PacMan_gui.ViewModel.level {
 
         private delegate Shape CreateViewFromCell(double width, double height);
 
-        private static readonly IDictionary<StaticCellFactory.StaticCellType, CreateViewFromCell> CellsCreateor;
+        private static readonly IDictionary<StaticCellType, CreateViewFromCell> CellsCreateor;
         static CellToView() {
 
-            CellsCreateor = new Dictionary<StaticCellFactory.StaticCellType, CreateViewFromCell> {
-                {StaticCellFactory.StaticCellType.FreeSpace, CreateFreeSpace},
-                {StaticCellFactory.StaticCellType.Wall, CreateWall},
-                {StaticCellFactory.StaticCellType.PacDot, CreatePacDot},
-                {StaticCellFactory.StaticCellType.Energizer, CreateEnergizer},
-                {StaticCellFactory.StaticCellType.Fruit, CreateFruit}
+            CellsCreateor = new Dictionary<StaticCellType, CreateViewFromCell> {
+                {StaticCellType.FreeSpace, CreateFreeSpace},
+                {StaticCellType.Wall, CreateWall},
+                {StaticCellType.PacDot, CreatePacDot},
+                {StaticCellType.Energizer, CreateEnergizer},
+                {StaticCellType.Fruit, CreateFruit}
             };
         }
 
