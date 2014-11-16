@@ -8,7 +8,7 @@ using PacMan_model.level;
 using PacMan_model.level.cells;
 
 namespace PacMan_gui.ViewModel.level {
-    public class FieldViewModel {
+    internal class FieldViewModel {
 
         public int Width { get; private set; }
         public int Height { get; private set; }

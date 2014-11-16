@@ -8,7 +8,7 @@ using PacMan_model.level;
 
 namespace PacMan_gui.ViewModel.level {
 
-    static class ColorResolver {
+    internal static class ColorResolver {
         public static Brush PauseColor { get { return Brushes.Gray; } }
         public static Brush StalkingColor { get { return Brushes.DarkSlateBlue; } }
         public static Brush FrightedColor { get { return Brushes.Red; } }

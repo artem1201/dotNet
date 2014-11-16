@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
@@ -82,6 +83,7 @@ namespace PacMan_gui {
                 _game.Stop();
 
                 //TODO: championship and go to main window
+                _gameView.Dispatcher.BeginInvoke(new Action(_gameView.Close));
             }
         }
 

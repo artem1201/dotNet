@@ -3,7 +3,7 @@ using PacMan_model.level.cells.ghosts;
 using PacMan_model.util;
 
 namespace PacMan_gui.ViewModel.level {
-    public class GhostViewModel {
+    internal class GhostViewModel {
 
         public Point Position { get; private set; }
         public string Name { get; private set; }

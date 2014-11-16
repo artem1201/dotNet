@@ -3,9 +3,7 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         x:Class="PacMan_gui.View.Level.GameView"
         SizeChanged="GameView_OnSizeChanged"
-        KeyDown="GameView_OnKeyDown"
-        SizeToContent="WidthAndHeight"
-        Title="{StaticResource ApplicationTitle}">
+        KeyDown="GameView_OnKeyDown">
     <Window.Resources>
         <system:String x:Key="ScoreLabel">Score</system:String>
         <system:String x:Key="CompanyScoreLabel">Company Score</system:String>
@@ -22,12 +20,9 @@
         <Canvas Grid.Column="1" Name="GameCanvas">
             <Canvas.MinWidth>300</Canvas.MinWidth>
             <Canvas.MinHeight>300</Canvas.MinHeight>
-            <Canvas.Background>
-                <Brush>SlateBlue</Brush>
-            </Canvas.Background>
         </Canvas>
 
-        <StackPanel Grid.Column="0" Background="SlateBlue">
+        <StackPanel Grid.Column="0">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -48,7 +43,7 @@
             
         </StackPanel>
 
-        <StackPanel Grid.Column="2" Background="SlateBlue">
+        <StackPanel Grid.Column="2">
             <Label Content="{StaticResource ScoreLabel}" FontSize="16"/>
             <TextBlock Name="ScoreTextBlock" Margin="5" FontSize="16"/>
 
@@ -64,5 +59,4 @@
         </StackPanel>
 
     </Grid>
-
 </Window>

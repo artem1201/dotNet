@@ -10,7 +10,7 @@ using PacMan_model.util;
 using Point = PacMan_model.util.Point;
 
 namespace PacMan_gui.ViewModel.level {
-    public class PacManViewModel {
+    internal class PacManViewModel {
 
         public Point Position { get; private set; }
         public Direction Direction { get; private set; }

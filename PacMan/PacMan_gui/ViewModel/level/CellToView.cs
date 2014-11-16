@@ -6,7 +6,7 @@ using System.Windows.Shapes;
 using PacMan_model.level.cells;
 
 namespace PacMan_gui.ViewModel.level {
-    static class CellToView {
+    internal static class CellToView {
 
         private delegate Shape CreateViewFromCell(double width, double height);
 

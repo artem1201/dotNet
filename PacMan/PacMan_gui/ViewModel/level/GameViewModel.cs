@@ -8,7 +8,7 @@ using PacMan_model.level;
 using PacMan_model.level.cells.pacman;
 
 namespace PacMan_gui.ViewModel.level {
-    public class GameViewModel : INotifyPropertyChanged {
+    internal class GameViewModel : INotifyPropertyChanged {
 
         public PacManViewModel PacManViewModel { get; private set; }
         public FieldViewModel FieldViewModel { get; private set; }
