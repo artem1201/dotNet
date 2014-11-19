@@ -19,8 +19,8 @@ namespace PacMan_gui.ViewModel.level {
 
         private INotChanebleableField _field;
 
-        private readonly Canvas _canvas;
-        private readonly IFieldObserverable _fieldObserverable;
+        private Canvas _canvas;
+        private IFieldObserverable _fieldObserverable;
 
         private readonly IList<Shape> _addedShapes = new List<Shape>(); 
 
@@ -31,13 +31,25 @@ namespace PacMan_gui.ViewModel.level {
             if (null == canvas) {
                 throw new ArgumentNullException("canvas");
             }
+            
+            Init(field, canvas);
+
+            //Redraw();
+        }
+
+        public void Init(IFieldObserverable field, Canvas canvas) {
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == canvas) {
+                throw new ArgumentNullException("canvas");
+            }
+            
             _canvas = canvas;
             _fieldObserverable = field;
 
 
             field.FieldState += OnFieldChanged;
-
-            //Redraw();
         }
 
         private void OnFieldChanged(Object sender, EventArgs e) {
@@ -67,9 +79,10 @@ namespace PacMan_gui.ViewModel.level {
             double cellWidth = (_canvas.ActualWidth / Width);
             double cellHeigth = (_canvas.ActualHeight / Height);
             
+            System.Console.WriteLine("redraw field on: " + Width + ":" + Height);
+
             ClearCanvas();
-            
-            _addedShapes.Clear();
+           
             for (var i = 0; i < Height; ++i) {
                 for (var j = 0; j < Width; ++j) {
                     var cellOnCanvas = CellToView.StaticCellToShape(_field.GetCell(j, i), cellWidth, cellHeigth, j, i);
@@ -83,6 +96,8 @@ namespace PacMan_gui.ViewModel.level {
             foreach (var addedShape in _addedShapes.Where(addedShape => _canvas.Children.Contains(addedShape))) {
                 _canvas.Children.Remove(addedShape);
             }
+
+            _addedShapes.Clear();
         }
     }
 }

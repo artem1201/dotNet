@@ -62,8 +62,7 @@ namespace PacMan_gui {
             _game.Level.PacMan.PacmanState += OnPacManChanged;
 
             _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas());
-            _gameViewModel.Redraw();
-
+            RedrawGame();
             BindDataWithGameView();
 
             _gameView.KeyPushed += OnKeyPushed;
@@ -71,23 +70,30 @@ namespace PacMan_gui {
             _game.Start();
         }
 
-        private void OnLevelFinished(object sender, LevelFinishedEventArs levelFinishedEventArs) {
+        private void OnLevelFinished(object sender, EventArgs emptyEventArgs) {
 
             //  handle viewing next level and start it
-            if (levelFinishedEventArs.HasNextLevel) {
-                MessageBox.Show("You win this level! Try next one", "Level finished");
 
-                _gameViewModel.Redraw();
+            if (_game.IsFinished()) {
 
-                _game.Start();
-            }
-            else {
                 MessageBox.Show(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
 
                 _game.Stop();
 
                 //TODO: championship and go to main window
                 _gameView.Dispatcher.BeginInvoke(new Action(_gameView.Close));
+            }
+            else {
+                MessageBox.Show("You win this level! Try next one", "Level finished");
+
+                _game.LoadNextLevel();
+
+                _gameViewModel.Init(_game, _gameView.GetGameFieldCanvas());
+
+                RedrawGame();
+
+
+                _game.Start();
             }
         }
 
@@ -112,6 +118,19 @@ namespace PacMan_gui {
             canvas.SetBinding(Panel.BackgroundProperty, binding);
         }
 
+        private void RedrawGame() {
+            
+            if (null != _gameViewModel) {
+                _gameViewModel.Redraw();
+                _gameViewModel.FieldViewModel.Redraw();
+                _gameViewModel.PacManViewModel.Redraw();
+
+                foreach (var ghostViewModel in _gameViewModel.GhostViewModels) {
+                    ghostViewModel.Redraw();
+                }
+            }
+        }
+
         private void OnGameViewSizeChanged(Object o, EventArgs e) {
             /*
             if (null == o) {
@@ -121,15 +140,7 @@ namespace PacMan_gui {
                 throw new ArgumentNullException("e");
             }
             */
-            if (null != _gameViewModel) {
-                _gameViewModel.Redraw();
-                _gameViewModel.FieldViewModel.Redraw();
-                _gameViewModel.PacManViewModel.Redraw();
-                
-                foreach (var ghostViewModel in _gameViewModel.GhostViewModels) {
-                    ghostViewModel.Redraw();
-                }
-            }
+            RedrawGame();
         }
 
         public event EventHandler<DirectionChangedEventArgs> DirectionChanged;

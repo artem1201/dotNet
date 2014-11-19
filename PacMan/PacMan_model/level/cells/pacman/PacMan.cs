@@ -42,6 +42,14 @@ namespace PacMan_model.level.cells.pacman {
             _pacman = new PacManCell(startPosition, CommonSpeed);
         }
 
+        public PacMan(IField field, Point startPosition, int lives) :this(field, startPosition) {
+            if (lives < 1) {
+                throw new ArgumentOutOfRangeException("lives");   
+            }
+
+            _lives = lives;
+        }
+
         public event EventHandler<PacmanStateChangedEventArgs> PacmanState;
         public void ForceNotify() {
             NotifyChangedStatement();

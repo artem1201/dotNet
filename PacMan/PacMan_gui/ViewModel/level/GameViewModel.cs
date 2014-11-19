@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Controls;
 using PacMan_gui.Annotations;
 using PacMan_model.level;
@@ -60,35 +59,60 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         //private readonly Canvas _canvas;
-        private readonly IGame _game;
+        private IGame _game;
         private int _bestScore;
         private int _currentScore;
         private int _currentLevelScore;
         private LevelCondition _condition;
 
-        public GameViewModel(IGame game, Canvas canvas) {
+        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas) {
+            if (null == game) {
+                throw new ArgumentNullException("game");
+            }
+            if (null == canvas) {
+                throw new ArgumentNullException("canvas");
+            }
             //_canvas = canvas;
-            _game = game;
 
-            game.Level.LevelState += OnLevelChanged;
-            game.Level.PacMan.PacmanState += OnPacManChanged;
+
+            Init(game, canvas);
 
             BestScore = game.GetBestScore();
             CurrentScore = game.GetGameScore();
             CurrentLevelScore = game.GetLevelScore();
 
-            FieldViewModel = new FieldViewModel(game.Level.Field, canvas);
-            PacManViewModel = new PacManViewModel(game.Level.PacMan, canvas, FieldViewModel);
-            GhostViewModels = new List<GhostViewModel>(game.Level.Ghosts.Count);
-            
-            foreach (var ghostObserverable in game.Level.Ghosts) {
-                GhostViewModels.Add(new GhostViewModel(ghostObserverable, canvas, FieldViewModel));
-            }
-
             //Redraw();
         }
 
-        
+        public void Init([NotNull] IGame game, [NotNull] Canvas canvas) {
+
+
+            _game = game;
+
+            game.Level.LevelState += OnLevelChanged;
+            game.Level.PacMan.PacmanState += OnPacManChanged;
+
+            if (null == FieldViewModel) {
+                FieldViewModel = new FieldViewModel(game.Level.Field, canvas);
+            }
+            else {
+                FieldViewModel.Init(game.Level.Field, canvas);
+            }
+
+            if (null == PacManViewModel) {
+                PacManViewModel = new PacManViewModel(game.Level.PacMan, canvas, FieldViewModel);
+            }
+            else {
+                PacManViewModel.Init(game.Level.PacMan, canvas, FieldViewModel);
+            }
+
+
+            GhostViewModels = new List<GhostViewModel>(game.Level.Ghosts.Count);
+
+            foreach (var ghostObserverable in game.Level.Ghosts) {
+                GhostViewModels.Add(new GhostViewModel(ghostObserverable, this, canvas, FieldViewModel));
+            }
+        }
 
         private void OnPacManChanged([NotNull] object sender, [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
             

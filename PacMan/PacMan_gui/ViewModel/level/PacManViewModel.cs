@@ -29,8 +29,8 @@ namespace PacMan_gui.ViewModel.level {
 
         public FieldViewModel FieldViewModel { get; set; }
 
-        private readonly Canvas _canvas;
-        private readonly IPacManObserverable _pacMan;
+        private Canvas _canvas;
+        private IPacManObserverable _pacMan;
         private Shape _addedShape;
         private int _livesNumber;
 
@@ -44,13 +44,28 @@ namespace PacMan_gui.ViewModel.level {
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
             }
+            
+            Init(pacMan, canvas, fieldViewModel);
+            
+            //Redraw();
+        }
+
+        public void Init(IPacManObserverable pacMan, Canvas canvas, FieldViewModel fieldViewModel) {
+            if (null == pacMan) {
+                throw new ArgumentNullException("pacMan");
+            }
+            if (null == canvas) {
+                throw new ArgumentNullException("canvas");
+            }
+            if (null == fieldViewModel) {
+                throw new ArgumentNullException("fieldViewModel");
+            }
+            
             _pacMan = pacMan;
             pacMan.PacmanState += OnPacManChanged;
 
             FieldViewModel = fieldViewModel;
             _canvas = canvas;
-            
-            //Redraw();
         }
 
         private void OnPacManChanged(Object sender, EventArgs e) {

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using PacMan_gui.Annotations;
+using PacMan_model.level;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts;
 
@@ -85,6 +86,11 @@ namespace PacMan_gui.ViewModel.level {
             return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Green };
         }
 
+
+        private static Shape CreateFrightedGhost(double width, double height) {
+            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.LightSkyBlue };
+        }
+
         private static void SetPositionOnCanvas(Shape shape, double widthOnCanvas, double heightOnCanvas, double x, double y) {
             double dx = 0;
             double dy = 0;
@@ -145,13 +151,13 @@ namespace PacMan_gui.ViewModel.level {
             return result;
         }
 
-        public static Shape GhostToShape([NotNull] string name, double widthOnCanvas, double heightOnCanvas, double x, double y) {
+        public static Shape GhostToShape([NotNull] string name, LevelCondition condition, double widthOnCanvas, double heightOnCanvas, double x, double y) {
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
 
 
-            var result = GhostsCreator[name](widthOnCanvas, heightOnCanvas);
+            var result = condition == LevelCondition.Fright ? CreateFrightedGhost(widthOnCanvas, heightOnCanvas) : GhostsCreator[name](widthOnCanvas, heightOnCanvas);
 
 
             SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);

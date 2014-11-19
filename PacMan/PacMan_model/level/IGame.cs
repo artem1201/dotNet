@@ -6,6 +6,7 @@ namespace PacMan_model.level {
         
 
         void NewGame(int bestScore, string pathToLevels = null);
+        bool LoadNextLevel();
 
         ILevelObserverable Level { get; }
 
@@ -23,21 +24,12 @@ namespace PacMan_model.level {
         void Loose();
 
         bool IsWon();
-        bool IsLost();
+        bool IsFinished();
 
-        event EventHandler<LevelFinishedEventArs> LevelFinished;
+        event EventHandler LevelFinished;
 
         void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver);
 
-    }
-
-    public class LevelFinishedEventArs : EventArgs {
-        
-        public LevelFinishedEventArs(bool hasNextLevel) {
-            HasNextLevel = hasNextLevel;
-        }
-
-        public bool HasNextLevel { get; private set; }
     }
 
     public class InvalidLevelDirectory : Exception {

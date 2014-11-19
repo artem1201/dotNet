@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using PacMan_gui.Annotations;
+using PacMan_model.level;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.util;
 
@@ -14,15 +15,23 @@ namespace PacMan_gui.ViewModel.level {
 
         public FieldViewModel FieldViewModel { get; set; }
 
-        private readonly Canvas _canvas;
+        private Canvas _canvas;
         private Shape _addedShape;
 
-        private readonly IGhostObserverable _ghost;
+        private IGhostObserverable _ghost;
+        private readonly GameViewModel _gameViewModel;
+        private LevelCondition LevelCondition {
+            get { return _gameViewModel.Condition; }
+        }
 
-        public GhostViewModel([NotNull] IGhostObserverable ghost, [NotNull] Canvas canvas,
+
+        public GhostViewModel([NotNull] IGhostObserverable ghost, [NotNull] GameViewModel gameViewModel, [NotNull] Canvas canvas,
             [NotNull] FieldViewModel fieldViewModel) {
             if (null == ghost) {
                 throw new ArgumentNullException("ghost");
+            }
+            if (null == gameViewModel) {
+                throw new ArgumentNullException("gameViewModel");
             }
             if (null == canvas) {
                 throw new ArgumentNullException("canvas");
@@ -30,14 +39,31 @@ namespace PacMan_gui.ViewModel.level {
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
             }
+            _gameViewModel = gameViewModel;
+
+            Init(ghost, canvas, fieldViewModel);
+
+            //Redraw();
+        }
+
+        public void Init([NotNull] IGhostObserverable ghost, [NotNull] Canvas canvas,
+            [NotNull] FieldViewModel fieldViewModel) {
+            if (null == ghost) {
+                throw new ArgumentNullException("ghost");
+            }
+           if (null == canvas) {
+                throw new ArgumentNullException("canvas");
+            }
+            if (null == fieldViewModel) {
+                throw new ArgumentNullException("fieldViewModel");
+            }
 
             _ghost = ghost;
+            
             _canvas = canvas;
             FieldViewModel = fieldViewModel;
 
             ghost.GhostState += OnGhostChanged;
-
-            //Redraw();
         }
 
         private void OnGhostChanged(Object sender, EventArgs e) {
@@ -69,7 +95,7 @@ namespace PacMan_gui.ViewModel.level {
 
             double cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
             double cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
-            _addedShape = CellToView.GhostToShape(Name, cellWidth, cellHeight, Position.GetX(), Position.GetY());
+            _addedShape = CellToView.GhostToShape(Name, LevelCondition, cellWidth, cellHeight, Position.GetX(), Position.GetY());
 
             _canvas.Children.Add(_addedShape);
         }

@@ -25,10 +25,14 @@ namespace PacMan_model.level {
 
 
         private bool _isWon;
-        private bool _isLost;
+        private bool _isFinished;
 
         private string[] _levelFiles;
         private int _currentLevelNumber;
+
+        private bool HasNextLevel {
+            get { return _levelFiles.Length - 1 != _currentLevelNumber; }
+        }
 
         public Game(string pathToLevels, string pathToGhosts, int bestScore) {
             if (null == pathToLevels) {
@@ -57,7 +61,7 @@ namespace PacMan_model.level {
             _ticker.Stop();
 
             _isWon = false;
-            _isLost = false;
+            _isFinished = false;
 
             _bestScore = bestScore;
             _currentScore = 0;
@@ -77,6 +81,28 @@ namespace PacMan_model.level {
 
             _currentLevelNumber = -1;
             LoadNextLevel();
+        }
+
+        public bool LoadNextLevel() {
+            _ticker.Stop();
+
+            if (_levelFiles.Length - 1 == _currentLevelNumber) {
+                return false;
+            }
+
+            ++_currentLevelNumber;
+
+            _currentLevelScore = 0;
+
+            using (var nextLevelSource = new FileStream(_levelFiles[_currentLevelNumber], FileMode.Open)) {
+
+                _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
+
+                _currentLevel.PacMan.PacmanState += OnPacManChanged;
+                _currentLevel.Field.FieldState += OnFieldChanged;
+            }
+
+            return true;
         }
 
         public void Start() {
@@ -110,16 +136,14 @@ namespace PacMan_model.level {
         public void Win() {
             _ticker.Stop();
 
-            var hasNextLevel = LoadNextLevel();
-
-            if (!hasNextLevel) {
+            if (!HasNextLevel) {
                 //  no more levels
                 //  total win    
                 _isWon = true;
-                _isLost = false;
+                _isFinished = true;
             }
 
-            NotifyLevelFinished(hasNextLevel);
+            NotifyLevelFinished();
 
         }
 
@@ -127,17 +151,17 @@ namespace PacMan_model.level {
             _ticker.Stop();
             
             _isWon = false;
-            _isLost = true;
+            _isFinished = true;
 
-            NotifyLevelFinished(false);
+            NotifyLevelFinished();
         }
 
         public bool IsWon() {
             return _isWon;
         }
 
-        public bool IsLost() {
-            return _isLost;
+        public bool IsFinished() {
+            return _isFinished;
         }
 
         public void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver) {
@@ -147,6 +171,8 @@ namespace PacMan_model.level {
         public ILevelObserverable Level {
             get { return _currentLevel; }
         }
+
+
 
         private void DoATick() {
 
@@ -159,26 +185,6 @@ namespace PacMan_model.level {
 //            System.Console.WriteLine("One tick: " + stopwatch.ElapsedMilliseconds);
         }
 
-        private bool LoadNextLevel() {
-            _ticker.Stop();
-
-            if (_levelFiles.Length - 1 == _currentLevelNumber) {
-                return false;
-            }
-
-            ++_currentLevelNumber;
-
-            using (var nextLevelSource = new FileStream(_levelFiles[_currentLevelNumber], FileMode.Open)) {
-
-                _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
-
-                _currentLevel.PacMan.PacmanState += OnPacManChanged;
-                _currentLevel.Field.FieldState += OnFieldChanged;
-            }
-
-            return true;
-        }
-        
         private void OnPacManChanged(Object sender, EventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
@@ -217,18 +223,18 @@ namespace PacMan_model.level {
             }
 
 
-            if ((eventArgs.DotIsNoMore) && (!IsLost())) {
+            if ((eventArgs.DotIsNoMore) && (!IsFinished())) {
                 Win();
             }
         }
 
-        public event EventHandler<LevelFinishedEventArs> LevelFinished;
+        public event EventHandler LevelFinished;
 
-        private void NotifyLevelFinished(bool hasNextLevel) {
-            OnLevelFinishedNotify(new LevelFinishedEventArs(hasNextLevel));
+        private void NotifyLevelFinished() {
+            OnLevelFinishedNotify(EventArgs.Empty);
         }
 
-        protected virtual void OnLevelFinishedNotify(LevelFinishedEventArs e) {
+        protected virtual void OnLevelFinishedNotify(EventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
