@@ -26,6 +26,9 @@ namespace PacMan_model.level {
         //  if Stalking is set - ghost stalks pacman
         //  if Fright is set - pacman is able to eat ghosts
         private LevelCondition _condition = LevelCondition.Stalking;
+        //  time for firighted mode in ms
+        private const int FrightedTimeMs = 5000;
+        private readonly Timer _frightedTimer;
 
         public Level(IPacMan pacman, IField field, IList<IGhost> ghosts) {
             if (null == pacman) {
@@ -40,6 +43,8 @@ namespace PacMan_model.level {
             _pacman = pacman;
             //_field = field;
             _ghosts = ghosts;
+
+            _frightedTimer = new Timer(OnFrightedModeEnds, null, Timeout.Infinite, FrightedTimeMs);
 
             PacMan = _pacman;
             Field = field;
@@ -58,6 +63,7 @@ namespace PacMan_model.level {
             if (null != _currentDirection) _pacman.Move(_currentDirection.Value);
             
             CheckDeath();
+            
             foreach (var ghost in _ghosts) {
                 ghost.Move();
             }
@@ -136,19 +142,28 @@ namespace PacMan_model.level {
 
         private void OnEnergizerEaten(Object sender, EventArgs e) {
 
-            //TODO: rewrite with timer
-            switch (_condition) {
-                case LevelCondition.Stalking:
-                    ChangeToFrightCondition();
-                    break;
-                case LevelCondition.Fright:
-                    ChangeToStalkingCondition();
-                    break;
-                default:
-                    throw new InvalidEnumArgumentException(Resources.Level_OnEnergizerEaten_unknown_level_condition__ + _condition.ToString());
-            }
+            _frightedTimer.Change(FrightedTimeMs, Timeout.Infinite);
 
-            NotifyChangedStatement();
+            ChangeToFrightCondition();
+
+
+
+//            switch (_condition) {
+//                case LevelCondition.Stalking:
+//                    ChangeToFrightCondition();
+//                    break;
+//                case LevelCondition.Fright:
+//                    ChangeToStalkingCondition();
+//                    break;
+//                default:
+//                    throw new InvalidEnumArgumentException(Resources.Level_OnEnergizerEaten_unknown_level_condition__ + _condition.ToString());
+//            }
+        }
+
+        private void OnFrightedModeEnds(Object parameter) {
+            _frightedTimer.Change(Timeout.Infinite, 0);
+
+            ChangeToStalkingCondition();
         }
 
         private void ChangeToFrightCondition() {
@@ -157,6 +172,8 @@ namespace PacMan_model.level {
             foreach (var ghost in _ghosts) {
                 ghost.MakeFrighted();
             }
+
+            NotifyChangedStatement();
         }
 
         private void ChangeToStalkingCondition() {
@@ -165,6 +182,8 @@ namespace PacMan_model.level {
             foreach (var ghost in _ghosts) {
                 ghost.MakeStalker();
             }
+
+            NotifyChangedStatement();
         }
 
         private void OnDirectionChanged(Object sender, EventArgs e) {
