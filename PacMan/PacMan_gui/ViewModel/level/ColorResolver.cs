@@ -24,7 +24,7 @@ namespace PacMan_gui.ViewModel.level {
 
         public class LevelConditionToColorConverter : IValueConverter {
 
-           public object Convert([NotNull] object value, Type targetType, object parameter, CultureInfo culture) {
+            public object Convert([NotNull] object value, Type targetType, object parameter, CultureInfo culture) {
                 if (null == value) {
                     throw new ArgumentNullException("value");
                 }
@@ -33,7 +33,7 @@ namespace PacMan_gui.ViewModel.level {
                 if (null == condition) {
                     throw new ArgumentException("convert value is not LevelCondition");
                 }
-
+                
                 return LevelConditionariesBrushes[(LevelCondition) condition];
 
             }

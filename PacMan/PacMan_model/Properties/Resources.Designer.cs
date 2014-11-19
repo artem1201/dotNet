@@ -61,6 +61,15 @@ namespace PacMan_model.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to unknown level condition: .
+        /// </summary>
+        internal static string Level_OnEnergizerEaten_unknown_level_condition__ {
+            get {
+                return ResourceManager.GetString("Level_OnEnergizerEaten_unknown_level_condition__", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to unknown static cell type: .
         /// </summary>
         internal static string StaticCellFactory_CreateStaticCell_unknown_static_cell_type__ {

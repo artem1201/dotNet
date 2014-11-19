@@ -1,13 +1,12 @@
-﻿using PacMan_model.level.cells.pacman;
-using PacMan_model.util;
+﻿using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
     public interface IGhost : ICellWithCost, IGhostObserverable {
 
         
 
-        void SetTarget(IPacMan target);
-        void SetField(IField field);
+        void SetTarget(MovingCell target);
+        void SetField(INotChanebleableField field);
 
 
         void Move();

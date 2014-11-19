@@ -10,10 +10,11 @@ using PacMan_model.util;
 using Point = PacMan_model.util.Point;
 
 namespace PacMan_gui.ViewModel.level {
-    internal class PacManViewModel {
+    internal class PacManViewModel : INotifyPropertyChanged {
 
         public Point Position { get; private set; }
         public Direction Direction { get; private set; }
+        
         public int LivesNumber {
             get { return _livesNumber; }
             private set {

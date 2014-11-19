@@ -84,7 +84,8 @@ namespace PacMan_model.level.cells {
     }
 
 
-    internal sealed class Wall : StaticCell {
+    //TODO: make internal when testghost become depr.
+    public sealed class Wall : StaticCell {
         public Wall(Point position) : base(position) {}
 
         public override StaticCellType GetCellType() {

@@ -7,7 +7,7 @@ namespace PacMan_model.level.cells {
     ///     cell's class
     ///     which can be moved on field
     /// </summary>
-    internal abstract class MovingCell : Cell {
+    public abstract class MovingCell : Cell {
 
         private readonly Point _startPosition;
 

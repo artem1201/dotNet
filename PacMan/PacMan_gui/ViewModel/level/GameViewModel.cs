@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
 using PacMan_gui.Annotations;
 using PacMan_model.level;
@@ -81,7 +82,7 @@ namespace PacMan_gui.ViewModel.level {
             GhostViewModels = new List<GhostViewModel>(game.Level.Ghosts.Count);
             
             foreach (var ghostObserverable in game.Level.Ghosts) {
-                GhostViewModels.Add(new GhostViewModel(ghostObserverable));
+                GhostViewModels.Add(new GhostViewModel(ghostObserverable, canvas, FieldViewModel));
             }
 
             //Redraw();
@@ -104,7 +105,6 @@ namespace PacMan_gui.ViewModel.level {
             BestScore = _game.GetBestScore();
             CurrentScore = _game.GetGameScore();
             CurrentLevelScore = _game.GetLevelScore();
-
         }
 
         private void OnLevelChanged(Object sender, EventArgs e) {

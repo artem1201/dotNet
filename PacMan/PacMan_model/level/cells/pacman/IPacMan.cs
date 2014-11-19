@@ -17,6 +17,8 @@ namespace PacMan_model.level.cells.pacman {
         int GetScore();
         int GetLives();
 
+        MovingCell AsMovingCell();
+
         void StartMovingTo(Point point, Action onEndOfMovement = null);
 
         void Eat(ICellWithCost cell);

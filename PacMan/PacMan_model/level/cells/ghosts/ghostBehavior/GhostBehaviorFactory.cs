@@ -6,8 +6,6 @@ using System.Reflection;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
     class GhostBehaviorFactory : IGhostBehaviorFactory {
-        
-        private static readonly string[] OrderedPossibleGhostNames = { "Blinky", "Pinky", "Inky", "Clyde" };
 
         private readonly string _pathToGhostsBehaviors;
 
@@ -46,55 +44,105 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             return _orderedLoadedGhostNames[ghostNumber % _orderedLoadedGhostNames.Length];
         }
 
-        public ICollection<string> GetNames() {
+        public ICollection<string> GetAvaialbleNames() {
             return _ghostsBehaviors.Keys;
         }
 
-        public IGhostBehavior GetStalkerBehavior(string name) {
+        public GhostStalkerBehavior GetStalkerBehavior(string name, INotChanebleableField field, MovingCell target) {
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
-            
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == target) {
+                throw new ArgumentNullException("target");
+            }
+
             if (!_ghostsBehaviors.ContainsKey(name)) {
                 throw new UnknownGhostName(name);    
             }
-            return Activator.CreateInstance(_ghostsBehaviors[name].Item1) as IGhostBehavior;
+            return Activator.CreateInstance(_ghostsBehaviors[name].Item1, field, target) as GhostStalkerBehavior;
             
         }
 
-        public IGhostBehavior GetFrightedBehavior(string name) {
+        public GhostFrightedBehavior GetFrightedBehavior(string name, INotChanebleableField field, MovingCell target) {
 
             if (null == name) {
                 throw new ArgumentNullException("name");
+            }
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == target) {
+                throw new ArgumentNullException("target");
             }
 
             if (!_ghostsBehaviors.ContainsKey(name)) {
                 throw new UnknownGhostName(name);
             }
 
-            return Activator.CreateInstance(_ghostsBehaviors[name].Item2) as IGhostBehavior;
+            return Activator.CreateInstance(_ghostsBehaviors[name].Item2, field, target) as GhostFrightedBehavior;
         }
 
-        public IGhostBehavior GetBehavior(string name, bool isFrightModeEnabled = false) {
+        public GhostBehavior GetBehavior(string name, INotChanebleableField field, MovingCell target, bool isFrightModeEnabled = false) {
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == target) {
+                throw new ArgumentNullException("target");
+            }
 
-            return isFrightModeEnabled ? GetFrightedBehavior(name) : GetStalkerBehavior(name);
+            if (isFrightModeEnabled) {
+                return GetFrightedBehavior(name, field, target);
+            }
+            else {
+                return GetStalkerBehavior(name, field, target);
+            }
         }
 
-        public IGhostBehavior GetStalkerBehavior(int ghostNumber) {
+        public GhostStalkerBehavior GetStalkerBehavior(int ghostNumber, INotChanebleableField field, MovingCell target) {
 
-            return GetStalkerBehavior(GetGhostNameByNumber(ghostNumber));
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == target) {
+                throw new ArgumentNullException("target");
+            }
+
+            return GetStalkerBehavior(GetGhostNameByNumber(ghostNumber), field, target);
         }
 
-        public IGhostBehavior GetFrightedBehavior(int ghostNumber) {
+        public GhostFrightedBehavior GetFrightedBehavior(int ghostNumber, INotChanebleableField field, MovingCell target) {
 
-            return GetStalkerBehavior(GetGhostNameByNumber(ghostNumber));
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == target) {
+                throw new ArgumentNullException("target");
+            }
+
+            return GetFrightedBehavior(GetGhostNameByNumber(ghostNumber), field, target);
         }
 
-        public IGhostBehavior GetBehavior(int ghostNumber, bool isFrightModeEnabled = false) {
-            return isFrightModeEnabled ? GetFrightedBehavior(ghostNumber) : GetStalkerBehavior(ghostNumber);
+        public GhostBehavior GetBehavior(int ghostNumber, INotChanebleableField field, MovingCell target, bool isFrightModeEnabled = false) {
+
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+            if (null == target) {
+                throw new ArgumentNullException("target");
+            }
+
+            if (isFrightModeEnabled) {
+                return GetFrightedBehavior(ghostNumber, field, target);
+            }
+            else {
+                return GetStalkerBehavior(ghostNumber, field, target);
+            }
         }
 
         private void LoadBehaviorsFromFiles(string[] behaviorFiles) {
@@ -110,7 +158,7 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             //  find which ghosts were loaded
             _orderedLoadedGhostNames = (
                 from name 
-                in OrderedPossibleGhostNames 
+                in GhostsInfo.OrderedPossibleGhostNames 
                 where _ghostsBehaviors.ContainsKey(name) 
                 select  name
             ).ToArray();
@@ -128,9 +176,10 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             Type stalkerBehavior = null;
             Type frightedBehavior = null;
 
-            //  load first of IGhostStaklerBehavior and IGhostFrightedBehavior in assembly
+            //  load first of IGhostStaklerBehavior and GhostFrightedBehavior in assembly
             foreach (var exportedType in dll.GetExportedTypes()) {
-                if (exportedType.IsInstanceOfType(typeof (IGhostStalkerBehavior))) {
+                
+                if (exportedType.IsSubclassOf(typeof (GhostStalkerBehavior))) {
                     if (null != stalkerBehavior) {
                         continue;
                     }
@@ -140,7 +189,7 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                         break;
                     }
                 }
-                else if (exportedType.IsInstanceOfType(typeof (IGhostFrightedBehavior))) {
+                else if (exportedType.IsSubclassOf(typeof(GhostFrightedBehavior))) {
                     if (null != frightedBehavior) {
                         continue;
                     }

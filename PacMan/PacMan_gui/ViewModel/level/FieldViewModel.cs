@@ -5,17 +5,22 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using PacMan_model.level;
-using PacMan_model.level.cells;
 
 namespace PacMan_gui.ViewModel.level {
     internal class FieldViewModel {
 
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public IList<StaticCell> Cells { get; private set; }
+        public int Width {
+            get { return _field.GetWidth(); }
+        }
+
+        public int Height {
+            get { return _field.GetHeight(); }
+        }
+
+        private INotChanebleableField _field;
 
         private readonly Canvas _canvas;
-        private readonly IFieldObserverable _field;
+        private readonly IFieldObserverable _fieldObserverable;
 
         private readonly IList<Shape> _addedShapes = new List<Shape>(); 
 
@@ -27,7 +32,7 @@ namespace PacMan_gui.ViewModel.level {
                 throw new ArgumentNullException("canvas");
             }
             _canvas = canvas;
-            _field = field;
+            _fieldObserverable = field;
 
 
             field.FieldState += OnFieldChanged;
@@ -46,15 +51,13 @@ namespace PacMan_gui.ViewModel.level {
                 throw new ArgumentException("e");
             }
 
-            Width = eventArgs.Width;
-            Height = eventArgs.Height;
-            Cells = eventArgs.Cells;
+            _field = eventArgs.Field;
 
             _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new WorkWithCanvas(RedrawFieldOnCanvas));
         }
 
         public void Redraw() {
-            _field.ForceNotify();
+            _fieldObserverable.ForceNotify();
         }
 
         private delegate void WorkWithCanvas();
@@ -69,7 +72,7 @@ namespace PacMan_gui.ViewModel.level {
             _addedShapes.Clear();
             for (var i = 0; i < Height; ++i) {
                 for (var j = 0; j < Width; ++j) {
-                    var cellOnCanvas = CellToView.StaticCellToShape(Cells[i * Width + j], cellWidth, cellHeigth, j, i);
+                    var cellOnCanvas = CellToView.StaticCellToShape(_field.GetCell(j, i), cellWidth, cellHeigth, j, i);
                     _addedShapes.Add(cellOnCanvas);
                     _canvas.Children.Add(cellOnCanvas);
                 }

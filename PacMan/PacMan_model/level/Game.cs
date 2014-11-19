@@ -198,7 +198,7 @@ namespace PacMan_model.level {
             }
 
             if (eventArgs.HasDied) {
-                _ticker.Stop();
+                 _ticker.Stop();
 
                 if (0 == eventArgs.Lives) {
                     Loose();

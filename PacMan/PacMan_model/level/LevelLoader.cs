@@ -14,7 +14,7 @@ namespace PacMan_model.level {
         //  from which this level can be loaded
         private const string MagicNumber = "123456";
 
-        private static readonly IDictionary<char, StaticCellFactory.StaticCellType> CharStaticCellToStaticCellType;
+        private static readonly IDictionary<char, StaticCellType> CharStaticCellToStaticCellType;
         private const char CharPacMan = '\\';
         private const char CharGhost = '=';
         private const char CharFreeSpace = ' ';
@@ -27,12 +27,12 @@ namespace PacMan_model.level {
 
         static LevelLoader() {
 
-            CharStaticCellToStaticCellType = new Dictionary<char, StaticCellFactory.StaticCellType> {
-                {CharFreeSpace, StaticCellFactory.StaticCellType.FreeSpace},
-                {CharWall, StaticCellFactory.StaticCellType.Wall},
-                {CharDot, StaticCellFactory.StaticCellType.PacDot},
-                {CharSuperDot, StaticCellFactory.StaticCellType.Energizer},
-                {CharFruit, StaticCellFactory.StaticCellType.Fruit}
+            CharStaticCellToStaticCellType = new Dictionary<char, StaticCellType> {
+                {CharFreeSpace, StaticCellType.FreeSpace},
+                {CharWall, StaticCellType.Wall},
+                {CharDot, StaticCellType.PacDot},
+                {CharSuperDot, StaticCellType.Energizer},
+                {CharFruit, StaticCellType.Fruit}
             };
         }
 
@@ -118,8 +118,9 @@ namespace PacMan_model.level {
             field.Init(width, height, fieldCells);
             //  pacman was not set to ghosts as target - do it
             foreach (var ghost in ghosts) {
-                ghost.SetTarget(pacman);
+                ghost.SetTarget(pacman.AsMovingCell());
                 //ghost.SetField(field);
+                ghost.MakeStalker();
             }
 
             return new Level(pacman, field, ghosts);
@@ -173,6 +174,7 @@ namespace PacMan_model.level {
                 if (CharGhost == levelLineChars[x]) {
                     ghosts.Add(_ghostFactory.CreateGhost(ghosts.Count, new Point(x, y), field));
                     ghostWasFound = true;
+                    levelLineChars[x] = CharFreeSpace;
                 }
 
             }

@@ -51,6 +51,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -69,11 +72,13 @@
   <ItemGroup>
     <Compile Include="level\cells\Cell.cs" />
     <Compile Include="level\cells\ghosts\Ghost.cs" />
-    <Compile Include="level\cells\ghosts\GhostBehaviorFactory.cs" />
-    <Compile Include="level\cells\ghosts\ghostBehavior\IGhostBehavior.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehaviorFactory.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehavior.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostFrightedBehavior.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostStalkerBehavior.cs" />
     <Compile Include="level\cells\ghosts\GhostFactory.cs" />
     <Compile Include="level\cells\ghosts\IGhost.cs" />
-    <Compile Include="level\cells\ghosts\IGhostBehaviorFactory.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\IGhostBehaviorFactory.cs" />
     <Compile Include="level\cells\ghosts\IGhostFactory.cs" />
     <Compile Include="level\cells\ghosts\IGhostObserverable.cs" />
     <Compile Include="level\cells\MovingCell.cs" />
@@ -90,6 +95,7 @@
     <Compile Include="level\ILevel.cs" />
     <Compile Include="level\ILevelLoader.cs" />
     <Compile Include="level\ILevelObserverable.cs" />
+    <Compile Include="level\INotChanebleableField.cs" />
     <Compile Include="level\Level.cs" />
     <Compile Include="level\LevelLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -110,6 +116,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

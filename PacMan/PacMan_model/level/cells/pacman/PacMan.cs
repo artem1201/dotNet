@@ -123,6 +123,10 @@ namespace PacMan_model.level.cells.pacman {
             return _lives;
         }
 
+        public MovingCell AsMovingCell() {
+            return _pacman;
+        }
+
 
         public void StartMovingTo(Point newPosition, Action onEndOfMovement = null) {
             if (null == newPosition) {

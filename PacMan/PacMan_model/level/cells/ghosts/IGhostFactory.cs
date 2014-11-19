@@ -1,10 +1,14 @@
-﻿using PacMan_model.level.cells.pacman;
-using PacMan_model.util;
+﻿using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
     internal interface IGhostFactory {
+        IGhost CreateGhost(int numberOfGhost, Point position, INotChanebleableField field = null, MovingCell target = null);
 
-        IGhost CreateGhost(int numberOfGhost, Point position, IField field = null, IPacMan target = null);
+    }
 
+
+    public static class GhostsInfo {
+        
+        public static readonly string[] OrderedPossibleGhostNames = { "TestGhost", "Blinky", "Pinky", "Inky", "Clyde" };
     }
 }

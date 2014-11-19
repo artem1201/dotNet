@@ -141,7 +141,7 @@ namespace PacMan_model.level {
         }
 
         private void NotifyChangedStatement() {
-            var e = new FieldStateChangedEventArs(_width, _height, _cells, (_numberOfDots == 0));
+            var e = new FieldStateChangedEventArs(this, (_numberOfDots == 0));
             OnStatementChanged(e);
         }
 

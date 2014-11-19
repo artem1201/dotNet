@@ -118,4 +118,7 @@
     <value>unknown static cell type: </value>
     <comment>message for unknown cell type</comment>
   </data>
+  <data name="Level_OnEnergizerEaten_unknown_level_condition__" xml:space="preserve">
+    <value>unknown level condition: </value>
+  </data>
 </root>

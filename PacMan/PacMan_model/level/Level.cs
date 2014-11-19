@@ -6,6 +6,7 @@ using System.Threading;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
+using PacMan_model.Properties;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
@@ -55,12 +56,13 @@ namespace PacMan_model.level {
         public void DoATick() {
             
             if (null != _currentDirection) _pacman.Move(_currentDirection.Value);
-
+            
+            CheckDeath();
             foreach (var ghost in _ghosts) {
                 ghost.Move();
             }
 
-            //TODO: move this calling in event when someone of pacman and ghosts changes place
+            //TODO: move this calling in event when someone of pacman or ghosts changes place
             CheckDeath();
 
         }
@@ -86,6 +88,7 @@ namespace PacMan_model.level {
         private void CheckDeath() {
 
             foreach (var ghost in _ghosts.Where(ghost => _pacman.GetPosition().Equals(ghost.GetPosition()))) {
+                
                 switch (_condition) {
                     case LevelCondition.Stalking:
                         GhostsWins();
@@ -102,7 +105,7 @@ namespace PacMan_model.level {
 
         private void GhostsWins() {
             _pacman.Die();
-
+            _currentDirection = null;
             foreach (var ghost in _ghosts) {
                 ghost.Restart();
             }
@@ -132,6 +135,8 @@ namespace PacMan_model.level {
 
 
         private void OnEnergizerEaten(Object sender, EventArgs e) {
+
+            //TODO: rewrite with timer
             switch (_condition) {
                 case LevelCondition.Stalking:
                     ChangeToFrightCondition();
@@ -140,7 +145,7 @@ namespace PacMan_model.level {
                     ChangeToStalkingCondition();
                     break;
                 default:
-                    throw new InvalidEnumArgumentException("unknown level condition: " + _condition.ToString());
+                    throw new InvalidEnumArgumentException(Resources.Level_OnEnergizerEaten_unknown_level_condition__ + _condition.ToString());
             }
 
             NotifyChangedStatement();

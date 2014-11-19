@@ -7,9 +7,11 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using PacMan_gui.Annotations;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
+using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
 
 namespace PacMan_gui {
@@ -21,7 +23,7 @@ namespace PacMan_gui {
 
         private static readonly IDictionary<Key, Direction> KeyToDirection;
         private static readonly ISet<Key> PauseKeys;
-        private Brush _canvasColorBeforePause;
+        private Brush _canvasColorBeforePause = ColorResolver.StalkingColor;
 
         static GameController()  {
             KeyToDirection = new Dictionary<Key, Direction> {
@@ -53,9 +55,11 @@ namespace PacMan_gui {
         }
 
         public void Run() {
+            
             _game = new Game(_pathToCompany, _pathToGhosts, 0);
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
+            _game.Level.PacMan.PacmanState += OnPacManChanged;
 
             _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas());
             _gameViewModel.Redraw();
@@ -161,7 +165,26 @@ namespace PacMan_gui {
                 throw new ArgumentException("unknown key pushed");
             }
         }
-        
+
+        private void OnPacManChanged([NotNull] object sender,
+            [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
+//            if (null == sender) {
+//                throw new ArgumentNullException("sender");
+//            }
+
+            if (null == pacmanStateChangedEventArgs) {
+                throw new ArgumentNullException("pacmanStateChangedEventArgs");
+            }
+
+
+            // if have died and still can play
+            if (pacmanStateChangedEventArgs.HasDied && (0 != pacmanStateChangedEventArgs.Lives)) {
+                MessageBox.Show("You have died");
+
+                _game.Start();
+            }
+        }
+
         protected virtual void NotifyDirectionChanged(DirectionChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");

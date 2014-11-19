@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
-using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
@@ -23,9 +22,9 @@ namespace PacMan_model.level.cells.ghosts {
 
 
         private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
-        private IGhostBehavior _currentBehavior;
+        private GhostBehavior _currentBehavior;
 
-        private IGhostBehavior CurrentBehavior {
+        private GhostBehavior CurrentBehavior {
             get { return _currentBehavior; }
             set {
                 _currentBehavior = value;
@@ -33,10 +32,10 @@ namespace PacMan_model.level.cells.ghosts {
             }
         }
 
-        private IPacMan _target;
-        private IField _field;
+        private MovingCell _target;
+        private INotChanebleableField _field;
 
-        public Ghost(Point startPosition, string name, IGhostBehaviorFactory ghostBehaviorFactory, IPacMan target, IField field) {
+        public Ghost(Point startPosition, string name, IGhostBehaviorFactory ghostBehaviorFactory, MovingCell target, INotChanebleableField field) {
             
             if (null == startPosition) {
                 throw new ArgumentNullException("startPosition");
@@ -60,7 +59,7 @@ namespace PacMan_model.level.cells.ghosts {
             _target = target;
             _field = field;
 
-            MakeStalker();
+            //MakeStalker();
         }
 
         public event EventHandler<GhostStateChangedEventArgs> GhostState;
@@ -68,18 +67,24 @@ namespace PacMan_model.level.cells.ghosts {
             NotifyChangedStatement();
         }
 
-        public void SetTarget(IPacMan target) {
+        public void SetTarget(MovingCell target) {
             if (null == target) {
                 throw new ArgumentNullException("target");
             }
-            _target = target;
+
+            lock (this) {
+                _target = target;
+            }
         }
 
-        public void SetField(IField field) {
+        public void SetField(INotChanebleableField field) {
             if (null == field) {
                 throw new ArgumentNullException("field");
             }
-            _field = field;
+            lock (this) {
+                _field = field;    
+            }
+            
         }
 
         public int GetCost() {
@@ -89,22 +94,31 @@ namespace PacMan_model.level.cells.ghosts {
         public void Move() {
 
             if (0 != _currentTick) {
-                _nextPosition = CurrentBehavior.GetNextPoint();
 
-                StartMoving();
+                lock (this) {
+                    StartMoving();
+                }
+
+                
             }
             else {
-                KeepMoving();
+                lock (this) {
+                    KeepMoving();
+                }
             }
             
         }
 
         public void MakeStalker() {
-            CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name);
+            lock (this) {
+                CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name, _field, _target);
+            }
         }
 
         public void MakeFrighted() {
-            CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name);
+            lock (this) {
+                CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name, _field, _target);
+            }
         }
 
         public Point GetPosition() {
@@ -116,26 +130,28 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         public void Restart() {
-            _ghost.MoveTo(_ghost.GetStartPosition());
 
-            Stop();
+            lock (this) {
+                Stop();
+
+                _ghost.MoveTo(_ghost.GetStartPosition());
+            }
         }
 
         public void Die() {
 
-            Stop();
 
-            _ghost.MoveTo(_ghost.GetStartPosition());
+            lock (this) {
+                Stop();
 
+                _ghost.MoveTo(_ghost.GetStartPosition());
+            }
             NotifyChangedStatement();
         }
 
-        private void Stop() {
-            _currentTick = 0;
-            _nextPosition = null;
-        }
-
         private void StartMoving() {
+            _nextPosition = CurrentBehavior.GetNextPoint(_ghost.GetPosition());
+
             KeepMoving();
         }
 
@@ -145,15 +161,21 @@ namespace PacMan_model.level.cells.ghosts {
 
             if (_ghost.GetSpeed() == _currentTick) {
 
-                Stop();
+                _ghost.MoveTo(_nextPosition);
 
-               _ghost.MoveTo(_nextPosition);
+                Stop();
 
                 NotifyChangedStatement();
             }
         }
 
+        private void Stop() {
+            _currentTick = 0;
+            _nextPosition = null;
+        }
+
         protected virtual void OnStatementChanged(GhostStateChangedEventArgs e) {
+            
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -163,6 +185,7 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void NotifyChangedStatement() {
+
             var e = new GhostStateChangedEventArgs(_name, _ghost.GetPosition());
             OnStatementChanged(e);
         }
@@ -210,6 +233,7 @@ namespace PacMan_model.level.cells.ghosts {
             if (null == nextPosition) {
                 throw new ArgumentNullException("nextPosition");
             }
+
             Position = nextPosition;
         }
     }

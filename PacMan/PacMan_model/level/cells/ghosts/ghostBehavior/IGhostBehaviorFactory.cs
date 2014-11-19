@@ -6,15 +6,15 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
 
         bool ContainsName(string name);
         string GetGhostNameByNumber(int ghostNumber);
-        ICollection<string> GetNames();
+        ICollection<string> GetAvaialbleNames();
 
-        IGhostBehavior GetStalkerBehavior(string name);
-        IGhostBehavior GetFrightedBehavior(string name);
-        IGhostBehavior GetBehavior(string name, bool isFrightModeEnabled = false);
+        GhostStalkerBehavior GetStalkerBehavior(string name, INotChanebleableField field, MovingCell target);
+        GhostFrightedBehavior GetFrightedBehavior(string name, INotChanebleableField field, MovingCell target);
+        GhostBehavior GetBehavior(string name, INotChanebleableField field, MovingCell target, bool isFrightModeEnabled = false);
 
-        IGhostBehavior GetStalkerBehavior(int ghostNumber);
-        IGhostBehavior GetFrightedBehavior(int ghostNumber);
-        IGhostBehavior GetBehavior(int ghostNumber, bool isFrightModeEnabled = false);
+        GhostStalkerBehavior GetStalkerBehavior(int ghostNumber, INotChanebleableField field, MovingCell target);
+        GhostFrightedBehavior GetFrightedBehavior(int ghostNumber, INotChanebleableField field, MovingCell target);
+        GhostBehavior GetBehavior(int ghostNumber, INotChanebleableField field, MovingCell target, bool isFrightModeEnabled = false);
     }
 
     public class UnknownGhostName : Exception {
