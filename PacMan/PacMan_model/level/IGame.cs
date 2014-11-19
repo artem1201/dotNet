@@ -29,7 +29,6 @@ namespace PacMan_model.level {
         event EventHandler LevelFinished;
 
         void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver);
-
     }
 
     public class InvalidLevelDirectory : Exception {

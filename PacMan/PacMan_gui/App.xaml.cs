@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using PacMan_gui.View.Level;
-
-namespace PacMan_gui {
+﻿namespace PacMan_gui {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>

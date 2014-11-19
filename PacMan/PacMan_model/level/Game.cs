@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Threading;
+using System.Timers;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
+using PacMan_model.util;
 
 namespace PacMan_model.level {
     public class Game : IGame {
@@ -29,6 +31,9 @@ namespace PacMan_model.level {
 
         private string[] _levelFiles;
         private int _currentLevelNumber;
+
+
+        private readonly ICollection<IDirectionEventObserver> _observers = new List<IDirectionEventObserver>(); 
 
         private bool HasNextLevel {
             get { return _levelFiles.Length - 1 != _currentLevelNumber; }
@@ -63,6 +68,8 @@ namespace PacMan_model.level {
             _isWon = false;
             _isFinished = false;
 
+            _observers.Clear();
+
             _bestScore = bestScore;
             _currentScore = 0;
             _currentLevelScore = 0;
@@ -96,10 +103,18 @@ namespace PacMan_model.level {
 
             using (var nextLevelSource = new FileStream(_levelFiles[_currentLevelNumber], FileMode.Open)) {
 
+                if (null != _currentLevel) {
+                    _currentLevel.Dispose();
+                }
+
                 _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
 
                 _currentLevel.PacMan.PacmanState += OnPacManChanged;
                 _currentLevel.Field.FieldState += OnFieldChanged;
+
+                foreach (var directionEventObserver in _observers) {
+                    _currentLevel.RegisterOnDirectionObserver(directionEventObserver);
+                }
             }
 
             return true;
@@ -165,7 +180,15 @@ namespace PacMan_model.level {
         }
 
         public void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver) {
-            _currentLevel.RegisterOnDirectionObserver(directionEventObserver);
+            if (null == directionEventObserver) {
+                throw new ArgumentNullException("directionEventObserver");
+            }
+
+            if (null != _currentLevel) {
+                _currentLevel.RegisterOnDirectionObserver(directionEventObserver);    
+            }
+
+            _observers.Add(directionEventObserver);
         }
 
         public ILevelObserverable Level {
@@ -176,54 +199,37 @@ namespace PacMan_model.level {
 
         private void DoATick() {
 
-//            Stopwatch stopwatch = Stopwatch.StartNew();
-
             _currentLevel.DoATick();
-
-//            stopwatch.Stop();
-//
-//            System.Console.WriteLine("One tick: " + stopwatch.ElapsedMilliseconds);
         }
 
-        private void OnPacManChanged(Object sender, EventArgs e) {
+        private void OnPacManChanged(Object sender, PacmanStateChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as PacmanStateChangedEventArgs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-            _currentScore += (eventArgs.Score - _currentLevelScore);
-            _currentLevelScore = eventArgs.Score;
+            _currentScore += (e.Score - _currentLevelScore);
+            _currentLevelScore = e.Score;
             
 
             if (_currentScore > _bestScore) {
                 _bestScore = _currentScore;
             }
 
-            if (eventArgs.HasDied) {
+            if (e.HasDied) {
                  _ticker.Stop();
 
-                if (0 == eventArgs.Lives) {
+                if (0 == e.Lives) {
                     Loose();
                 }
             }
         }
 
-        private void OnFieldChanged(Object sender, EventArgs e) {
+        private void OnFieldChanged(Object sender, FieldStateChangedEventArs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as FieldStateChangedEventArs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-
-            if ((eventArgs.DotIsNoMore) && (!IsFinished())) {
+            if ((e.DotIsNoMore) && (!IsFinished())) {
                 Win();
             }
         }
@@ -238,41 +244,35 @@ namespace PacMan_model.level {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
-            var temp = Volatile.Read(ref LevelFinished);
 
-            if (temp != null) temp(this, e);
+            e.Raise(this, ref LevelFinished);
         }
 
         private class Ticker {
 
             private const int Delay = 1;
 
-            public delegate void TickPerformer();
-
-            private readonly TickPerformer _tickPerformer;
             private readonly Timer _timer;
-            private bool _isOn;
+            private readonly Action _tickAction;
 
-            public Ticker(TickPerformer tickPerformer) {
-                _tickPerformer = tickPerformer;
 
-                TimerCallback tcb = Tick;
-
-                _timer = new Timer(tcb, null, Timeout.Infinite, Delay);
+            public Ticker(Action tickAction) {
+                _tickAction = tickAction;
+                
+                _timer = new Timer(Delay);
+                _timer.Elapsed += Tick;
             }
 
             public bool IsOn() {
-                return _isOn;
+                return _timer.Enabled;
             }
 
             public void Start() {
-                _timer.Change(0, Delay);
-                _isOn = true;
+                _timer.Start();
             }
 
             public void Stop() {
-                _timer.Change(Timeout.Infinite, Delay);
-                _isOn = false;
+                _timer.Stop();
             }
 
             public void Abort() {
@@ -281,8 +281,9 @@ namespace PacMan_model.level {
 
             }
 
-            private void Tick(Object parameter) {
-                _tickPerformer();
+            private void Tick(Object source, ElapsedEventArgs e) {
+
+                _tickAction();
             }
         }
     }

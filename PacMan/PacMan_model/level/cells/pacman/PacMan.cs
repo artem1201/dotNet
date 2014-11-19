@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
@@ -18,7 +17,7 @@ namespace PacMan_model.level.cells.pacman {
         private int _lives = MaxLives;
 
         //  field where pacman is able to move
-        private readonly IField _field;
+        private IField _field;
 
         //  last direction where pacman was moved
         private Direction _currentDirection = Direction.Left;
@@ -53,6 +52,21 @@ namespace PacMan_model.level.cells.pacman {
         public event EventHandler<PacmanStateChangedEventArgs> PacmanState;
         public void ForceNotify() {
             NotifyChangedStatement();
+        }
+
+        public void Dispose() {
+            UnsubsrcibeAll();
+
+            _field = null;
+        }
+
+        private void UnsubsrcibeAll() {
+
+            if (null != PacmanState) {
+                foreach (var levelClient in PacmanState.GetInvocationList()) {
+                    PacmanState -= levelClient as EventHandler<PacmanStateChangedEventArgs>;
+                }
+            }
         }
 
         /// <summary>
@@ -199,9 +213,7 @@ namespace PacMan_model.level.cells.pacman {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
-            var temp = Volatile.Read(ref PacmanState);
-
-            if (temp != null) temp(this, e);
+            e.Raise(this, ref PacmanState);
         }
 
         private void NotifyChangedStatement() {

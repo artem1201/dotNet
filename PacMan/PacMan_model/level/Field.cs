@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using PacMan_model.level.cells;
 using PacMan_model.util;
 
@@ -31,6 +30,24 @@ namespace PacMan_model.level {
         public event EventHandler<FieldStateChangedEventArs> FieldState;
         public void ForceNotify() {
             NotifyChangedStatement();
+        }
+
+        public void Dispose() {
+            UnsubsrcibeAll();
+
+//            _cells.Clear();
+//
+//            _width = 0;
+//            _height = 0;
+        }
+
+        private void UnsubsrcibeAll() {
+
+            if (null != FieldState) {
+                foreach (var levelClient in FieldState.GetInvocationList()) {
+                    FieldState -= levelClient as EventHandler<FieldStateChangedEventArs>;
+                }
+            }
         }
 
         public void Init(int width, int height, IList<StaticCell> cells) {
@@ -132,12 +149,12 @@ namespace PacMan_model.level {
 
 
         protected virtual void OnStatementChanged(FieldStateChangedEventArs e) {
+            
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
-            var temp = Volatile.Read(ref FieldState);
 
-            if (temp != null) temp(this, e);
+            e.Raise(this, ref FieldState);
         }
 
         private void NotifyChangedStatement() {

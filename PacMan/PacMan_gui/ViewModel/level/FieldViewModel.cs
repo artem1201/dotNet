@@ -9,83 +9,70 @@ using PacMan_model.level;
 namespace PacMan_gui.ViewModel.level {
     internal class FieldViewModel {
 
-        public int Width {
-            get { return _field.GetWidth(); }
-        }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
-        public int Height {
-            get { return _field.GetHeight(); }
-        }
+        //private INotChanebleableField _field;
 
-        private INotChanebleableField _field;
-
-        private Canvas _canvas;
+        private readonly Canvas _canvas;
         private IFieldObserverable _fieldObserverable;
 
         private readonly IList<Shape> _addedShapes = new List<Shape>(); 
 
-        public FieldViewModel(IFieldObserverable field, Canvas canvas) {
-            if (null == field) {
-                throw new ArgumentNullException("field");
+        public FieldViewModel(IFieldObserverable fieldObserverable, Canvas canvas) {
+            if (null == fieldObserverable) {
+                throw new ArgumentNullException("fieldObserverable");
             }
             if (null == canvas) {
                 throw new ArgumentNullException("canvas");
             }
-            
-            Init(field, canvas);
+            _canvas = canvas;
+            Init(fieldObserverable);
 
             //Redraw();
         }
 
-        public void Init(IFieldObserverable field, Canvas canvas) {
-            if (null == field) {
-                throw new ArgumentNullException("field");
+        public void Init(IFieldObserverable newFieldObserverable) {
+            if (null == newFieldObserverable) {
+                throw new ArgumentNullException("newFieldObserverable");
             }
-            if (null == canvas) {
-                throw new ArgumentNullException("canvas");
-            }
-            
-            _canvas = canvas;
-            _fieldObserverable = field;
 
+            newFieldObserverable.FieldState += OnFieldChanged;
 
-            field.FieldState += OnFieldChanged;
+            _fieldObserverable = newFieldObserverable;
         }
 
-        private void OnFieldChanged(Object sender, EventArgs e) {
+        private void OnFieldChanged(Object sender, FieldStateChangedEventArs e) {
 
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as FieldStateChangedEventArs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
+            Width = e.Field.GetWidth();
+            Height = e.Field.GetHeight();
 
-            _field = eventArgs.Field;
+            //System.Console.WriteLine("call redraw field on: " + Width + ":" + Height);
 
-            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new WorkWithCanvas(RedrawFieldOnCanvas));
+            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action<INotChanebleableField>(RedrawFieldOnCanvas), e.Field);
         }
 
         public void Redraw() {
             _fieldObserverable.ForceNotify();
         }
 
-        private delegate void WorkWithCanvas();
+       
+        private void RedrawFieldOnCanvas(INotChanebleableField field) {
 
-        private void RedrawFieldOnCanvas() {
+            double cellWidth = (_canvas.ActualWidth / field.GetWidth());
+            double cellHeigth = (_canvas.ActualHeight / field.GetHeight());
 
-            double cellWidth = (_canvas.ActualWidth / Width);
-            double cellHeigth = (_canvas.ActualHeight / Height);
-            
-            System.Console.WriteLine("redraw field on: " + Width + ":" + Height);
+            //System.Console.WriteLine("redraw field on: " + field.GetWidth() + ":" + field.GetHeight());
 
             ClearCanvas();
-           
-            for (var i = 0; i < Height; ++i) {
-                for (var j = 0; j < Width; ++j) {
-                    var cellOnCanvas = CellToView.StaticCellToShape(_field.GetCell(j, i), cellWidth, cellHeigth, j, i);
+
+            for (var i = 0; i < field.GetHeight(); ++i) {
+                for (var j = 0; j < field.GetWidth(); ++j) {
+                    var cellOnCanvas = CellToView.StaticCellToShape(field.GetCell(j, i), cellWidth, cellHeigth, j, i);
                     _addedShapes.Add(cellOnCanvas);
                     _canvas.Children.Add(cellOnCanvas);
                 }

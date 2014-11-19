@@ -29,7 +29,7 @@ namespace PacMan_gui.ViewModel.level {
 
         public FieldViewModel FieldViewModel { get; set; }
 
-        private Canvas _canvas;
+        private readonly Canvas _canvas;
         private IPacManObserverable _pacMan;
         private Shape _addedShape;
         private int _livesNumber;
@@ -44,48 +44,36 @@ namespace PacMan_gui.ViewModel.level {
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
             }
-            
-            Init(pacMan, canvas, fieldViewModel);
+
+            _canvas = canvas;
+            Init(pacMan, fieldViewModel);
             
             //Redraw();
         }
 
-        public void Init(IPacManObserverable pacMan, Canvas canvas, FieldViewModel fieldViewModel) {
+        public void Init(IPacManObserverable pacMan, FieldViewModel fieldViewModel) {
             if (null == pacMan) {
                 throw new ArgumentNullException("pacMan");
-            }
-            if (null == canvas) {
-                throw new ArgumentNullException("canvas");
             }
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
             }
-            
+
             _pacMan = pacMan;
             pacMan.PacmanState += OnPacManChanged;
 
             FieldViewModel = fieldViewModel;
-            _canvas = canvas;
         }
 
-        private void OnPacManChanged(Object sender, EventArgs e) {
+        private void OnPacManChanged(Object sender, PacmanStateChangedEventArgs e) {
 
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as PacmanStateChangedEventArgs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-            Position = eventArgs.Position;
-            Direction = eventArgs.Direction;
-            LivesNumber = eventArgs.Lives;
-
-            if (eventArgs.HasDied) {
-                //TODO: draw death and start game again
-            }
+            Position = e.Position;
+            Direction = e.Direction;
+            LivesNumber = e.Lives;
 
             _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new WorkWithCanvas(RedrawPacManOnCanvas));
         }
@@ -108,7 +96,7 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         private void ClearCanvas() {
-            if (_canvas.Children.Contains(_addedShape)) {
+            if ((null != _addedShape) && _canvas.Children.Contains(_addedShape)) {
 
                 _canvas.Children.Remove(_addedShape);
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Threading;
 using PacMan_model.level.cells.pacman;
 using PacMan_model.Properties;
 using PacMan_model.util;
@@ -195,9 +194,7 @@ namespace PacMan_model.level.cells {
         }
 
         private void OnEnergizerEaten() {
-            var temp = Volatile.Read(ref EnergizerEaten);
-
-            if (temp != null) temp(this, EventArgs.Empty);
+            EventArgs.Empty.Raise(this, ref EnergizerEaten);
         }
     }
 

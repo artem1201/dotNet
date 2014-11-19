@@ -4,7 +4,7 @@ using PacMan_model.level.cells;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
-    public interface IField : INotChanebleableField, IFieldObserverable {
+    public interface IField : INotChanebleableField, IFieldObserverable, IDisposable {
         
         void Init(int width, int height, IList<StaticCell> cells);
 

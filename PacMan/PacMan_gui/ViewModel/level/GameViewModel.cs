@@ -96,14 +96,14 @@ namespace PacMan_gui.ViewModel.level {
                 FieldViewModel = new FieldViewModel(game.Level.Field, canvas);
             }
             else {
-                FieldViewModel.Init(game.Level.Field, canvas);
+                FieldViewModel.Init(game.Level.Field);
             }
 
             if (null == PacManViewModel) {
                 PacManViewModel = new PacManViewModel(game.Level.PacMan, canvas, FieldViewModel);
             }
             else {
-                PacManViewModel.Init(game.Level.PacMan, canvas, FieldViewModel);
+                PacManViewModel.Init(game.Level.PacMan, FieldViewModel);
             }
 
 
@@ -131,29 +131,23 @@ namespace PacMan_gui.ViewModel.level {
             CurrentLevelScore = _game.GetLevelScore();
         }
 
-        private void OnLevelChanged(Object sender, EventArgs e) {
+        private void OnLevelChanged(Object sender, LevelStateChangedEventArgs e) {
 
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as LevelStateChangedEventArgs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-
-            Condition = eventArgs.Condition;
+            Condition = e.Condition;
         }
 
         public void Redraw() {
             _game.Level.ForceNotify();
-            FieldViewModel.Redraw();
-            PacManViewModel.Redraw();
-
-            foreach (var ghostViewModel in GhostViewModels) {
-                ghostViewModel.Redraw();
-            }
+//            FieldViewModel.Redraw();
+//            PacManViewModel.Redraw();
+//
+//            foreach (var ghostViewModel in GhostViewModels) {
+//                ghostViewModel.Redraw();
+//            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -15,7 +15,7 @@ namespace PacMan_gui.ViewModel.level {
 
         public FieldViewModel FieldViewModel { get; set; }
 
-        private Canvas _canvas;
+        private readonly Canvas _canvas;
         private Shape _addedShape;
 
         private IGhostObserverable _ghost;
@@ -40,19 +40,17 @@ namespace PacMan_gui.ViewModel.level {
                 throw new ArgumentNullException("fieldViewModel");
             }
             _gameViewModel = gameViewModel;
+            _canvas = canvas;
 
-            Init(ghost, canvas, fieldViewModel);
+            Init(ghost, fieldViewModel);
 
             //Redraw();
         }
 
-        public void Init([NotNull] IGhostObserverable ghost, [NotNull] Canvas canvas,
+        public void Init([NotNull] IGhostObserverable ghost,
             [NotNull] FieldViewModel fieldViewModel) {
             if (null == ghost) {
                 throw new ArgumentNullException("ghost");
-            }
-           if (null == canvas) {
-                throw new ArgumentNullException("canvas");
             }
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
@@ -60,25 +58,20 @@ namespace PacMan_gui.ViewModel.level {
 
             _ghost = ghost;
             
-            _canvas = canvas;
+            
             FieldViewModel = fieldViewModel;
 
             ghost.GhostState += OnGhostChanged;
         }
 
-        private void OnGhostChanged(Object sender, EventArgs e) {
+        private void OnGhostChanged(Object sender, GhostStateChangedEventArgs e) {
 
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as GhostStateChangedEventArgs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-            Position = eventArgs.Position;
-            Name = eventArgs.Name;
+            Position = e.Position;
+            Name = e.Name;
 
             _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new WorkWithCanvas(RedrawGhostOnCanvas));
         }
@@ -101,7 +94,7 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         private void ClearCanvas() {
-            if (_canvas.Children.Contains(_addedShape)) {
+            if ((_addedShape != null) && _canvas.Children.Contains(_addedShape)) {
 
                 _canvas.Children.Remove(_addedShape);
             }

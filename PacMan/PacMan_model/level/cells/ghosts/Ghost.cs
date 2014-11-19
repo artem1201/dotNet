@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.util;
 
@@ -65,6 +64,21 @@ namespace PacMan_model.level.cells.ghosts {
         public event EventHandler<GhostStateChangedEventArgs> GhostState;
         public void ForceNotify() {
             NotifyChangedStatement();
+        }
+
+        public void Dispose() {
+            UnsubsrcibeAll();
+
+            _field = null;
+        }
+
+        private void UnsubsrcibeAll() {
+
+            if (null != GhostState) {
+                foreach (var levelClient in GhostState.GetInvocationList()) {
+                    GhostState -= levelClient as EventHandler<GhostStateChangedEventArgs>;
+                }
+            }
         }
 
         public void SetTarget(MovingCell target) {
@@ -179,9 +193,8 @@ namespace PacMan_model.level.cells.ghosts {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
-            var temp = Volatile.Read(ref GhostState);
 
-            if (temp != null) temp(this, e);
+            e.Raise(this, ref GhostState);
         }
 
         private void NotifyChangedStatement() {

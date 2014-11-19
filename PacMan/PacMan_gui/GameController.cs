@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -92,7 +91,6 @@ namespace PacMan_gui {
 
                 RedrawGame();
 
-
                 _game.Start();
             }
         }
@@ -145,21 +143,16 @@ namespace PacMan_gui {
 
         public event EventHandler<DirectionChangedEventArgs> DirectionChanged;
 
-        private void OnKeyPushed(Object sender, EventArgs e) {
+        private void OnKeyPushed(Object sender, KeyEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as KeyEventArgs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-            if (KeyToDirection.ContainsKey(eventArgs.Key)) {
-                var directionChangedArgs = new DirectionChangedEventArgs(KeyToDirection[eventArgs.Key]);
+            if (KeyToDirection.ContainsKey(e.Key)) {
+                var directionChangedArgs = new DirectionChangedEventArgs(KeyToDirection[e.Key]);
                 NotifyDirectionChanged(directionChangedArgs);
             }
-            else if (PauseKeys.Contains(eventArgs.Key)) {
+            else if (PauseKeys.Contains(e.Key)) {
 
                 if (_game.IsOn()) {
                     _game.Pause();
@@ -200,9 +193,8 @@ namespace PacMan_gui {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
-            var temp = Volatile.Read(ref DirectionChanged);
 
-            if (temp != null) temp(this, e);
+            e.Raise(this, ref DirectionChanged);
         }
 
 

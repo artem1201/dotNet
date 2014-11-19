@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
+using PacMan_model.util;
 
 namespace PacMan_gui.View.Level {
     /// <summary>
@@ -58,19 +58,19 @@ namespace PacMan_gui.View.Level {
                 throw new ArgumentNullException("e");
             }
             */
-            var temp = Volatile.Read(ref GameViewSizeChanged);
-
-            if (temp != null) temp(this, EventArgs.Empty);
+            
+            EventArgs.Empty.Raise(this, ref GameViewSizeChanged);
         }
 
-        private void GameView_OnKeyDown(object sender, KeyEventArgs e) {
-
-            if (ControlKeys.Contains(e.Key)) {
-                var temp = Volatile.Read(ref KeyPushed);
-
-                if (temp != null) temp(this, e);
+        private void GameView_OnKeyDown(object sender, [NotNull] KeyEventArgs e) {
+            if (null == e) {
+                throw new ArgumentNullException("e");
             }
 
+            if (ControlKeys.Contains(e.Key)) {
+
+                e.Raise(this, ref KeyPushed);
+            }
         }
 
         private void ControlButton_OnClick([NotNull] object sender, [NotNull] RoutedEventArgs e) {

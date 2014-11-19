@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
+using System.Runtime.InteropServices;
+using System.Timers;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
-using PacMan_model.Properties;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
@@ -18,7 +18,7 @@ namespace PacMan_model.level {
         //  determines pacman's direction
         private Direction? _currentDirection;
 
-        //private readonly IField _field;
+        private readonly IField _field;
 
         private readonly IList<IGhost> _ghosts;
 
@@ -29,6 +29,9 @@ namespace PacMan_model.level {
         //  time for firighted mode in ms
         private const int FrightedTimeMs = 5000;
         private readonly Timer _frightedTimer;
+
+
+        private readonly ICollection<IDirectionEventObserver> _observers = new List<IDirectionEventObserver>();
 
         public Level(IPacMan pacman, IField field, IList<IGhost> ghosts) {
             if (null == pacman) {
@@ -41,10 +44,11 @@ namespace PacMan_model.level {
                 throw new ArgumentNullException("ghosts");
             }
             _pacman = pacman;
-            //_field = field;
+            _field = field;
             _ghosts = ghosts;
 
-            _frightedTimer = new Timer(OnFrightedModeEnds, null, Timeout.Infinite, FrightedTimeMs);
+            _frightedTimer = new Timer(FrightedTimeMs) {AutoReset = false};
+            _frightedTimer.Elapsed += OnFrightedModeEnds;
 
             PacMan = _pacman;
             Field = field;
@@ -59,7 +63,8 @@ namespace PacMan_model.level {
         }
 
         public void DoATick() {
-            
+
+
             if (null != _currentDirection) _pacman.Move(_currentDirection.Value);
             
             CheckDeath();
@@ -78,13 +83,48 @@ namespace PacMan_model.level {
         }
 
         public void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver) {
+
             directionEventObserver.DirectionChanged += OnDirectionChanged;
+
+            _observers.Add(directionEventObserver);
         }
 
 
         public event EventHandler<LevelStateChangedEventArgs> LevelState;
         public void ForceNotify() {
             NotifyChangedStatement();
+        }
+
+        public void Dispose() {
+
+            UnsubsrcibeAll();
+            
+            _frightedTimer.Dispose();
+            _currentDirection = null;
+
+//            _pacman = null;
+//            _field = null;
+//            _ghosts.Clear();
+
+        }
+
+        private void UnsubsrcibeAll() {
+
+            if (null != LevelState) {
+                foreach (var levelClient in LevelState.GetInvocationList()) {
+                    LevelState -= levelClient as EventHandler<LevelStateChangedEventArgs>;
+                }
+            }
+
+            foreach (var directionEventObserver in _observers) {
+                directionEventObserver.DirectionChanged -= OnDirectionChanged;
+            }
+
+            _pacman.Dispose();
+            _field.Dispose();
+            foreach (var ghost in _ghosts) {
+                ghost.Dispose();
+            }
         }
 
         public IPacManObserverable PacMan { get; private set; }
@@ -126,9 +166,7 @@ namespace PacMan_model.level {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
-            var temp = Volatile.Read(ref LevelState);
-
-            if (temp != null) temp(this, e);
+            e.Raise(this, ref LevelState);
         }
 
         /// <summary>
@@ -142,7 +180,8 @@ namespace PacMan_model.level {
 
         private void OnEnergizerEaten(Object sender, EventArgs e) {
 
-            _frightedTimer.Change(FrightedTimeMs, Timeout.Infinite);
+            _frightedTimer.Stop();
+            _frightedTimer.Start();
 
             ChangeToFrightCondition();
 
@@ -160,9 +199,7 @@ namespace PacMan_model.level {
 //            }
         }
 
-        private void OnFrightedModeEnds(Object parameter) {
-            _frightedTimer.Change(Timeout.Infinite, 0);
-
+        private void OnFrightedModeEnds(Object parameter, ElapsedEventArgs elapsedEventArgs) {
             ChangeToStalkingCondition();
         }
 
@@ -186,21 +223,14 @@ namespace PacMan_model.level {
             NotifyChangedStatement();
         }
 
-        private void OnDirectionChanged(Object sender, EventArgs e) {
+        private void OnDirectionChanged(Object sender, DirectionChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            var eventArgs = e as DirectionChangedEventArgs;
-            if (null == eventArgs) {
-                throw new ArgumentException("e");
-            }
-
-            _currentDirection = eventArgs.Direction;
+            _currentDirection = e.Direction;
         }
     }
-
-
 
     public enum LevelCondition {
         Stalking
