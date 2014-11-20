@@ -229,7 +229,7 @@ namespace PacMan_model.level.cells.pacman {
         private class PacManCell : MovingCell {
 
             //  number of ticks per second
-            private int _currentSpeed;
+            private readonly int _currentSpeed;
 
 
             public PacManCell(Point startPosition, int initialSpeed)
@@ -244,9 +244,11 @@ namespace PacMan_model.level.cells.pacman {
                 _currentSpeed = initialSpeed;
             }
 
+/*
             public void SetSpeed(int newSpeed) {
                 _currentSpeed = newSpeed;
             }
+*/
 
             /// <summary>
             /// returns number of ticks per one movement
@@ -263,10 +265,12 @@ namespace PacMan_model.level.cells.pacman {
                 Position = newPosition;
             }
 
+/*
             public void MoveTo(int x, int y) {
                 Position.SetX(x);
                 Position.SetY(y);
             }
+*/
         }
     }
 }

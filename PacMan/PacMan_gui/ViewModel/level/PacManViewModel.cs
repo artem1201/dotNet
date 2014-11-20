@@ -10,7 +10,7 @@ using PacMan_model.util;
 using Point = PacMan_model.util.Point;
 
 namespace PacMan_gui.ViewModel.level {
-    internal class PacManViewModel : INotifyPropertyChanged {
+    internal sealed class PacManViewModel : INotifyPropertyChanged {
 
         public Point Position { get; private set; }
         public Direction Direction { get; private set; }
@@ -118,7 +118,7 @@ namespace PacMan_gui.ViewModel.level {
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;
             if (handler != null) {
                 handler(this, new PropertyChangedEventArgs(propertyName));

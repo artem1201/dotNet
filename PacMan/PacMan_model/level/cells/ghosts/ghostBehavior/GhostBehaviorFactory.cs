@@ -96,12 +96,9 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                 throw new ArgumentNullException("target");
             }
 
-            if (isFrightModeEnabled) {
-                return GetFrightedBehavior(name, field, target);
-            }
-            else {
-                return GetStalkerBehavior(name, field, target);
-            }
+            return isFrightModeEnabled
+                ? (GhostBehavior) GetFrightedBehavior(name, field, target)
+                : GetStalkerBehavior(name, field, target);
         }
 
         public GhostStalkerBehavior GetStalkerBehavior(int ghostNumber, INotChanebleableField field, MovingCell target) {
@@ -137,12 +134,9 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                 throw new ArgumentNullException("target");
             }
 
-            if (isFrightModeEnabled) {
-                return GetFrightedBehavior(ghostNumber, field, target);
-            }
-            else {
-                return GetStalkerBehavior(ghostNumber, field, target);
-            }
+            return isFrightModeEnabled
+                ? (GhostBehavior) GetFrightedBehavior(ghostNumber, field, target)
+                : GetStalkerBehavior(ghostNumber, field, target);
         }
 
         private void LoadBehaviorsFromFiles(string[] behaviorFiles) {

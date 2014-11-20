@@ -27,7 +27,7 @@ namespace PacMan_gui.View.Level {
             , Key.D
         };
 
-        private readonly IDictionary<string, Key> ButtonNameToControlKey;
+        private readonly IDictionary<string, Key> _buttonNameToControlKey;
 
         public event EventHandler GameViewSizeChanged;
         public event EventHandler<KeyEventArgs> KeyPushed; 
@@ -35,7 +35,7 @@ namespace PacMan_gui.View.Level {
         public GameView() {
             InitializeComponent();
 
-            ButtonNameToControlKey = new Dictionary<string, Key> {
+            _buttonNameToControlKey = new Dictionary<string, Key> {
                 {UpButton.Name, Key.Up},
                 {DownButton.Name, Key.Down},
                 {LeftButton.Name, Key.Left},
@@ -86,7 +86,10 @@ namespace PacMan_gui.View.Level {
             if (null == pressedButton) {
                 throw new ArgumentException("only buttons allowed");
             }
-            
+            if (false == _buttonNameToControlKey.ContainsKey(pressedButton.Name)) {
+                throw new ArgumentException("unknown button clicked");
+            }
+
             //TODO: raise event
         }
     }

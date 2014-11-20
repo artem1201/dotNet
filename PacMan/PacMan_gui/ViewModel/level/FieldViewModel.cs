@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using PacMan_model.level;
 
 namespace PacMan_gui.ViewModel.level {
-    internal class FieldViewModel {
+    internal sealed class FieldViewModel {
 
         public int Width { get; private set; }
         public int Height { get; private set; }

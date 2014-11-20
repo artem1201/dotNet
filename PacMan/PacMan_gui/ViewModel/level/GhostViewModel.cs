@@ -8,7 +8,7 @@ using PacMan_model.level.cells.ghosts;
 using PacMan_model.util;
 
 namespace PacMan_gui.ViewModel.level {
-    internal class GhostViewModel {
+    internal sealed class GhostViewModel {
 
         public Point Position { get; private set; }
         public string Name { get; private set; }
@@ -86,8 +86,8 @@ namespace PacMan_gui.ViewModel.level {
             ClearCanvas();
 
 
-            double cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
-            double cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
+            var cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
+            var cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
             _addedShape = CellToView.GhostToShape(Name, LevelCondition, cellWidth, cellHeight, Position.GetX(), Position.GetY());
 
             _canvas.Children.Add(_addedShape);

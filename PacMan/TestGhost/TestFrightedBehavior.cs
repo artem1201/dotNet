@@ -26,9 +26,7 @@ namespace TestGhost {
             if (Field.GetCell(currentPoint.GetRightOf()) is Wall) {
                 return currentPoint;
             }
-            else {
-                return currentPoint.GetRightOf();
-            }
+            return currentPoint.GetRightOf();
         }
 
     }

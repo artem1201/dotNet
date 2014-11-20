@@ -15,6 +15,7 @@ namespace PacMan_model.level {
 
     }
 
+
     class CellOutOfField : Exception {
 
         private readonly Point _where;

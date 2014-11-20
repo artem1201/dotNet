@@ -180,7 +180,8 @@ namespace PacMan_model.level {
 
 
         private void CalculateDots() {
-            foreach (ICellWithCost cell in _cells.OfType<ICellWithCost>()) {
+// ReSharper disable once UnusedVariable
+            foreach (var cell in _cells.OfType<ICellWithCost>()) {
                 ++_numberOfDots;
             }
         }

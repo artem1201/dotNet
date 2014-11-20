@@ -8,7 +8,7 @@ using PacMan_model.level;
 using PacMan_model.level.cells.pacman;
 
 namespace PacMan_gui.ViewModel.level {
-    internal class GameViewModel : INotifyPropertyChanged {
+    internal sealed class GameViewModel : INotifyPropertyChanged {
 
         private const string PausedMessage = "Paused";
         private const string NotPausedMessage = "";
@@ -84,7 +84,7 @@ namespace PacMan_gui.ViewModel.level {
         private LevelCondition _condition;
         private string _pausedMessage;
 
-        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
+        public  GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
             if (null == game) {
                 throw new ArgumentNullException("game");
             }
@@ -184,7 +184,7 @@ namespace PacMan_gui.ViewModel.level {
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             var handler = PropertyChanged;
             if (handler != null) {
                 handler(this, new PropertyChangedEventArgs(propertyName));

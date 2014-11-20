@@ -94,7 +94,7 @@ namespace PacMan_model.level {
         public bool LoadNextLevel() {
             //_ticker.Stop();
 
-            _ticker.Abort();
+            _ticker.Dispose();
 
             if (_levelFiles.Length - 1 == _currentLevelNumber) {
                 return false;
@@ -140,7 +140,7 @@ namespace PacMan_model.level {
         }
 
         public void Stop() {
-            _ticker.Abort();
+            _ticker.Dispose();
         }
 
         public bool IsOn() {
@@ -259,7 +259,7 @@ namespace PacMan_model.level {
             e.Raise(this, ref LevelFinished);
         }
 
-        private class Ticker {
+        private class Ticker : IDisposable {
 
             private const int Delay = 1;
 
@@ -286,14 +286,13 @@ namespace PacMan_model.level {
                 _timer.Stop();
             }
 
-            public void Abort() {
-                Stop();
-                _timer.Dispose();
-
-            }
-
             private void Tick(Object source, ElapsedEventArgs e) {
                 _tickAction();
+            }
+
+            public void Dispose() {
+                _timer.Stop();
+                _timer.Dispose();
             }
         }
     }
