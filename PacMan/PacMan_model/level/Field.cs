@@ -28,6 +28,8 @@ namespace PacMan_model.level {
         }
 
         public event EventHandler<FieldStateChangedEventArs> FieldState;
+        public event EventHandler DotsEnds;
+
         public void ForceNotify() {
             NotifyChangedStatement();
         }
@@ -46,6 +48,12 @@ namespace PacMan_model.level {
             if (null != FieldState) {
                 foreach (var levelClient in FieldState.GetInvocationList()) {
                     FieldState -= levelClient as EventHandler<FieldStateChangedEventArs>;
+                }
+            }
+
+            if (null != DotsEnds) {
+                foreach (var levelClient in DotsEnds.GetInvocationList()) {
+                    DotsEnds -= levelClient as EventHandler;
                 }
             }
         }
@@ -147,8 +155,7 @@ namespace PacMan_model.level {
             SetCell(p.GetX(), p.GetY(), cell);
         }
 
-
-        protected virtual void OnStatementChanged(FieldStateChangedEventArs e) {
+        protected virtual void OnStatementChangedNotify(FieldStateChangedEventArs e) {
             
             if (null == e) {
                 throw new ArgumentNullException("e");
@@ -156,10 +163,19 @@ namespace PacMan_model.level {
 
             e.Raise(this, ref FieldState);
         }
+        protected virtual void OnDotsEnds() {
+            EventArgs.Empty.Raise(this, ref DotsEnds);
+        }
 
         private void NotifyChangedStatement() {
-            var e = new FieldStateChangedEventArs(this, (_numberOfDots == 0));
-            OnStatementChanged(e);
+
+            if (0 == _numberOfDots) {
+                OnDotsEnds();
+
+            }
+            else {
+                OnStatementChangedNotify(new FieldStateChangedEventArs(this)); 
+            }
         }
 
 

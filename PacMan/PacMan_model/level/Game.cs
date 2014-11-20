@@ -5,6 +5,7 @@ using System.Timers;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
+using Timer = System.Timers.Timer;
 
 namespace PacMan_model.level {
     public class Game : IGame {
@@ -12,7 +13,7 @@ namespace PacMan_model.level {
         //  directory where levels are
         private string _pathToLevels;
 
-        private readonly Ticker _ticker;
+        private Ticker _ticker;
 
         //  current level of company
         private ILevel _currentLevel;
@@ -91,7 +92,9 @@ namespace PacMan_model.level {
         }
 
         public bool LoadNextLevel() {
-            _ticker.Stop();
+            //_ticker.Stop();
+
+            _ticker.Abort();
 
             if (_levelFiles.Length - 1 == _currentLevelNumber) {
                 return false;
@@ -110,12 +113,14 @@ namespace PacMan_model.level {
                 _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
 
                 _currentLevel.PacMan.PacmanState += OnPacManChanged;
-                _currentLevel.Field.FieldState += OnFieldChanged;
+                _currentLevel.Field.DotsEnds += OnDotsEnds;
 
                 foreach (var directionEventObserver in _observers) {
                     _currentLevel.RegisterOnDirectionObserver(directionEventObserver);
                 }
             }
+
+            _ticker = new Ticker(DoATick);
 
             return true;
         }
@@ -224,12 +229,12 @@ namespace PacMan_model.level {
             }
         }
 
-        private void OnFieldChanged(Object sender, FieldStateChangedEventArs e) {
+        private void OnDotsEnds(Object sender, EventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            if ((e.DotIsNoMore) && (!IsFinished())) {
+            if (!IsFinished()) {
                 Win();
             }
         }
@@ -282,7 +287,6 @@ namespace PacMan_model.level {
             }
 
             private void Tick(Object source, ElapsedEventArgs e) {
-
                 _tickAction();
             }
         }
