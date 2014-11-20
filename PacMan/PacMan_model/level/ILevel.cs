@@ -5,6 +5,9 @@ namespace PacMan_model.level {
 
         LevelCondition GetLevelCondition();
 
+        void Pause();
+        void Resume();
+
         void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver);
 
         void DoATick();

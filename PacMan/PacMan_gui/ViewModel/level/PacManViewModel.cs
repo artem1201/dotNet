@@ -33,8 +33,10 @@ namespace PacMan_gui.ViewModel.level {
         private IPacManObserverable _pacMan;
         private Shape _addedShape;
         private int _livesNumber;
+        private Action<int> _onPacmanDeathAction;
 
-        public PacManViewModel(IPacManObserverable pacMan, Canvas canvas, FieldViewModel fieldViewModel) {
+        public PacManViewModel(IPacManObserverable pacMan, Canvas canvas, FieldViewModel fieldViewModel,
+            [NotNull] Action<int> onPacmanDeathAction) {
             if (null == pacMan) {
                 throw new ArgumentNullException("pacMan");
             }
@@ -44,19 +46,26 @@ namespace PacMan_gui.ViewModel.level {
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
             }
+            if (null == onPacmanDeathAction) {
+                throw new ArgumentNullException("onPacmanDeathAction");
+            }
 
             _canvas = canvas;
-            Init(pacMan, fieldViewModel);
+            Init(pacMan, fieldViewModel, onPacmanDeathAction);
             
             //Redraw();
         }
 
-        public void Init(IPacManObserverable pacMan, FieldViewModel fieldViewModel) {
+        public void Init(IPacManObserverable pacMan, FieldViewModel fieldViewModel, Action<int> onPacmanDeathAction) {
             if (null == pacMan) {
                 throw new ArgumentNullException("pacMan");
             }
             if (null == fieldViewModel) {
                 throw new ArgumentNullException("fieldViewModel");
+            }
+
+            if (null != onPacmanDeathAction) {
+                _onPacmanDeathAction = onPacmanDeathAction;
             }
 
             _pacMan = pacMan;
@@ -74,6 +83,10 @@ namespace PacMan_gui.ViewModel.level {
             Position = e.Position;
             Direction = e.Direction;
             LivesNumber = e.Lives;
+
+            if (e.HasDied) {
+                _onPacmanDeathAction(e.Lives);
+            }
 
             _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new WorkWithCanvas(RedrawPacManOnCanvas));
         }

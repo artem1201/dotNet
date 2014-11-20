@@ -5,12 +5,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using PacMan_gui.Annotations;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
-using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
 
 namespace PacMan_gui {
@@ -22,7 +19,7 @@ namespace PacMan_gui {
 
         private static readonly IDictionary<Key, Direction> KeyToDirection;
         private static readonly ISet<Key> PauseKeys;
-        private Brush _canvasColorBeforePause = ColorResolver.StalkingColor;
+//        private Brush _canvasColorBeforePause = ColorResolver.StalkingColor;
 
         static GameController()  {
             KeyToDirection = new Dictionary<Key, Direction> {
@@ -58,9 +55,9 @@ namespace PacMan_gui {
             _game = new Game(_pathToCompany, _pathToGhosts, 0);
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
-            _game.Level.PacMan.PacmanState += OnPacManChanged;
+//            _game.Level.PacMan.PacmanState += OnPacManChanged;
 
-            _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas());
+            _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas(), OnPacmanDeath);
             RedrawGame();
             BindDataWithGameView();
 
@@ -100,7 +97,10 @@ namespace PacMan_gui {
             BindTextBlock(_gameView.ScoreTextBlock, _gameViewModel, "CurrentLevelScore");
             BindTextBlock(_gameView.CompanyScoreTextBlock, _gameViewModel, "CurrentScore");
             BindTextBlock(_gameView.BestScoreTextBlock, _gameViewModel, "BestScore");
+            
             BindTextBlock(_gameView.LivesTextBlock, _gameViewModel.PacManViewModel, "LivesNumber");
+
+            BindTextBlock(_gameView.PausedTitleTextBlock, _gameViewModel, "Paused");
 
             BindCanvasBackGround(_gameView.GetGameFieldCanvas(), _gameViewModel, "Condition", new ColorResolver.LevelConditionToColorConverter());
         }
@@ -141,6 +141,15 @@ namespace PacMan_gui {
             RedrawGame();
         }
 
+        private void OnPacmanDeath(int livesNumber) {
+
+            if (0 != livesNumber) {
+                MessageBox.Show("You have been died! Only " + livesNumber + " lives left");
+
+                _game.Start();   
+            }
+        }
+
         public event EventHandler<DirectionChangedEventArgs> DirectionChanged;
 
         private void OnKeyPushed(Object sender, KeyEventArgs e) {
@@ -154,23 +163,26 @@ namespace PacMan_gui {
             }
             else if (PauseKeys.Contains(e.Key)) {
 
+                
+
                 if (_game.IsOn()) {
                     _game.Pause();
-
-                    _canvasColorBeforePause = _gameView.GetGameFieldCanvas().Background;
-                    _gameView.GetGameFieldCanvas().Background = ColorResolver.PauseColor;
+//                    _canvasColorBeforePause = _gameView.GetGameFieldCanvas().Background;
+//                    _gameView.GetGameFieldCanvas().Background = ColorResolver.PauseColor;
                 }
                 else {
                     _game.Start();
-                    _gameView.GetGameFieldCanvas().Background = _canvasColorBeforePause;
+//                    _gameView.GetGameFieldCanvas().Background = _canvasColorBeforePause;
                 }
+
+                _gameViewModel.SetPaused(!_game.IsOn());
             }
             else {
                 throw new ArgumentException("unknown key pushed");
             }
         }
 
-        private void OnPacManChanged([NotNull] object sender,
+        /*private void OnPacManChanged([NotNull] object sender,
             [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
 //            if (null == sender) {
 //                throw new ArgumentNullException("sender");
@@ -187,7 +199,7 @@ namespace PacMan_gui {
 
                 _game.Start();
             }
-        }
+        }*/
 
         protected virtual void NotifyDirectionChanged(DirectionChangedEventArgs e) {
             if (null == e) {

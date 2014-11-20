@@ -126,10 +126,16 @@ namespace PacMan_model.level {
         }
 
         public void Start() {
-           _ticker.Start();
+            if (null != _currentLevel) {
+                _currentLevel.Resume();
+            }
+            _ticker.Start();
         }
 
         public void Pause() {
+            if (null != _currentLevel) {
+                _currentLevel.Pause();
+            }
             _ticker.Stop();
         }
 

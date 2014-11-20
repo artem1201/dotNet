@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Timers;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts;
@@ -27,7 +25,7 @@ namespace PacMan_model.level {
         //  if Fright is set - pacman is able to eat ghosts
         private LevelCondition _condition = LevelCondition.Stalking;
         //  time for firighted mode in ms
-        private const int FrightedTimeMs = 5000;
+        private const int FrightedTimeMs = 2000;
         private readonly Timer _frightedTimer;
 
 
@@ -82,6 +80,20 @@ namespace PacMan_model.level {
             return _condition;
         }
 
+        public void Pause() {
+
+            if (_frightedTimer.Enabled) {
+                _frightedTimer.Stop();    
+            }
+        }
+
+        public void Resume() {
+
+            if (LevelCondition.Fright == _condition) {
+                _frightedTimer.Start();    
+            }
+        }
+
         public void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver) {
 
             directionEventObserver.DirectionChanged += OnDirectionChanged;
@@ -99,6 +111,7 @@ namespace PacMan_model.level {
 
             UnsubsrcibeAll();
             
+            _frightedTimer.Stop();
             _frightedTimer.Dispose();
             _currentDirection = null;
 
@@ -200,6 +213,7 @@ namespace PacMan_model.level {
         }
 
         private void OnFrightedModeEnds(Object parameter, ElapsedEventArgs elapsedEventArgs) {
+
             ChangeToStalkingCondition();
         }
 

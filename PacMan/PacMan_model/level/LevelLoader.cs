@@ -99,8 +99,8 @@ namespace PacMan_model.level {
                             StaticCellFactory.CreateStaticCell(
                                 CharStaticCellToStaticCellType[levelLine[x]]
                                 , new Point(x, height)
-                                )
-                            );
+                            )
+                        );
 
                     }
 

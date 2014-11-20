@@ -10,6 +10,9 @@ using PacMan_model.level.cells.pacman;
 namespace PacMan_gui.ViewModel.level {
     internal class GameViewModel : INotifyPropertyChanged {
 
+        private const string PausedMessage = "Paused";
+        private const string NotPausedMessage = "";
+
         public PacManViewModel PacManViewModel { get; private set; }
         public FieldViewModel FieldViewModel { get; private set; }
         public IList<GhostViewModel> GhostViewModels { get; private set; }
@@ -58,33 +61,52 @@ namespace PacMan_gui.ViewModel.level {
             }
         }
 
+        public string Paused {
+            get { return _pausedMessage; }
+            private set {
+                if (value == _pausedMessage) {
+                    return;
+                }
+                _pausedMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public void SetPaused(bool paused) {
+            Paused = paused ? PausedMessage : NotPausedMessage;
+        }
+
         //private readonly Canvas _canvas;
         private IGame _game;
         private int _bestScore;
         private int _currentScore;
         private int _currentLevelScore;
         private LevelCondition _condition;
+        private string _pausedMessage;
 
-        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas) {
+        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
             if (null == game) {
                 throw new ArgumentNullException("game");
             }
             if (null == canvas) {
                 throw new ArgumentNullException("canvas");
             }
+            if (null == onPacmanDeathAction) {
+                throw new ArgumentNullException("onPacmanDeathAction");
+            }
             //_canvas = canvas;
 
 
-            Init(game, canvas);
+            Init(game, canvas, onPacmanDeathAction);
 
             BestScore = game.GetBestScore();
             CurrentScore = game.GetGameScore();
             CurrentLevelScore = game.GetLevelScore();
-
+            SetPaused(false);
             //Redraw();
         }
 
-        public void Init([NotNull] IGame game, [NotNull] Canvas canvas) {
+        public void Init([NotNull] IGame game, [NotNull] Canvas canvas, Action<int> onPacmanDeathAction = null) {
 
 
             _game = game;
@@ -100,10 +122,19 @@ namespace PacMan_gui.ViewModel.level {
             }
 
             if (null == PacManViewModel) {
-                PacManViewModel = new PacManViewModel(game.Level.PacMan, canvas, FieldViewModel);
+                if (onPacmanDeathAction != null) {
+                    PacManViewModel = new PacManViewModel(
+                        game.Level.PacMan,
+                        canvas,
+                        FieldViewModel,
+                        onPacmanDeathAction);
+                }
+                else {
+                    throw new ArgumentNullException("onPacmanDeathAction");
+                }
             }
             else {
-                PacManViewModel.Init(game.Level.PacMan, FieldViewModel);
+                PacManViewModel.Init(game.Level.PacMan, FieldViewModel, onPacmanDeathAction);
             }
 
 
