@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using PacMan_gui.View.Level;
 
 namespace PacMan_gui.View {
@@ -6,23 +8,10 @@ namespace PacMan_gui.View {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow {
+        
         public MainWindow() {
             InitializeComponent();
-        }
-
-        private void ExitButton_OnClick(object sender, RoutedEventArgs e) {
-            Close();
-        }
-
-        private void PlayButton_OnClick(object sender, RoutedEventArgs e) {
-
-            //TODO: do normal screen changing in one window
-
-            var gameView = new GameView {Background = Background};
-            var gameController = new GameController(gameView);
-
-            gameView.Show();
-            gameController.Run();
+            ContentControl.Content = new MainWindowContent(this);
         }
     }
 }

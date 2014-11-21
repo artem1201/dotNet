@@ -40,18 +40,23 @@ namespace PacMan_gui {
         private GameViewModel _gameViewModel;
         private readonly GameView _gameView;
 
+        //  is called when game is over
+        //  parameters are best score and current score
+        private readonly Action<int, int> _onGameEndCallback;
 
-        public GameController(GameView gameView) {
+        public GameController(GameView gameView, Action<int, int> onGameEndCallback) {
             if (null == gameView) {
                 throw new ArgumentNullException("gameView");
             }
+
+            _onGameEndCallback = onGameEndCallback;
 
             _gameView = gameView;
             _gameView.GameViewSizeChanged += OnGameViewSizeChanged;
         }
 
         public void Run() {
-            
+            //TODO: initializing of best score
             _game = new Game(_pathToCompany, _pathToGhosts, 0);
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
@@ -77,7 +82,8 @@ namespace PacMan_gui {
                 _game.Stop();
 
                 //TODO: championship and go to main window
-                _gameView.Dispatcher.BeginInvoke(new Action(_gameView.Close));
+
+                _onGameEndCallback(_game.GetBestScore(), _game.GetGameScore());
             }
             else {
                 MessageBox.Show("You win this level! Try next one", "Level finished");

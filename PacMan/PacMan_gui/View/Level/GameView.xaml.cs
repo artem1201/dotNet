@@ -58,6 +58,7 @@ namespace PacMan_gui.View.Level {
                 throw new ArgumentNullException("e");
             }
             */
+
             
             EventArgs.Empty.Raise(this, ref GameViewSizeChanged);
         }
@@ -91,6 +92,18 @@ namespace PacMan_gui.View.Level {
             }
 
             //TODO: raise event
+        }
+
+        private void GameView_OnLoaded(object sender, RoutedEventArgs e) {
+            
+            
+            var window = Window.GetWindow(this);
+            if (window != null) {
+                window.KeyDown += GameView_OnKeyDown;
+            }
+            else {
+                throw new Exception("window is not specified");
+            }
         }
     }
 }
