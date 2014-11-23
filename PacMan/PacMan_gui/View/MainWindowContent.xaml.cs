@@ -71,6 +71,7 @@ namespace PacMan_gui.View {
         private static readonly string ChampionNameEmpty = String.Empty;
 
         private string _newChampionName = ChampionNameEmpty;
+        private bool _addNewRecord;
         private readonly AutoResetEvent _nameEnteredEvent = new AutoResetEvent(false);
         private void AddNewRecord(int score) {
 
@@ -81,15 +82,24 @@ namespace PacMan_gui.View {
 
                 }));
 
-            //  wait for valid name
-            while (WrongName(_newChampionName)) {
-                _nameEnteredEvent.WaitOne();
-            }
+            //  wait for name
+            _nameEnteredEvent.WaitOne();
             //  reset waiter
             _nameEnteredEvent.Reset();
 
-            //  add new champion
-            _championsTable.AddNewResult(score, _newChampionName);
+            Application.Current.Dispatcher.BeginInvoke(
+                new Action(delegate {
+                //  clean input area and hide input box
+                InputNameTextBox.Text = ChampionNameEmpty;
+                InputNameBox.Visibility = Visibility.Collapsed;
+            }));
+
+            
+
+            if (_addNewRecord) {
+                //  add new champion
+                _championsTable.AddNewResult(score, _newChampionName);
+            }
 
             //  clean champion name
             _newChampionName = ChampionNameEmpty;
@@ -108,9 +118,7 @@ namespace PacMan_gui.View {
             //  set name
             _newChampionName = InputNameTextBox.Text;
 
-            //  clean input area and hide input box
-            InputNameTextBox.Text = ChampionNameEmpty;
-            InputNameBox.Visibility = Visibility.Collapsed;
+            _addNewRecord = true;
 
             //  notify name has been entered
             _nameEnteredEvent.Set();
@@ -132,6 +140,14 @@ namespace PacMan_gui.View {
                 var championsController = new ChampionsController(_mainWindow.ContentControl.Content as ChampionsTableView, _championsTable, OnBackToMainWindow);
                 championsController.Run();
             };
+        }
+
+        private void NoButton_OnClick(object sender, RoutedEventArgs e) {
+
+            _addNewRecord = false;
+
+            //  notify name has been entered
+            _nameEnteredEvent.Set();
         }
     }
 }
