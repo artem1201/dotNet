@@ -70,6 +70,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="champions\ChampionsTable.cs" />
+    <Compile Include="champions\IChampionsTable.cs" />
+    <Compile Include="champions\IChampionsTableOberverable.cs" />
     <Compile Include="level\cells\Cell.cs" />
     <Compile Include="level\cells\ghosts\Ghost.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehaviorFactory.cs" />
@@ -128,9 +131,7 @@
   <ItemGroup>
     <None Include="util\App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="champions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>

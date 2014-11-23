@@ -8,10 +8,31 @@
         <system:String x:Key="ApplicationLable">My PacMan</system:String>
         <system:String x:Key="LevelCanvasName">GameCanvas</system:String>
         
-        <Style x:Key="MainWindowButtoStylen" TargetType="Button">
+        <Style x:Key="MainLableStyle" TargetType="Label">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        
+        <Style x:Key="CommonButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="FontSize" Value="24"/>
         </Style>
-        
+
+        <Style x:Key="ChampionsTableRowStyle" TargetType="DataGridRow">
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+
+        <Style x:Key="ChampionsTableHeaderStyle" TargetType="DataGridRowHeader">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="ChampionsTableStyle" TargetType="DataGrid">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="RowStyle" Value="{StaticResource ChampionsTableRowStyle}"/>
+            <Setter Property="RowHeaderStyle" Value="{StaticResource ChampionsTableHeaderStyle}"/>
+        </Style>
+
     </Application.Resources>
 </Application>

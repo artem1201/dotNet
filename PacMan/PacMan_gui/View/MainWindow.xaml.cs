@@ -8,5 +8,6 @@
             InitializeComponent();
             ContentControl.Content = new MainWindowContent(this);
         }
+
     }
 }
