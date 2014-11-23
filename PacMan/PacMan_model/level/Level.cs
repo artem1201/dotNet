@@ -25,7 +25,7 @@ namespace PacMan_model.level {
         //  if Fright is set - pacman is able to eat ghosts
         private LevelCondition _condition = LevelCondition.Stalking;
         //  time for firighted mode in ms
-        private const int FrightedTimeMs = 2000;
+        private const int FrightedTimeMs = 5000;
         private readonly Timer _frightedTimer;
 
 
@@ -213,6 +213,8 @@ namespace PacMan_model.level {
         }
 
         private void OnFrightedModeEnds(Object parameter, ElapsedEventArgs elapsedEventArgs) {
+            
+            System.Console.WriteLine("frighted mode ends");
 
             ChangeToStalkingCondition();
         }

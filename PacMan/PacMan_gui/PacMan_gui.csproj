@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\ChampionshipController.cs" />
     <Compile Include="View\MainWindowContent.xaml.cs">
       <DependentUpon>MainWindowContent.xaml</DependentUpon>
     </Compile>
@@ -71,7 +72,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GameController.cs" />
+    <Compile Include="Controllers\GameController.cs" />
     <Compile Include="ViewModel\level\ColorResolver.cs" />
     <Compile Include="ViewModel\level\FieldViewModel.cs" />
     <Compile Include="ViewModel\level\GameViewModel.cs" />
