@@ -28,11 +28,11 @@ namespace PacMan_gui.View {
 
         //  changes content of window to main window
         private void OnBackToMainWindow() {
-            Application.Current.Dispatcher.BeginInvoke(
-                new Action(delegate {
-                _mainWindow.ContentControl.Content = this;
+            Application.Current.Dispatcher.Invoke(
+                delegate {
+                    _mainWindow.ContentControl.Content = this;
 
-            }));
+                });
         }
 
         private void PlayButton_OnClick(object sender, RoutedEventArgs e) {
@@ -58,7 +58,7 @@ namespace PacMan_gui.View {
             _championsTable.Dispose();
         }
 
-        private void OnGameEnds(int bestScore, int gameScore) {
+        private void OnGameEnds(int gameScore) {
 
             OnBackToMainWindow();
             

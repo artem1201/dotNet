@@ -30,7 +30,8 @@ namespace PacMan_gui.View.Level {
         private readonly IDictionary<string, Key> _buttonNameToControlKey;
 
         public event EventHandler GameViewSizeChanged;
-        public event EventHandler<KeyEventArgs> KeyPushed; 
+        public event EventHandler<ControlEventArs> ControlOccurs;
+        public event EventHandler BackPressed;
         
         public GameView() {
             InitializeComponent();
@@ -70,7 +71,7 @@ namespace PacMan_gui.View.Level {
 
             if (ControlKeys.Contains(e.Key)) {
 
-                e.Raise(this, ref KeyPushed);
+                (new ControlEventArs(e.Key)).Raise(this, ref ControlOccurs);
             }
         }
 
@@ -91,7 +92,7 @@ namespace PacMan_gui.View.Level {
                 throw new ArgumentException("unknown button clicked");
             }
 
-            //TODO: raise event
+            (new ControlEventArs(_buttonNameToControlKey[pressedButton.Name])).Raise(this, ref ControlOccurs);
         }
 
         private void GameView_OnLoaded(object sender, RoutedEventArgs e) {
@@ -105,5 +106,25 @@ namespace PacMan_gui.View.Level {
                 throw new Exception("window is not specified");
             }
         }
+
+        private void PauseButton_OnClick(object sender, RoutedEventArgs e) {
+            ControlButton_OnClick(sender, e);
+        }
+
+        private void BackButton_OnClick(object sender, RoutedEventArgs e) {
+
+            EventArgs.Empty.Raise(this, ref BackPressed);
+
+        }
+    }
+
+    public class ControlEventArs : EventArgs {
+
+        public ControlEventArs(Key pushedKey) {
+
+            PushedKey = pushedKey;
+        }
+
+        public Key PushedKey { get; private set; }
     }
 }

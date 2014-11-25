@@ -214,8 +214,6 @@ namespace PacMan_model.level {
 
         private void OnFrightedModeEnds(Object parameter, ElapsedEventArgs elapsedEventArgs) {
             
-            System.Console.WriteLine("frighted mode ends");
-
             ChangeToStalkingCondition();
         }
 
