@@ -6,8 +6,6 @@ namespace PacMan_model.level.cells.pacman {
     internal class PacMan : IPacMan {
 
         private const int MaxLives = 3;
-        private const int CommonSpeed = 10;
-
         // cell with position, lives and current speed
         private readonly PacManCell _pacman;
 
@@ -38,7 +36,7 @@ namespace PacMan_model.level.cells.pacman {
             }
             _field = field;
 
-            _pacman = new PacManCell(startPosition, CommonSpeed);
+            _pacman = new PacManCell(startPosition, TicksResolver.PacmanTicksPerMove);
         }
 
         public PacMan(IField field, Point startPosition, int lives) :this(field, startPosition) {

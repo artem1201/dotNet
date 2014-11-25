@@ -101,6 +101,7 @@
     <Compile Include="level\INotChanebleableField.cs" />
     <Compile Include="level\Level.cs" />
     <Compile Include="level\LevelLoader.cs" />
+    <Compile Include="level\TicksResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
