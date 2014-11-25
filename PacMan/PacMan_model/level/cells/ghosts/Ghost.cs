@@ -108,31 +108,20 @@ namespace PacMan_model.level.cells.ghosts {
         public void Move() {
 
             if (0 != _currentTick) {
-
-                lock (this) {
-                    StartMoving();
-                }
-
-                
+                StartMoving();
             }
             else {
-                lock (this) {
-                    KeepMoving();
-                }
+                KeepMoving();
             }
             
         }
 
         public void MakeStalker() {
-            lock (this) {
-                CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name, _field, _target);
-            }
+            CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name, _field, _target);
         }
 
         public void MakeFrighted() {
-            lock (this) {
-                CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name, _field, _target);
-            }
+            CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name, _field, _target);
         }
 
         public Point GetPosition() {
@@ -145,21 +134,16 @@ namespace PacMan_model.level.cells.ghosts {
 
         public void Restart() {
 
-            lock (this) {
-                Stop();
-
-                _ghost.MoveTo(_ghost.GetStartPosition());
-            }
+            Stop();
+            _ghost.MoveTo(_ghost.GetStartPosition());
         }
 
         public void Die() {
 
+            Stop();
+            _ghost.MoveTo(_ghost.GetStartPosition());
 
-            lock (this) {
-                Stop();
 
-                _ghost.MoveTo(_ghost.GetStartPosition());
-            }
             NotifyChangedStatement();
         }
 
