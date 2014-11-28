@@ -51,7 +51,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY "$(TargetDir)$(TargetFileName)" "$(SolutionDir)Resources\AI" /S /Y</PostBuildEvent>
+    <PostBuildEvent>XCOPY "$(TargetDir)$(TargetFileName)" "$(SolutionDir)Resources\AI\" /S /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
