@@ -6,7 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d"
         SizeChanged="GameView_OnSizeChanged"
-             Loaded="GameView_OnLoaded">
+        Loaded="GameView_OnLoaded">
     <UserControl.Resources>
         <system:String x:Key="ScoreLabel">Score</system:String>
         <system:String x:Key="CompanyScoreLabel">Company Score</system:String>
@@ -43,9 +43,13 @@
                 <Button Name="RightButton" Content="Right" Grid.Column="2" Grid.Row="1" Click="ControlButton_OnClick"/>
             </Grid>
             
-            <Button Name="PauseButton" Content="Pause" Margin="5"/>
+            <Button Name="PauseButton" Content="Pause" Margin="5" Click="PauseButton_OnClick"/>
+
             
+
         </StackPanel>
+
+        <Button Grid.Column="0" Name="BackButton" Content="Back" Margin="5" VerticalAlignment="Bottom" Click="BackButton_OnClick"/>
 
         <StackPanel Grid.Column="2">
             <Label Content="{StaticResource ScoreLabel}" FontSize="16"/>

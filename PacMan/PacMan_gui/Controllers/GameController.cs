@@ -42,9 +42,9 @@ namespace PacMan_gui.Controllers {
 
         //  is called when game is over
         //  parameters are best score and current score
-        private readonly Action<int, int> _onGameEndCallback;
+        private readonly Action<int> _onGameEndCallback;
 
-        public GameController(GameView gameView, Action<int, int> onGameEndCallback) {
+        public GameController(GameView gameView, Action<int> onGameEndCallback) {
             if (null == gameView) {
                 throw new ArgumentNullException("gameView");
             }
@@ -56,7 +56,6 @@ namespace PacMan_gui.Controllers {
         }
 
         public void Run() {
-            //TODO: initializing of best score
             _game = new Game(_pathToCompany, _pathToGhosts, 0);
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
@@ -66,10 +65,13 @@ namespace PacMan_gui.Controllers {
             RedrawGame();
             BindDataWithGameView();
 
-            _gameView.KeyPushed += OnKeyPushed;
+            _gameView.ControlOccurs += OnControlEvent;
+            _gameView.BackPressed += OnBack;
 
             _game.Start();
         }
+
+        
 
         private void OnLevelFinished(object sender, EventArgs emptyEventArgs) {
 
@@ -81,9 +83,7 @@ namespace PacMan_gui.Controllers {
 
                 _game.Stop();
 
-                //TODO: championship and go to main window
-
-                _onGameEndCallback(_game.GetBestScore(), _game.GetGameScore());
+                _onGameEndCallback(_game.GetGameScore());
             }
             else {
                 MessageBox.Show("You win this level! Try next one", "Level finished");
@@ -158,16 +158,16 @@ namespace PacMan_gui.Controllers {
 
         public event EventHandler<DirectionChangedEventArgs> DirectionChanged;
 
-        private void OnKeyPushed(Object sender, KeyEventArgs e) {
+        private void OnControlEvent(Object sender, ControlEventArs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
-            if (KeyToDirection.ContainsKey(e.Key)) {
-                var directionChangedArgs = new DirectionChangedEventArgs(KeyToDirection[e.Key]);
+            if (KeyToDirection.ContainsKey(e.PushedKey)) {
+                var directionChangedArgs = new DirectionChangedEventArgs(KeyToDirection[e.PushedKey]);
                 NotifyDirectionChanged(directionChangedArgs);
             }
-            else if (PauseKeys.Contains(e.Key)) {
+            else if (PauseKeys.Contains(e.PushedKey)) {
 
                 
 
@@ -188,24 +188,10 @@ namespace PacMan_gui.Controllers {
             }
         }
 
-        /*private void OnPacManChanged([NotNull] object sender,
-            [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
-//            if (null == sender) {
-//                throw new ArgumentNullException("sender");
-//            }
-
-            if (null == pacmanStateChangedEventArgs) {
-                throw new ArgumentNullException("pacmanStateChangedEventArgs");
-            }
-
-
-            // if have died and still can play
-            if (pacmanStateChangedEventArgs.HasDied && (0 != pacmanStateChangedEventArgs.Lives)) {
-                MessageBox.Show("You have died");
-
-                _game.Start();
-            }
-        }*/
+        private void OnBack(object sender, EventArgs eventArgs) {
+            _game.Stop();
+            _onGameEndCallback(-1);
+        }
 
         protected virtual void NotifyDirectionChanged(DirectionChangedEventArgs e) {
             if (null == e) {
