@@ -63,12 +63,19 @@
     </ApplicationDefinition>
     <Compile Include="Controllers\ChampionsController.cs" />
     <Compile Include="ViewModel\champions\ChampionsViewModel.cs" />
+    <Compile Include="View\About\AboutBox.xaml.cs">
+      <DependentUpon>AboutBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Champions\ChampionsTableView.xaml.cs">
       <DependentUpon>ChampionsTableView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindowContent.xaml.cs">
       <DependentUpon>MainWindowContent.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\About\AboutBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Champions\ChampionsTableView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

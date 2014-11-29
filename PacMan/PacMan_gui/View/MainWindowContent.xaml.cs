@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows;
 using PacMan_gui.Annotations;
 using PacMan_gui.Controllers;
+using PacMan_gui.View.About;
 using PacMan_gui.View.Champions;
 using PacMan_gui.View.Level;
 using PacMan_model.champions;
@@ -14,16 +15,28 @@ namespace PacMan_gui.View {
     public partial class MainWindowContent {
 
         private readonly MainWindow _mainWindow;
+        
         private readonly IChampionsTable _championsTable;
+        private readonly ChampionsTableView _championsTableView;
+        private readonly ChampionsController _championsController;
+
+
+        private readonly AboutBox _aboutBox;
 
         public MainWindowContent([NotNull] MainWindow mainWindow) {
             if (null == mainWindow) {
                 throw new ArgumentNullException("mainWindow");
             }
             InitializeComponent();
-            _championsTable = new ChampionsTable();
+            
             _mainWindow = mainWindow;
             Application.Current.Exit += (sender, args) => OnExit();
+
+            _championsTable = new ChampionsTable();
+            _championsTableView = new ChampionsTableView();
+            _championsController = new ChampionsController(_championsTableView, _championsTable, OnBackToMainWindow);
+
+            _aboutBox = new AboutBox(OnBackToMainWindow);
         }
 
         //  changes content of window to main window
@@ -125,21 +138,14 @@ namespace PacMan_gui.View {
 
         }
 
-        private bool WrongName(string name) {
-            if (null == name) {
-                return false;
-            }
-            return name.Equals(ChampionNameEmpty);
+        private static bool WrongName(string name) {
+            return null != name && name.Equals(ChampionNameEmpty);
         }
 
         private void ChampionsButton_OnClick(object sender, RoutedEventArgs e) {
-            _mainWindow.ContentControl.Content = new ChampionsTableView();
+            _mainWindow.ContentControl.Content = _championsTableView;
 
-            (_mainWindow.ContentControl.Content as ChampionsTableView).Loaded += delegate {
-
-                var championsController = new ChampionsController(_mainWindow.ContentControl.Content as ChampionsTableView, _championsTable, OnBackToMainWindow);
-                championsController.Run();
-            };
+            _championsController.Run();
         }
 
         private void NoButton_OnClick(object sender, RoutedEventArgs e) {
@@ -148,6 +154,10 @@ namespace PacMan_gui.View {
 
             //  notify name has been entered
             _nameEnteredEvent.Set();
+        }
+
+        private void AboutButton_OnClick( object sender, RoutedEventArgs e ) {
+            _mainWindow.ContentControl.Content = _aboutBox;
         }
     }
 }
