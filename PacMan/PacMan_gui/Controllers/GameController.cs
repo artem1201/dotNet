@@ -12,7 +12,6 @@ using PacMan_model.util;
 
 namespace PacMan_gui.Controllers {
     internal class GameController : IDirectionEventObserver {
-
         private static readonly string RootDir = Directory.GetCurrentDirectory();
         private readonly string _pathToCompany = RootDir + "\\Company";
         private readonly string _pathToGhosts = RootDir + "\\AI";
@@ -21,7 +20,7 @@ namespace PacMan_gui.Controllers {
         private static readonly ISet<Key> PauseKeys;
 //        private Brush _canvasColorBeforePause = ColorResolver.StalkingColor;
 
-        static GameController()  {
+        static GameController() {
             KeyToDirection = new Dictionary<Key, Direction> {
                 {Key.W, Direction.Down},
                 {Key.A, Direction.Left},
@@ -43,6 +42,8 @@ namespace PacMan_gui.Controllers {
         //  is called when game is over
         //  parameters are best score and current score
         private readonly Action<int> _onGameEndCallback;
+
+        #region Initialization
 
         public GameController(GameView gameView, Action<int> onGameEndCallback) {
             if (null == gameView) {
@@ -71,14 +72,64 @@ namespace PacMan_gui.Controllers {
             _game.Start();
         }
 
-        
+        #endregion
+
+        #region Binding
+
+        private void BindDataWithGameView() {
+            BindTextBlock(_gameView.ScoreTextBlock, _gameViewModel, "CurrentLevelScore");
+            BindTextBlock(_gameView.CompanyScoreTextBlock, _gameViewModel, "CurrentScore");
+            BindTextBlock(_gameView.BestScoreTextBlock, _gameViewModel, "BestScore");
+
+            BindTextBlock(_gameView.LivesTextBlock, _gameViewModel.PacManViewModel, "LivesNumber");
+
+            BindTextBlock(_gameView.PausedTitleTextBlock, _gameViewModel, "Paused");
+
+            BindCanvasBackGround(
+                _gameView.GetGameFieldCanvas(),
+                _gameViewModel,
+                "Condition",
+                new ColorResolver.LevelConditionToColorConverter());
+        }
+
+        private static void BindTextBlock(TextBlock element, Object source, string propertyName) {
+            var binding = new Binding(propertyName) {Source = source};
+            element.SetBinding(TextBlock.TextProperty, binding);
+        }
+
+        private static void BindCanvasBackGround(
+            Canvas canvas,
+            Object source,
+            string propertyName,
+            IValueConverter converter) {
+            var binding = new Binding(propertyName) {Source = source, Converter = converter};
+            canvas.SetBinding(Panel.BackgroundProperty, binding);
+        }
+
+        #endregion
+
+        #region Redrawing
+
+        private void RedrawGame() {
+            if (null != _gameViewModel) {
+                _gameViewModel.Redraw();
+                _gameViewModel.FieldViewModel.Redraw();
+                _gameViewModel.PacManViewModel.Redraw();
+
+                foreach (var ghostViewModel in _gameViewModel.GhostViewModels) {
+                    ghostViewModel.Redraw();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Events
 
         private void OnLevelFinished(object sender, EventArgs emptyEventArgs) {
-
             //  handle viewing next level and start it
 
             if (_game.IsFinished()) {
-
                 MessageBox.Show(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
 
                 _game.Stop();
@@ -98,43 +149,6 @@ namespace PacMan_gui.Controllers {
             }
         }
 
-        private void BindDataWithGameView() {
-
-            BindTextBlock(_gameView.ScoreTextBlock, _gameViewModel, "CurrentLevelScore");
-            BindTextBlock(_gameView.CompanyScoreTextBlock, _gameViewModel, "CurrentScore");
-            BindTextBlock(_gameView.BestScoreTextBlock, _gameViewModel, "BestScore");
-            
-            BindTextBlock(_gameView.LivesTextBlock, _gameViewModel.PacManViewModel, "LivesNumber");
-
-            BindTextBlock(_gameView.PausedTitleTextBlock, _gameViewModel, "Paused");
-
-            BindCanvasBackGround(_gameView.GetGameFieldCanvas(), _gameViewModel, "Condition", new ColorResolver.LevelConditionToColorConverter());
-        }
-
-        private static void BindTextBlock(TextBlock element, Object source, string propertyName) {
-            var binding = new Binding(propertyName) {Source = source};
-            element.SetBinding(TextBlock.TextProperty, binding);
-        }
-
-        private static void BindCanvasBackGround(Canvas canvas, Object source, string propertyName, IValueConverter converter) {
-            
-            var binding = new Binding(propertyName) { Source = source, Converter = converter};
-            canvas.SetBinding(Panel.BackgroundProperty, binding);
-        }
-
-        private void RedrawGame() {
-            
-            if (null != _gameViewModel) {
-                _gameViewModel.Redraw();
-                _gameViewModel.FieldViewModel.Redraw();
-                _gameViewModel.PacManViewModel.Redraw();
-
-                foreach (var ghostViewModel in _gameViewModel.GhostViewModels) {
-                    ghostViewModel.Redraw();
-                }
-            }
-        }
-
         private void OnGameViewSizeChanged(Object o, EventArgs e) {
             /*
             if (null == o) {
@@ -148,11 +162,10 @@ namespace PacMan_gui.Controllers {
         }
 
         private void OnPacmanDeath(int livesNumber) {
-
             if (0 != livesNumber) {
                 MessageBox.Show("You have been died! Only " + livesNumber + " lives left");
 
-                _game.Start();   
+                _game.Start();
             }
         }
 
@@ -168,9 +181,6 @@ namespace PacMan_gui.Controllers {
                 NotifyDirectionChanged(directionChangedArgs);
             }
             else if (PauseKeys.Contains(e.PushedKey)) {
-
-                
-
                 if (_game.IsOn()) {
                     _game.Pause();
 //                    _canvasColorBeforePause = _gameView.GetGameFieldCanvas().Background;
@@ -201,6 +211,6 @@ namespace PacMan_gui.Controllers {
             e.Raise(this, ref DirectionChanged);
         }
 
-
+        #endregion
     }
 }

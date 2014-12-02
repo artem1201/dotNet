@@ -8,8 +8,7 @@ using PacMan_model.util;
 using Timer = System.Timers.Timer;
 
 namespace PacMan_model.level {
-    public class Game : IGame {
-
+    public sealed class Game : IGame {
         //  directory where levels are
         private string _pathToLevels;
 
@@ -34,11 +33,9 @@ namespace PacMan_model.level {
         private int _currentLevelNumber;
 
 
-        private readonly ICollection<IDirectionEventObserver> _observers = new List<IDirectionEventObserver>(); 
+        private readonly ICollection<IDirectionEventObserver> _observers = new List<IDirectionEventObserver>();
 
-        private bool HasNextLevel {
-            get { return _levelFiles.Length - 1 != _currentLevelNumber; }
-        }
+        #region Initialization
 
         public Game(string pathToLevels, string pathToGhosts, int bestScore) {
             if (null == pathToLevels) {
@@ -47,12 +44,11 @@ namespace PacMan_model.level {
             if (null == pathToGhosts) {
                 throw new ArgumentNullException("pathToGhosts");
             }
-            
+
             _levelLoader = new LevelLoader(new GhostFactory(pathToGhosts));
 
 
             _ticker = new Ticker(DoATick);
-
 
 
             NewGame(bestScore, pathToLevels);
@@ -60,7 +56,6 @@ namespace PacMan_model.level {
 
         public void NewGame(int bestScore, string pathToLevels = null) {
             if (null != pathToLevels) {
-                
                 _pathToLevels = pathToLevels;
             }
 
@@ -76,7 +71,6 @@ namespace PacMan_model.level {
             _currentLevelScore = 0;
 
             try {
-
                 _levelFiles = Directory.GetFiles(_pathToLevels);
             }
             catch (DirectoryNotFoundException) {
@@ -84,11 +78,19 @@ namespace PacMan_model.level {
             }
 
             if (0 == _levelFiles.Length) {
-                throw new InvalidLevelDirectory(_pathToLevels); 
+                throw new InvalidLevelDirectory(_pathToLevels);
             }
 
             _currentLevelNumber = -1;
             LoadNextLevel();
+        }
+
+        #endregion
+
+        #region Level loading
+
+        private bool HasNextLevel {
+            get { return _levelFiles.Length - 1 != _currentLevelNumber; }
         }
 
         public bool LoadNextLevel() {
@@ -105,7 +107,6 @@ namespace PacMan_model.level {
             _currentLevelScore = 0;
 
             using (var nextLevelSource = new FileStream(_levelFiles[_currentLevelNumber], FileMode.Open)) {
-
                 if (null != _currentLevel) {
                     _currentLevel.Dispose();
                 }
@@ -125,17 +126,21 @@ namespace PacMan_model.level {
             return true;
         }
 
+        #endregion
+
+        #region Start Stop
+
         public void Start() {
-            if (null != _currentLevel) {
-                _currentLevel.Resume();
-            }
+//            if (null != _currentLevel) {
+//                _currentLevel.Resume();
+//            }
             _ticker.Start();
         }
 
         public void Pause() {
-            if (null != _currentLevel) {
-                _currentLevel.Pause();
-            }
+//            if (null != _currentLevel) {
+//                _currentLevel.Pause();
+//            }
             _ticker.Stop();
         }
 
@@ -146,6 +151,10 @@ namespace PacMan_model.level {
         public bool IsOn() {
             return _ticker.IsOn();
         }
+
+        #endregion
+
+        #region Getters
 
         public int GetGameScore() {
             return _currentScore;
@@ -159,6 +168,10 @@ namespace PacMan_model.level {
             return _bestScore;
         }
 
+        #endregion
+
+        #region Win Loose
+
         public void Win() {
             _ticker.Stop();
 
@@ -170,12 +183,11 @@ namespace PacMan_model.level {
             }
 
             NotifyLevelFinished();
-
         }
 
         public void Loose() {
             _ticker.Stop();
-            
+
             _isWon = false;
             _isFinished = true;
 
@@ -190,13 +202,17 @@ namespace PacMan_model.level {
             return _isFinished;
         }
 
+        #endregion
+
+        #region Observing
+
         public void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver) {
             if (null == directionEventObserver) {
                 throw new ArgumentNullException("directionEventObserver");
             }
 
             if (null != _currentLevel) {
-                _currentLevel.RegisterOnDirectionObserver(directionEventObserver);    
+                _currentLevel.RegisterOnDirectionObserver(directionEventObserver);
             }
 
             _observers.Add(directionEventObserver);
@@ -206,12 +222,9 @@ namespace PacMan_model.level {
             get { return _currentLevel; }
         }
 
+        #endregion
 
-
-        private void DoATick() {
-
-            _currentLevel.DoATick();
-        }
+        #region Events
 
         private void OnPacManChanged(Object sender, PacmanStateChangedEventArgs e) {
             if (null == e) {
@@ -220,14 +233,14 @@ namespace PacMan_model.level {
 
             _currentScore += (e.Score - _currentLevelScore);
             _currentLevelScore = e.Score;
-            
+
 
             if (_currentScore > _bestScore) {
                 _bestScore = _currentScore;
             }
 
             if (e.HasDied) {
-                 _ticker.Stop();
+                _ticker.Stop();
 
                 if (0 == e.Lives) {
                     Loose();
@@ -251,7 +264,7 @@ namespace PacMan_model.level {
             OnLevelFinishedNotify(EventArgs.Empty);
         }
 
-        protected virtual void OnLevelFinishedNotify(EventArgs e) {
+        private void OnLevelFinishedNotify(EventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -259,8 +272,15 @@ namespace PacMan_model.level {
             e.Raise(this, ref LevelFinished);
         }
 
-        private class Ticker : IDisposable {
+        #endregion
 
+        #region Ticking
+
+        private void DoATick() {
+            _currentLevel.DoATick();
+        }
+
+        private class Ticker : IDisposable {
             private const int Delay = 1;
 
             private readonly Timer _timer;
@@ -269,7 +289,7 @@ namespace PacMan_model.level {
 
             public Ticker(Action tickAction) {
                 _tickAction = tickAction;
-                
+
                 _timer = new Timer(Delay);
                 _timer.Elapsed += Tick;
             }
@@ -295,5 +315,7 @@ namespace PacMan_model.level {
                 _timer.Dispose();
             }
         }
+
+        #endregion
     }
 }

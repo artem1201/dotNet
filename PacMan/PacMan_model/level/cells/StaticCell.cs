@@ -5,7 +5,6 @@ using PacMan_model.Properties;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells {
-
     /// <summary>
     ///     type of cell which will never be moved on field
     /// </summary>
@@ -30,15 +29,15 @@ namespace PacMan_model.level.cells {
         FreeSpace
         ,
         Wall
-            ,
+        ,
         PacDot
-            ,
+        ,
         Energizer
-            , Fruit
+        ,
+        Fruit
     }
 
     internal static class StaticCellFactory {
-
         public static StaticCell CreateStaticCell(StaticCellType type, Point position) {
             if (null == position) {
                 throw new ArgumentNullException("position");
@@ -57,10 +56,13 @@ namespace PacMan_model.level.cells {
                     //TODO: add Fruit
                     return new PacDot(position);
                 default:
-                    throw new InvalidEnumArgumentException(Resources.StaticCellFactory_CreateStaticCell_unknown_static_cell_type__ + type.ToString());
+                    throw new InvalidEnumArgumentException(
+                        Resources.StaticCellFactory_CreateStaticCell_unknown_static_cell_type__ + type.ToString());
             }
         }
     }
+
+    #region Simple Cells
 
     internal sealed class FreeSpace : StaticCell {
         public FreeSpace(Point position) : base(position) {}
@@ -91,14 +93,16 @@ namespace PacMan_model.level.cells {
             return StaticCellType.Wall;
         }
 
-        public override void HandlePacmanMovement(IPacMan pacman, IField field) {
-        }
+        public override void HandlePacmanMovement(IPacMan pacman, IField field) {}
 
         public override bool IsFreeForMoving() {
             return false;
         }
     }
 
+    #endregion
+
+    #region Cells with cost
 
     /// <summary>
     ///     type of cell with cost
@@ -106,15 +110,11 @@ namespace PacMan_model.level.cells {
     ///     if player get it
     /// </summary>
     public interface ICellWithCost {
- 
         int GetCost();
-
     }
 
 
     internal sealed class PacDot : StaticCell, ICellWithCost {
-
-
         private const int Cost = 10;
 
 
@@ -136,9 +136,9 @@ namespace PacMan_model.level.cells {
                 throw new ArgumentNullException("field");
             }
 
-            
 
-            pacman.StartMovingTo(Position,
+            pacman.StartMovingTo(
+                Position,
                 delegate {
                     pacman.Eat(this);
                     field.SetSell(Position, new FreeSpace(Position));
@@ -151,7 +151,6 @@ namespace PacMan_model.level.cells {
     }
 
     internal sealed class Energizer : StaticCell, ICellWithCost {
-
         private const int Cost = 50;
 
         public event EventHandler EnergizerEaten;
@@ -167,7 +166,6 @@ namespace PacMan_model.level.cells {
         }
 
         public override void HandlePacmanMovement(IPacMan pacman, IField field) {
-            
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -175,18 +173,14 @@ namespace PacMan_model.level.cells {
                 throw new ArgumentNullException("field");
             }
 
-            
 
-            
-
-            pacman.StartMovingTo(Position,
+            pacman.StartMovingTo(
+                Position,
                 delegate {
                     pacman.Eat(this);
                     field.SetSell(Position, new FreeSpace(Position));
                     OnEnergizerEaten();
                 });
-
-            
         }
 
         public override bool IsFreeForMoving() {
@@ -200,4 +194,5 @@ namespace PacMan_model.level.cells {
 
     //TODO: add fruits
 
+    #endregion
 }

@@ -5,7 +5,7 @@ using PacMan_model.level.cells;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
-    internal class Field : IField {
+    internal sealed class Field : IField {
 
         private int _width;
         private int _height;
@@ -20,6 +20,8 @@ namespace PacMan_model.level {
         //  cell at (x, y)-position is cells.at(y * width + x)
         private IList<StaticCell> _cells;
 
+        #region Initialization
+
         public Field() {}
 
         public Field(int width, int height, IList<StaticCell> cells) {
@@ -27,12 +29,41 @@ namespace PacMan_model.level {
             Init(width, height, cells);
         }
 
-        public event EventHandler<FieldStateChangedEventArs> FieldState;
-        public event EventHandler DotsEnds;
+        public void Init(int width, int height, IList<StaticCell> cells) {
+            if (null == cells)
+            {
+                throw new ArgumentNullException("cells");
+            }
 
-        public void ForceNotify() {
-            NotifyChangedStatement();
+            if (width <= 0)
+            {
+                throw new ArgumentOutOfRangeException("width");
+            }
+            if (height <= 0)
+            {
+                throw new ArgumentOutOfRangeException("height");
+            }
+            if (width * height != cells.Count)
+            {
+                throw new ArgumentException("Field initialization: invalid size of cells list");
+            }
+
+
+            _width = width;
+            _height = height;
+
+            _cells = cells;
+
+            CalculateDots();
+
+            //NotifyChangedStatement();
         }
+
+        #endregion
+
+
+
+        #region Disposing
 
         public void Dispose() {
             UnsubsrcibeAll();
@@ -58,31 +89,9 @@ namespace PacMan_model.level {
             }
         }
 
-        public void Init(int width, int height, IList<StaticCell> cells) {
-            if (null == cells) {
-                throw new ArgumentNullException("cells");
-            }
+        #endregion
 
-            if (width <= 0) {
-                throw new ArgumentOutOfRangeException("width");
-            }
-            if (height <= 0) {
-                throw new ArgumentOutOfRangeException("height");
-            }
-            if (width * height != cells.Count) {
-                throw new ArgumentException("Field initialization: invalid size of cells list");
-            }
-            
-            
-            _width = width;
-            _height = height;
-
-            _cells = cells;
-
-            CalculateDots();
-
-            //NotifyChangedStatement();
-        }
+        #region Getters
 
         public int GetWidth() {
             return _width;
@@ -113,6 +122,10 @@ namespace PacMan_model.level {
         public IList<StaticCell> GetCells() {
             return _cells;
         }
+
+        #endregion
+
+        #region Setters
 
         public void SetCell(int x, int y, StaticCell cell) {
             if (null == cell) {
@@ -155,7 +168,28 @@ namespace PacMan_model.level {
             SetCell(p.GetX(), p.GetY(), cell);
         }
 
-        protected virtual void OnStatementChangedNotify(FieldStateChangedEventArs e) {
+        private void CalculateDots()
+        {
+            // ReSharper disable once UnusedVariable
+            foreach (var cell in _cells.OfType<ICellWithCost>())
+            {
+                ++_numberOfDots;
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler<FieldStateChangedEventArs> FieldState;
+        public event EventHandler DotsEnds;
+
+        public void ForceNotify()
+        {
+            NotifyChangedStatement();
+        }
+
+        private void OnStatementChangedNotify(FieldStateChangedEventArs e) {
             
             if (null == e) {
                 throw new ArgumentNullException("e");
@@ -163,7 +197,8 @@ namespace PacMan_model.level {
 
             e.Raise(this, ref FieldState);
         }
-        protected virtual void OnDotsEnds() {
+
+        private void OnDotsEnds() {
             EventArgs.Empty.Raise(this, ref DotsEnds);
         }
 
@@ -178,12 +213,7 @@ namespace PacMan_model.level {
             }
         }
 
+        #endregion
 
-        private void CalculateDots() {
-// ReSharper disable once UnusedVariable
-            foreach (var cell in _cells.OfType<ICellWithCost>()) {
-                ++_numberOfDots;
-            }
-        }
     }
 }

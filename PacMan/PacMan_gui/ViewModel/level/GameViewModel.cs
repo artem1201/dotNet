@@ -9,13 +9,14 @@ using PacMan_model.level.cells.pacman;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class GameViewModel : INotifyPropertyChanged {
-
         private const string PausedMessage = "Paused";
         private const string NotPausedMessage = "";
 
         public PacManViewModel PacManViewModel { get; private set; }
         public FieldViewModel FieldViewModel { get; private set; }
         public IList<GhostViewModel> GhostViewModels { get; private set; }
+
+        #region Properies
 
         public LevelCondition Condition {
             get { return _condition; }
@@ -76,6 +77,8 @@ namespace PacMan_gui.ViewModel.level {
             Paused = paused ? PausedMessage : NotPausedMessage;
         }
 
+        #endregion
+
         //private readonly Canvas _canvas;
         private IGame _game;
         private int _bestScore;
@@ -84,7 +87,9 @@ namespace PacMan_gui.ViewModel.level {
         private LevelCondition _condition;
         private string _pausedMessage;
 
-        public  GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
+        #region Initialization
+
+        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
             if (null == game) {
                 throw new ArgumentNullException("game");
             }
@@ -107,8 +112,6 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         public void Init([NotNull] IGame game, [NotNull] Canvas canvas, Action<int> onPacmanDeathAction = null) {
-
-
             _game = game;
 
             game.Level.LevelState += OnLevelChanged;
@@ -145,12 +148,17 @@ namespace PacMan_gui.ViewModel.level {
             }
         }
 
-        private void OnPacManChanged([NotNull] object sender, [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
-            
+        #endregion
+
+        #region Events
+
+        private void OnPacManChanged(
+            [NotNull] object sender,
+            [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
 //            if (null == sender) {
 //                throw new ArgumentNullException("sender");
 //            }
-           
+
             if (null == pacmanStateChangedEventArgs) {
                 throw new ArgumentNullException("pacmanStateChangedEventArgs");
             }
@@ -163,22 +171,11 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         private void OnLevelChanged(Object sender, LevelStateChangedEventArgs e) {
-
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
 
             Condition = e.Condition;
-        }
-
-        public void Redraw() {
-            _game.Level.ForceNotify();
-//            FieldViewModel.Redraw();
-//            PacManViewModel.Redraw();
-//
-//            foreach (var ghostViewModel in GhostViewModels) {
-//                ghostViewModel.Redraw();
-//            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -190,5 +187,21 @@ namespace PacMan_gui.ViewModel.level {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #endregion
+
+        #region Redrawing
+
+        public void Redraw() {
+            _game.Level.ForceNotify();
+//            FieldViewModel.Redraw();
+//            PacManViewModel.Redraw();
+//
+//            foreach (var ghostViewModel in GhostViewModels) {
+//                ghostViewModel.Redraw();
+//            }
+        }
+
+        #endregion
     }
 }

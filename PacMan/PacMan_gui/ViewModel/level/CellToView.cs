@@ -13,7 +13,9 @@ namespace PacMan_gui.ViewModel.level {
 
         private static readonly IDictionary<StaticCellType, Func<double, double, Shape>> CellsCreateor;
         private static readonly IDictionary<string, Func<double, double, Shape>> GhostsCreator;
-        
+
+        #region Initialization
+
         static CellToView() {
 
             CellsCreateor = new Dictionary<StaticCellType, Func<double, double, Shape>> {
@@ -47,7 +49,10 @@ namespace PacMan_gui.ViewModel.level {
             }
         }
 
+        #endregion
 
+
+        #region Static Cells
 
         private static Shape CreateFreeSpace(double width, double height) {
             return new Rectangle {Width = width, Height = height};
@@ -66,9 +71,75 @@ namespace PacMan_gui.ViewModel.level {
             return CreateEnergizer(width, height);
         }
 
+
+        public static Shape StaticCellToShape(StaticCell cell, double widthOnCanvas, double heightOnCanvas, double x, double y, string name = null)
+        {
+
+            if (null == cell)
+            {
+                throw new ArgumentNullException("cell");
+            }
+            if (widthOnCanvas <= 0)
+            {
+                throw new ArgumentOutOfRangeException("widthOnCanvas");
+            }
+            if (heightOnCanvas <= 0)
+            {
+                throw new ArgumentOutOfRangeException("heightOnCanvas");
+            }
+            if (x < 0)
+            {
+                throw new ArgumentOutOfRangeException("x");
+            }
+            if (y < 0)
+            {
+                throw new ArgumentOutOfRangeException("y");
+            }
+
+
+            if (!CellsCreateor.ContainsKey(cell.GetCellType()))
+            {
+                throw new ArgumentException("unknown cell type: " + cell.GetCellType());
+            }
+            var result = CellsCreateor[cell.GetCellType()](widthOnCanvas, heightOnCanvas);
+
+
+            SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
+
+            if (null != name)
+            {
+                result.Name = name;
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Pacman
+
         private static Shape CreatePacMan(double width, double height) {
             return new Ellipse {Width = width, Height = height, Fill = Brushes.Yellow};
         }
+
+        public static Shape PacmanToShape(double widthOnCanvas, double heightOnCanvas, double x, double y, string name = null)
+        {
+
+            var result = CreatePacMan(widthOnCanvas, heightOnCanvas);
+
+            SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
+
+            if (null != name)
+            {
+                result.Name = name;
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Ghosts
 
         private static Shape CreateBlinky(double width, double height) {
             return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Red };
@@ -104,55 +175,10 @@ namespace PacMan_gui.ViewModel.level {
             Canvas.SetTop(shape, heightOnCanvas * y + dy);
         }
 
-        public static Shape StaticCellToShape(StaticCell cell, double widthOnCanvas, double heightOnCanvas, double x, double y, string name = null) {
-
-            if (null == cell) {
-                throw new ArgumentNullException("cell");
-            }
-            if (widthOnCanvas <= 0) {
-                throw new ArgumentOutOfRangeException("widthOnCanvas");
-            }
-            if (heightOnCanvas <= 0) {
-                throw new ArgumentOutOfRangeException("heightOnCanvas");
-            }
-            if (x < 0) {
-                throw new ArgumentOutOfRangeException("x");
-            }
-            if (y < 0) {
-                throw new ArgumentOutOfRangeException("y");
-            }
-
-
-            if (!CellsCreateor.ContainsKey(cell.GetCellType())) {
-                throw new ArgumentException("unknown cell type: " + cell.GetCellType());
-            }
-            var result = CellsCreateor[cell.GetCellType()](widthOnCanvas, heightOnCanvas);
-
-            
-            SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
-
-            if (null != name) {
-                result.Name = name;
-            }
-
-            return result;
-        }
-
-        public static Shape PacmanToShape(double widthOnCanvas, double heightOnCanvas, double x, double y, string name = null) {
-
-            var result = CreatePacMan(widthOnCanvas, heightOnCanvas);
-
-            SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
-
-            if (null != name) {
-                result.Name = name;
-            }
-
-            return result;
-        }
-
-        public static Shape GhostToShape([NotNull] string name, LevelCondition condition, double widthOnCanvas, double heightOnCanvas, double x, double y) {
-            if (null == name) {
+        public static Shape GhostToShape([NotNull] string name, LevelCondition condition, double widthOnCanvas, double heightOnCanvas, double x, double y)
+        {
+            if (null == name)
+            {
                 throw new ArgumentNullException("name");
             }
 
@@ -164,6 +190,9 @@ namespace PacMan_gui.ViewModel.level {
 
             return result;
         }
+
+        #endregion
+
     }
 
     

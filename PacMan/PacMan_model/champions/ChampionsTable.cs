@@ -6,7 +6,7 @@ using PacMan_model.util;
 
 namespace PacMan_model.champions {
 
-    public class ChampionsTable : IChampionsTable {
+    public sealed class ChampionsTable : IChampionsTable {
 
         private static readonly string RootDir = Directory.GetCurrentDirectory();
         private static readonly string PathToChampions = RootDir + "\\" /*+ "\\Champions"*/;
@@ -21,6 +21,8 @@ namespace PacMan_model.champions {
         public ChampionsTable() {
             LoadFromFile();
         }
+
+        #region Work with file
 
         public void LoadFromFile() {
 
@@ -71,6 +73,10 @@ namespace PacMan_model.champions {
             }
 
         }
+        
+        #endregion
+
+        #region Adding of new record
 
         public bool IsNewRecord(int result) {
 
@@ -132,6 +138,10 @@ namespace PacMan_model.champions {
             NotifyChangedStatement();
         }
 
+        #endregion
+
+        #region Events
+
         public event EventHandler<ChampionsTableChangedEventArs> ChampionsTableState;
 
         public void ForceNotify() {
@@ -148,7 +158,7 @@ namespace PacMan_model.champions {
             OnStatementChangedNotify(new ChampionsTableChangedEventArs(_championsRecords));
         }
 
-        protected virtual void OnStatementChangedNotify(ChampionsTableChangedEventArs e) {
+        private void OnStatementChangedNotify(ChampionsTableChangedEventArs e) {
 
             if (null == e) {
                 throw new ArgumentNullException("e");
@@ -157,13 +167,22 @@ namespace PacMan_model.champions {
             e.Raise(this, ref ChampionsTableState);
         }
 
+        #endregion
+
+        #region Getters
+
         public ICollection<Tuple<int, string>> GetResults() {
             return _championsRecords;
         }
 
+        #endregion
+
+        #region Disposing
 
         public void Dispose() {
             SaveToFile();
         }
+
+        #endregion
     }
 }

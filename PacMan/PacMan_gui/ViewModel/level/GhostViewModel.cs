@@ -9,7 +9,6 @@ using PacMan_model.util;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class GhostViewModel {
-
         public Point Position { get; private set; }
         public string Name { get; private set; }
 
@@ -20,12 +19,17 @@ namespace PacMan_gui.ViewModel.level {
 
         private IGhostObserverable _ghost;
         private readonly GameViewModel _gameViewModel;
+
         private LevelCondition LevelCondition {
             get { return _gameViewModel.Condition; }
         }
 
+        #region Initialization
 
-        public GhostViewModel([NotNull] IGhostObserverable ghost, [NotNull] GameViewModel gameViewModel, [NotNull] Canvas canvas,
+        public GhostViewModel(
+            [NotNull] IGhostObserverable ghost,
+            [NotNull] GameViewModel gameViewModel,
+            [NotNull] Canvas canvas,
             [NotNull] FieldViewModel fieldViewModel) {
             if (null == ghost) {
                 throw new ArgumentNullException("ghost");
@@ -47,7 +51,8 @@ namespace PacMan_gui.ViewModel.level {
             //Redraw();
         }
 
-        public void Init([NotNull] IGhostObserverable ghost,
+        public void Init(
+            [NotNull] IGhostObserverable ghost,
             [NotNull] FieldViewModel fieldViewModel) {
             if (null == ghost) {
                 throw new ArgumentNullException("ghost");
@@ -57,15 +62,18 @@ namespace PacMan_gui.ViewModel.level {
             }
 
             _ghost = ghost;
-            
-            
+
+
             FieldViewModel = fieldViewModel;
 
             ghost.GhostState += OnGhostChanged;
         }
 
-        private void OnGhostChanged(Object sender, GhostStateChangedEventArgs e) {
+        #endregion
 
+        #region Events
+
+        private void OnGhostChanged(Object sender, GhostStateChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -73,14 +81,16 @@ namespace PacMan_gui.ViewModel.level {
             Position = e.Position;
             Name = e.Name;
 
-            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new WorkWithCanvas(RedrawGhostOnCanvas));
+            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(RedrawGhostOnCanvas));
         }
+
+        #endregion
+
+        #region Redrawing
 
         public void Redraw() {
             _ghost.ForceNotify();
         }
-
-        private delegate void WorkWithCanvas();
 
         private void RedrawGhostOnCanvas() {
             ClearCanvas();
@@ -88,16 +98,23 @@ namespace PacMan_gui.ViewModel.level {
 
             var cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
             var cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
-            _addedShape = CellToView.GhostToShape(Name, LevelCondition, cellWidth, cellHeight, Position.GetX(), Position.GetY());
+            _addedShape = CellToView.GhostToShape(
+                Name,
+                LevelCondition,
+                cellWidth,
+                cellHeight,
+                Position.GetX(),
+                Position.GetY());
 
             _canvas.Children.Add(_addedShape);
         }
 
         private void ClearCanvas() {
             if ((_addedShape != null) && _canvas.Children.Contains(_addedShape)) {
-
                 _canvas.Children.Remove(_addedShape);
             }
         }
+
+        #endregion
     }
 }

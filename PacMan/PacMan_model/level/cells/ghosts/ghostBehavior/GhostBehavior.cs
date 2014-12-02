@@ -1,4 +1,5 @@
-﻿using PacMan_model.util;
+﻿using System;
+using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
     public abstract class GhostBehavior {
@@ -15,5 +16,9 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
 
         public abstract int GetSpeed();
         public abstract Point GetNextPoint(Point currentPoint);
+
+        public static Direction? FindNextDirectionToTarger(Point startPoint, Point goalPoint, INotChanebleableField field) {
+            throw new NotImplementedException();
+        }
     }
 }

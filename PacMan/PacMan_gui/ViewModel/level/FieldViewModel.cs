@@ -8,7 +8,6 @@ using PacMan_model.level;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class FieldViewModel {
-
         public int Width { get; private set; }
         public int Height { get; private set; }
 
@@ -17,7 +16,9 @@ namespace PacMan_gui.ViewModel.level {
         private readonly Canvas _canvas;
         private IFieldObserverable _fieldObserverable;
 
-        private readonly IList<Shape> _addedShapes = new List<Shape>(); 
+        private readonly IList<Shape> _addedShapes = new List<Shape>();
+
+        #region Initialization
 
         public FieldViewModel(IFieldObserverable fieldObserverable, Canvas canvas) {
             if (null == fieldObserverable) {
@@ -42,8 +43,11 @@ namespace PacMan_gui.ViewModel.level {
             _fieldObserverable = newFieldObserverable;
         }
 
-        private void OnFieldChanged(Object sender, FieldStateChangedEventArs e) {
+        #endregion
 
+        #region Events
+
+        private void OnFieldChanged(Object sender, FieldStateChangedEventArs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -53,16 +57,22 @@ namespace PacMan_gui.ViewModel.level {
 
             //System.Console.WriteLine("call redraw field on: " + Width + ":" + Height);
 
-            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action<INotChanebleableField>(RedrawFieldOnCanvas), e.Field);
+            _canvas.Dispatcher.BeginInvoke(
+                DispatcherPriority.Send,
+                new Action<INotChanebleableField>(RedrawFieldOnCanvas),
+                e.Field);
         }
+
+        #endregion
+
+        #region Redrawing
 
         public void Redraw() {
             _fieldObserverable.ForceNotify();
         }
 
-       
-        private void RedrawFieldOnCanvas(INotChanebleableField field) {
 
+        private void RedrawFieldOnCanvas(INotChanebleableField field) {
             double cellWidth = (_canvas.ActualWidth / field.GetWidth());
             double cellHeigth = (_canvas.ActualHeight / field.GetHeight());
 
@@ -86,5 +96,7 @@ namespace PacMan_gui.ViewModel.level {
 
             _addedShapes.Clear();
         }
+
+        #endregion
     }
 }

@@ -11,10 +11,9 @@ using Point = PacMan_model.util.Point;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class PacManViewModel : INotifyPropertyChanged {
-
         public Point Position { get; private set; }
         public Direction Direction { get; private set; }
-        
+
         public int LivesNumber {
             get { return _livesNumber; }
             private set {
@@ -35,7 +34,12 @@ namespace PacMan_gui.ViewModel.level {
         private int _livesNumber;
         private Action<int> _onPacmanDeathAction;
 
-        public PacManViewModel(IPacManObserverable pacMan, Canvas canvas, FieldViewModel fieldViewModel,
+        #region Initialization
+
+        public PacManViewModel(
+            IPacManObserverable pacMan,
+            Canvas canvas,
+            FieldViewModel fieldViewModel,
             [NotNull] Action<int> onPacmanDeathAction) {
             if (null == pacMan) {
                 throw new ArgumentNullException("pacMan");
@@ -52,7 +56,7 @@ namespace PacMan_gui.ViewModel.level {
 
             _canvas = canvas;
             Init(pacMan, fieldViewModel, onPacmanDeathAction);
-            
+
             //Redraw();
         }
 
@@ -74,8 +78,11 @@ namespace PacMan_gui.ViewModel.level {
             FieldViewModel = fieldViewModel;
         }
 
-        private void OnPacManChanged(Object sender, PacmanStateChangedEventArgs e) {
+        #endregion
 
+        #region Events
+
+        private void OnPacManChanged(Object sender, PacmanStateChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -88,31 +95,7 @@ namespace PacMan_gui.ViewModel.level {
                 _onPacmanDeathAction(e.Lives);
             }
 
-            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new WorkWithCanvas(RedrawPacManOnCanvas));
-        }
-
-        public void Redraw() {
-            _pacMan.ForceNotify();
-        }
-
-        private delegate void WorkWithCanvas();
-
-        private void RedrawPacManOnCanvas() {
-            ClearCanvas();
-            
-
-            double cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
-            double cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
-            _addedShape = CellToView.PacmanToShape(cellWidth, cellHeight, Position.GetX(), Position.GetY());
-
-            _canvas.Children.Add(_addedShape);
-        }
-
-        private void ClearCanvas() {
-            if ((null != _addedShape) && _canvas.Children.Contains(_addedShape)) {
-
-                _canvas.Children.Remove(_addedShape);
-            }
+            _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(RedrawPacManOnCanvas));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -124,5 +107,32 @@ namespace PacMan_gui.ViewModel.level {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #endregion
+
+        #region Redrawing
+
+        public void Redraw() {
+            _pacMan.ForceNotify();
+        }
+
+        private void RedrawPacManOnCanvas() {
+            ClearCanvas();
+
+
+            double cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
+            double cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
+            _addedShape = CellToView.PacmanToShape(cellWidth, cellHeight, Position.GetX(), Position.GetY());
+
+            _canvas.Children.Add(_addedShape);
+        }
+
+        private void ClearCanvas() {
+            if ((null != _addedShape) && _canvas.Children.Contains(_addedShape)) {
+                _canvas.Children.Remove(_addedShape);
+            }
+        }
+
+        #endregion
     }
 }

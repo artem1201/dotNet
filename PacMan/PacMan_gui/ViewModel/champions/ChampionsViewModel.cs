@@ -6,34 +6,42 @@ using PacMan_model.champions;
 
 namespace PacMan_gui.ViewModel.champions {
     internal class ChampionsViewModel {
-
         public ObservableCollection<ChampionsTableItem> ChampionsTableItems { get; private set; }
 
+        #region Initialization
 
         public ChampionsViewModel(IChampionsTableOberverable championsTableOberverable) {
-
             ChampionsTableItems = new ObservableCollection<ChampionsTableItem>();
 
-            championsTableOberverable.ChampionsTableState += OnChampionsTableState;
+            championsTableOberverable.ChampionsTableState += OnChampionsTableStateChanges;
 
             championsTableOberverable.ForceNotify();
         }
 
-        private void OnChampionsTableState(object sender,
+        #endregion
+
+
+        #region Events
+
+        private void OnChampionsTableStateChanges(
+            object sender,
             [NotNull] ChampionsTableChangedEventArs championsTableChangedEventArs) {
             if (null == championsTableChangedEventArs) {
                 throw new ArgumentNullException("championsTableChangedEventArs");
             }
 
-            Application.Current.Dispatcher.BeginInvoke(new Action(
-                delegate {
-                    ChampionsTableItems.Clear();
+            Application.Current.Dispatcher.BeginInvoke(
+                new Action(
+                    delegate {
+                        ChampionsTableItems.Clear();
 
-                    foreach (var champion in championsTableChangedEventArs.Champions) {
-                        ChampionsTableItems.Add(new ChampionsTableItem(champion.Item2, champion.Item1));
-                    }
-                }));
-        }
+                        foreach (var champion in championsTableChangedEventArs.Champions) {
+                            ChampionsTableItems.Add(new ChampionsTableItem(champion.Item2, champion.Item1));
+                        }
+                    }));
+            }
+
+        #endregion
     }
 
     internal class ChampionsTableItem {

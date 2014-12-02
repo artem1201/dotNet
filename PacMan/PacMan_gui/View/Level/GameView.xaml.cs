@@ -49,6 +49,8 @@ namespace PacMan_gui.View.Level {
             return GameCanvas;
         }
 
+        #region Events
+
         private void GameView_OnSizeChanged(object o, SizeChangedEventArgs e) {
             
             /*
@@ -116,6 +118,7 @@ namespace PacMan_gui.View.Level {
             EventArgs.Empty.Raise(this, ref BackPressed);
 
         }
+        #endregion
     }
 
     public class ControlEventArs : EventArgs {

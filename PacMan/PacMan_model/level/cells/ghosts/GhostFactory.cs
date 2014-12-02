@@ -2,7 +2,7 @@
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
-    internal class GhostFactory : IGhostFactory {
+    internal sealed class GhostFactory : IGhostFactory {
 
         private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
 

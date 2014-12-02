@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
-    class GhostBehaviorFactory : IGhostBehaviorFactory {
+    internal sealed class GhostBehaviorFactory : IGhostBehaviorFactory {
 
         private readonly string _pathToGhostsBehaviors;
 
@@ -15,6 +15,8 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         //  contains names of ghosts ordered by difficulty which were loaded
         //  must be not empty
         private string[] _orderedLoadedGhostNames;
+
+        #region Initialization
 
         public GhostBehaviorFactory(string pathToGhostsBehaviors) {
 
@@ -30,6 +32,9 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             
         }
 
+        #endregion
+
+        #region Behavior by name
 
         public bool ContainsName(string name) {
             return _ghostsBehaviors.ContainsKey(name);
@@ -101,6 +106,10 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                 : GetStalkerBehavior(name, field, target);
         }
 
+        #endregion
+
+        #region Behavior by number
+
         public GhostStalkerBehavior GetStalkerBehavior(int ghostNumber, INotChanebleableField field, MovingCell target) {
 
             if (null == field) {
@@ -138,6 +147,10 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                 ? (GhostBehavior) GetFrightedBehavior(ghostNumber, field, target)
                 : GetStalkerBehavior(ghostNumber, field, target);
         }
+
+        #endregion
+
+        #region Loading from file
 
         private void LoadBehaviorsFromFiles(string[] behaviorFiles) {
 
@@ -197,5 +210,7 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
 
             _ghostsBehaviors.Add(ghostName, new Tuple<Type, Type>(stalkerBehavior, frightedBehavior));
         }
+
+        #endregion
     }
 }

@@ -3,10 +3,7 @@ using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
-    class Ghost : IGhost {
-
-        
-
+    internal sealed class Ghost : IGhost {
         private const int Cost = 400;
 
 
@@ -23,6 +20,7 @@ namespace PacMan_model.level.cells.ghosts {
         private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
         private GhostBehavior _currentBehavior;
 
+
         private GhostBehavior CurrentBehavior {
             get { return _currentBehavior; }
             set {
@@ -34,8 +32,14 @@ namespace PacMan_model.level.cells.ghosts {
         private MovingCell _target;
         private INotChanebleableField _field;
 
-        public Ghost(Point startPosition, string name, IGhostBehaviorFactory ghostBehaviorFactory, MovingCell target, INotChanebleableField field) {
-            
+        #region Initialization
+
+        public Ghost(
+            Point startPosition,
+            string name,
+            IGhostBehaviorFactory ghostBehaviorFactory,
+            MovingCell target,
+            INotChanebleableField field) {
             if (null == startPosition) {
                 throw new ArgumentNullException("startPosition");
             }
@@ -61,10 +65,9 @@ namespace PacMan_model.level.cells.ghosts {
             //MakeStalker();
         }
 
-        public event EventHandler<GhostStateChangedEventArgs> GhostState;
-        public void ForceNotify() {
-            NotifyChangedStatement();
-        }
+        #endregion
+
+        #region Disposing
 
         public void Dispose() {
             UnsubsrcibeAll();
@@ -73,13 +76,16 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void UnsubsrcibeAll() {
-
             if (null != GhostState) {
                 foreach (var levelClient in GhostState.GetInvocationList()) {
                     GhostState -= levelClient as EventHandler<GhostStateChangedEventArgs>;
                 }
             }
         }
+
+        #endregion
+
+        #region Setters
 
         public void SetTarget(MovingCell target) {
             if (null == target) {
@@ -96,25 +102,31 @@ namespace PacMan_model.level.cells.ghosts {
                 throw new ArgumentNullException("field");
             }
             lock (this) {
-                _field = field;    
+                _field = field;
             }
-            
         }
+
+        #endregion
+
+        #region Getters
 
         public int GetCost() {
             return Cost;
         }
 
-        public void Move() {
-
-            if (0 != _currentTick) {
-                StartMoving();
-            }
-            else {
-                KeepMoving();
-            }
-            
+        public Point GetPosition()
+        {
+            return _ghost.GetPosition();
         }
+
+        public string GetName()
+        {
+            return _name;
+        }
+
+        #endregion
+
+        #region Behavior
 
         public void MakeStalker() {
             CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name, _field, _target);
@@ -124,22 +136,25 @@ namespace PacMan_model.level.cells.ghosts {
             CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name, _field, _target);
         }
 
-        public Point GetPosition() {
-            return _ghost.GetPosition();
-        }
+        #endregion
 
-        public string GetName() {
-            return _name;
+        #region Moving
+
+        public void Move() {
+            if (0 != _currentTick) {
+                StartMoving();
+            }
+            else {
+                KeepMoving();
+            }
         }
 
         public void Restart() {
-
             Stop();
             _ghost.MoveTo(_ghost.GetStartPosition());
         }
 
         public void Die() {
-
             Stop();
             _ghost.MoveTo(_ghost.GetStartPosition());
 
@@ -154,11 +169,9 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void KeepMoving() {
-
             ++_currentTick;
 
             if (_ghost.GetSpeed() == _currentTick) {
-
                 _ghost.MoveTo(_nextPosition);
 
                 Stop();
@@ -172,8 +185,17 @@ namespace PacMan_model.level.cells.ghosts {
             _nextPosition = null;
         }
 
-        protected virtual void OnStatementChanged(GhostStateChangedEventArgs e) {
-            
+        #endregion
+
+        #region Events
+
+        public event EventHandler<GhostStateChangedEventArgs> GhostState;
+
+        public void ForceNotify() {
+            NotifyChangedStatement();
+        }
+
+        private void OnStatementChanged(GhostStateChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -182,56 +204,67 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void NotifyChangedStatement() {
-
             var e = new GhostStateChangedEventArgs(_name, _ghost.GetPosition());
             OnStatementChanged(e);
         }
-    }
 
-    internal class GhostCell : MovingCell {
+        #endregion
 
-        //  number of ticks per one movement
-        private int _currentSpeed;
+        #region As Cell
 
-        public GhostCell(Point startPosition) : base(startPosition) {
-            if (null == startPosition) {
-                throw new ArgumentNullException("startPosition");
+        private class GhostCell : MovingCell {
+            //  number of ticks per one movement
+            private int _currentSpeed;
+
+            public GhostCell(Point startPosition)
+                : base(startPosition) {
+                if (null == startPosition) {
+                    throw new ArgumentNullException("startPosition");
+                }
+            }
+
+
+/*
+            public GhostCell(Point startPosition, int speed)
+                : base(startPosition)
+            {
+                if (null == startPosition)
+                {
+                    throw new ArgumentNullException("startPosition");
+                }
+                if (speed <= 0)
+                {
+                    throw new ArgumentOutOfRangeException("speed");
+                }
+                _currentSpeed = speed;
+            }
+*/
+
+            public void SetSpeed(int speed) {
+                if (speed <= 0) {
+                    throw new ArgumentOutOfRangeException("speed");
+                }
+                _currentSpeed = speed;
+            }
+
+            /// <summary>
+            ///     returns number of ticks per one movement
+            /// </summary>
+            /// <returns>number of ticks per one movement</returns>
+            public override int GetSpeed() {
+                return _currentSpeed;
+            }
+
+
+            public void MoveTo(Point nextPosition) {
+                if (null == nextPosition) {
+                    throw new ArgumentNullException("nextPosition");
+                }
+
+                Position = nextPosition;
             }
         }
 
-
-        public GhostCell(Point startPosition, int speed) : base(startPosition) {
-            if (null == startPosition) {
-                throw new ArgumentNullException("startPosition");
-            }
-            if (speed <= 0) {
-                throw new ArgumentOutOfRangeException("speed");
-            }
-            _currentSpeed = speed;
-        }
-
-        public void SetSpeed(int speed) {
-            if (speed <= 0) {
-                throw new ArgumentOutOfRangeException("speed");
-            }
-            _currentSpeed = speed;
-        }
-
-        /// <summary>
-        ///     returns number of ticks per one movement
-        /// </summary>
-        /// <returns>number of ticks per one movement</returns>
-        public override int GetSpeed() {
-            return _currentSpeed;
-        }
-
-        
-        public void MoveTo(Point nextPosition) {
-            if (null == nextPosition) {
-                throw new ArgumentNullException("nextPosition");
-            }
-
-            Position = nextPosition;
-        }
+        #endregion
     }
 }

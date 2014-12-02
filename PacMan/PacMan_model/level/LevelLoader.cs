@@ -7,9 +7,7 @@ using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
-    
-    internal class LevelLoader : ILevelLoader {
-
+    internal sealed class LevelLoader : ILevelLoader {
         //  number goes in begin of source
         //  from which this level can be loaded
         private const string MagicNumber = "123456";
@@ -25,8 +23,9 @@ namespace PacMan_model.level {
 
         private static IGhostFactory _ghostFactory;
 
-        static LevelLoader() {
+        #region Initialization
 
+        static LevelLoader() {
             CharStaticCellToStaticCellType = new Dictionary<char, StaticCellType> {
                 {CharFreeSpace, StaticCellType.FreeSpace},
                 {CharWall, StaticCellType.Wall},
@@ -43,6 +42,10 @@ namespace PacMan_model.level {
             _ghostFactory = ghostFactory;
         }
 
+        #endregion
+
+        #region Loading
+
         public ILevel LoadFromSource(Stream source) {
             if (null == source) {
                 throw new ArgumentNullException("source");
@@ -57,14 +60,12 @@ namespace PacMan_model.level {
 
 
             using (var sourceReader = new StreamReader(source)) {
-
                 //  check first line and source magic number
                 if (false == MagicNumber.Equals(sourceReader.ReadLine())) {
                     throw new InvalidLevelSource(0, 0);
                 }
 
                 while (!sourceReader.EndOfStream) {
-
                     var levelLine = sourceReader.ReadLine();
 
                     if (null == levelLine) {
@@ -88,7 +89,6 @@ namespace PacMan_model.level {
                     FindGhosts(ref levelLine, ghosts, height, field);
 
                     for (var x = 0; x < levelLine.Length; ++x) {
-
                         //  check if unknown cell's char
                         if (false == CharStaticCellToStaticCellType.ContainsKey(levelLine[x])) {
                             throw new InvalidLevelSource(height + 1, 0);
@@ -98,10 +98,10 @@ namespace PacMan_model.level {
                         fieldCells.Add(
                             StaticCellFactory.CreateStaticCell(
                                 CharStaticCellToStaticCellType[levelLine[x]]
-                                , new Point(x, height)
-                            )
-                        );
-
+                                ,
+                                new Point(x, height)
+                                )
+                            );
                     }
 
                     //  increase field's height
@@ -126,6 +126,9 @@ namespace PacMan_model.level {
             return new Level(pacman, field, ghosts);
         }
 
+        #endregion
+
+        #region Searching of cell
 
         //  searchs for Pacman
         //  if it is found changes it on freeSpace
@@ -170,24 +173,23 @@ namespace PacMan_model.level {
             var ghostWasFound = false;
 
             for (var x = 0; x < levelLineChars.Length; ++x) {
-
                 if (CharGhost == levelLineChars[x]) {
                     ghosts.Add(_ghostFactory.CreateGhost(ghosts.Count, new Point(x, y), field));
                     ghostWasFound = true;
                     levelLineChars[x] = CharFreeSpace;
                 }
-
             }
 
             if (ghostWasFound) {
                 levelLine = new string(levelLineChars);
             }
         }
+
+        #endregion
     }
 
 
     public class InvalidLevelSource : Exception {
-
         private readonly int _line = -1;
         private readonly int _column = -1;
 
@@ -211,7 +213,6 @@ namespace PacMan_model.level {
         /// </summary>
         /// <returns>"at line:column"</returns>
         public string Where() {
-
             if ((-1 == _line) || (-1 == _column)) {
                 return "";
             }

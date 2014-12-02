@@ -2,9 +2,7 @@
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
-
-    internal class PacMan : IPacMan {
-
+    internal sealed class PacMan : IPacMan {
         private const int MaxLives = 3;
         // cell with position, lives and current speed
         private readonly PacManCell _pacman;
@@ -27,6 +25,8 @@ namespace PacMan_model.level.cells.pacman {
         //  calls when pacman finish movement to next cell
         private Action _onEndOfMovementAction;
 
+        #region Initialization
+
         public PacMan(IField field, Point startPosition) {
             if (null == field) {
                 throw new ArgumentNullException("field");
@@ -39,18 +39,17 @@ namespace PacMan_model.level.cells.pacman {
             _pacman = new PacManCell(startPosition, TicksResolver.PacmanTicksPerMove);
         }
 
-        public PacMan(IField field, Point startPosition, int lives) :this(field, startPosition) {
+        public PacMan(IField field, Point startPosition, int lives) : this(field, startPosition) {
             if (lives < 1) {
-                throw new ArgumentOutOfRangeException("lives");   
+                throw new ArgumentOutOfRangeException("lives");
             }
 
             _lives = lives;
         }
 
-        public event EventHandler<PacmanStateChangedEventArgs> PacmanState;
-        public void ForceNotify() {
-            NotifyChangedStatement();
-        }
+        #endregion
+
+        #region Disposing
 
         public void Dispose() {
             UnsubsrcibeAll();
@@ -59,7 +58,6 @@ namespace PacMan_model.level.cells.pacman {
         }
 
         private void UnsubsrcibeAll() {
-
             if (null != PacmanState) {
                 foreach (var levelClient in PacmanState.GetInvocationList()) {
                     PacmanState -= levelClient as EventHandler<PacmanStateChangedEventArgs>;
@@ -67,24 +65,25 @@ namespace PacMan_model.level.cells.pacman {
             }
         }
 
+        #endregion
+
+        #region Moving
+
         /// <summary>
         ///     moves pacman in some direction on set field
         ///     one call is one tick
         /// </summary>
         /// <param name="nextDirection">direction, where player will be moved</param>
         public void Move(Direction nextDirection) {
-
             //  if pacman is on its move
             if (0 != _currentTick) {
-                
                 KeepMoving();
             }
-            //  else pacman stops
+                //  else pacman stops
             else {
-                
                 var cellInNextDirection = _field.GetCell(_pacman.GetPosition().GetNearByDirection(nextDirection));
                 var cellInCurrentDirection = _field.GetCell(_pacman.GetPosition().GetNearByDirection(_currentDirection));
-                
+
                 if (cellInNextDirection.IsFreeForMoving()) {
                     _currentDirection = nextDirection;
                     _nextPosition = cellInNextDirection.GetPosition();
@@ -131,23 +130,6 @@ namespace PacMan_model.level.cells.pacman {
             Move(Direction.Down);
         }
 
-        public Point GetPosition() {
-            return _pacman.GetPosition();
-        }
-
-        public int GetScore() {
-            return _score;
-        }
-
-        public int GetLives() {
-            return _lives;
-        }
-
-        public MovingCell AsMovingCell() {
-            return _pacman;
-        }
-
-
         public void StartMovingTo(Point newPosition, Action onEndOfMovement = null) {
             if (null == newPosition) {
                 throw new ArgumentNullException("newPosition");
@@ -168,7 +150,6 @@ namespace PacMan_model.level.cells.pacman {
         }
 
         public void Die() {
-
             --_lives;
 
             Stop();
@@ -190,11 +171,9 @@ namespace PacMan_model.level.cells.pacman {
         }
 
         private void KeepMoving() {
-
             ++_currentTick;
 
             if (_pacman.GetSpeed() == _currentTick) {
-
                 _pacman.MoveTo(_nextPosition);
 
                 Stop();
@@ -207,7 +186,37 @@ namespace PacMan_model.level.cells.pacman {
             }
         }
 
-        protected virtual void OnStatementChanged(PacmanStateChangedEventArgs e) {
+        #endregion
+
+        #region Getters
+
+        public Point GetPosition() {
+            return _pacman.GetPosition();
+        }
+
+        public int GetScore() {
+            return _score;
+        }
+
+        public int GetLives() {
+            return _lives;
+        }
+
+        public MovingCell AsMovingCell() {
+            return _pacman;
+        }
+
+        #endregion
+
+        #region Events
+
+        public event EventHandler<PacmanStateChangedEventArgs> PacmanState;
+
+        public void ForceNotify() {
+            NotifyChangedStatement();
+        }
+
+        private void OnStatementChanged(PacmanStateChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -224,8 +233,11 @@ namespace PacMan_model.level.cells.pacman {
             OnStatementChanged(e);
         }
 
-        private class PacManCell : MovingCell {
+        #endregion
 
+        #region As Cell
+
+        private class PacManCell : MovingCell {
             //  number of ticks per second
             private readonly int _currentSpeed;
 
@@ -270,5 +282,7 @@ namespace PacMan_model.level.cells.pacman {
             }
 */
         }
+
+        #endregion
     }
 }
