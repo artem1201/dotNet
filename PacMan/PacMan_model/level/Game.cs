@@ -281,7 +281,7 @@ namespace PacMan_model.level {
         }
 
         private class Ticker : IDisposable {
-            private const int Delay = 1;
+            private const int Delay = 5;
 
             private readonly Timer _timer;
             private readonly Action _tickAction;

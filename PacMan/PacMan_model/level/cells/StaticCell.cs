@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using PacMan_model.level.cells.pacman;
+using PacMan_model.level.field;
 using PacMan_model.Properties;
 using PacMan_model.util;
 

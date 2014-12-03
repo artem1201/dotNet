@@ -89,18 +89,19 @@
     <Compile Include="level\cells\pacman\IPacManObserverable.cs" />
     <Compile Include="level\cells\pacman\PacMan.cs" />
     <Compile Include="level\cells\StaticCell.cs" />
-    <Compile Include="level\Field.cs" />
+    <Compile Include="level\field\Field.cs" />
     <Compile Include="level\Game.cs" />
     <Compile Include="level\IDirectionEventObserver.cs" />
-    <Compile Include="level\IField.cs" />
-    <Compile Include="level\IFieldObserverable.cs" />
+    <Compile Include="level\field\IField.cs" />
+    <Compile Include="level\field\IFieldObserverable.cs" />
     <Compile Include="level\IGame.cs" />
     <Compile Include="level\ILevel.cs" />
     <Compile Include="level\ILevelLoader.cs" />
     <Compile Include="level\ILevelObserverable.cs" />
-    <Compile Include="level\INotChanebleableField.cs" />
+    <Compile Include="level\field\INotChanebleableField.cs" />
     <Compile Include="level\Level.cs" />
     <Compile Include="level\LevelLoader.cs" />
+    <Compile Include="level\pathFinding\PathFinder.cs" />
     <Compile Include="level\TicksResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

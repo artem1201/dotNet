@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PacMan_model.level {
+namespace PacMan_model.level.field {
     public interface IFieldObserverable {
 
         event EventHandler<FieldStateChangedEventArs> FieldState;

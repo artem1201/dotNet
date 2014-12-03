@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using PacMan_model.level.field;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
     internal sealed class GhostBehaviorFactory : IGhostBehaviorFactory {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
+using PacMan_model.level.field;
 
 namespace PacMan_model.level {
     public interface ILevelObserverable {

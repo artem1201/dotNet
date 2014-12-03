@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using PacMan_model.level.field;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
     internal interface IGhostBehaviorFactory {

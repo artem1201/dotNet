@@ -1,5 +1,6 @@
 ﻿using System;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
+using PacMan_model.level.field;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
@@ -181,7 +182,8 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void Stop() {
-            _currentTick = 0;
+
+           _currentTick = 0;
             _nextPosition = null;
         }
 

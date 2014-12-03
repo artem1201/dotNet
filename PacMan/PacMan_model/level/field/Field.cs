@@ -4,9 +4,8 @@ using System.Linq;
 using PacMan_model.level.cells;
 using PacMan_model.util;
 
-namespace PacMan_model.level {
+namespace PacMan_model.level.field {
     internal sealed class Field : IField {
-
         private int _width;
         private int _height;
 
@@ -25,26 +24,21 @@ namespace PacMan_model.level {
         public Field() {}
 
         public Field(int width, int height, IList<StaticCell> cells) {
-
             Init(width, height, cells);
         }
 
         public void Init(int width, int height, IList<StaticCell> cells) {
-            if (null == cells)
-            {
+            if (null == cells) {
                 throw new ArgumentNullException("cells");
             }
 
-            if (width <= 0)
-            {
+            if (width <= 0) {
                 throw new ArgumentOutOfRangeException("width");
             }
-            if (height <= 0)
-            {
+            if (height <= 0) {
                 throw new ArgumentOutOfRangeException("height");
             }
-            if (width * height != cells.Count)
-            {
+            if (width * height != cells.Count) {
                 throw new ArgumentException("Field initialization: invalid size of cells list");
             }
 
@@ -61,8 +55,6 @@ namespace PacMan_model.level {
 
         #endregion
 
-
-
         #region Disposing
 
         public void Dispose() {
@@ -75,7 +67,6 @@ namespace PacMan_model.level {
         }
 
         private void UnsubsrcibeAll() {
-
             if (null != FieldState) {
                 foreach (var levelClient in FieldState.GetInvocationList()) {
                     FieldState -= levelClient as EventHandler<FieldStateChangedEventArs>;
@@ -106,9 +97,7 @@ namespace PacMan_model.level {
         }
 
         public StaticCell GetCell(int x, int y) {
-
-            if ((x >= _width) || (y >= _height)) {
-
+            if (!ContainsCellAtPoint(x, y)) {
                 return _wallAroundField;
             }
 
@@ -116,11 +105,59 @@ namespace PacMan_model.level {
         }
 
         public StaticCell GetCell(Point p) {
+            if (null == p) {
+                throw new ArgumentNullException("p");
+            }
+
             return GetCell(p.GetX(), p.GetY());
         }
 
         public IList<StaticCell> GetCells() {
             return _cells;
+        }
+
+        public StaticCell[] GetNeighbors(Point cellPoint)
+        {
+            if (null == cellPoint) {
+                throw new ArgumentNullException("cellPoint");
+            }
+
+            var points = new[] {
+                cellPoint.GetLeftOf(),
+                cellPoint.GetBelowOf(),
+                cellPoint.GetRightOf(),
+                cellPoint.GetAboveOf()
+            };
+
+            return (from point in points where ContainsCellAtPoint(point) select GetCell(point)).ToArray();
+        }
+
+        public Point[] GetNeighborsPoints(Point cellPoint)
+        {
+            if (null == cellPoint) {
+                throw new ArgumentNullException("cellPoint");
+            }
+
+            var points = new[] {
+                cellPoint.GetLeftOf(),
+                cellPoint.GetBelowOf(),
+                cellPoint.GetRightOf(),
+                cellPoint.GetAboveOf()
+            };
+
+            return (from point in points where ContainsCellAtPoint(point) select point).ToArray();
+        }
+
+        private bool ContainsCellAtPoint(Point cellPoint) {
+            if (null == cellPoint) {
+                throw new ArgumentNullException("cellPoint");
+            }
+
+            return ContainsCellAtPoint(cellPoint.GetX(), cellPoint.GetY());
+        }
+
+        private bool ContainsCellAtPoint(int x, int y) {
+            return ((x >= 0) && (y >= 0) && (x < _width) && (y < _height));
         }
 
         #endregion
@@ -133,7 +170,6 @@ namespace PacMan_model.level {
             }
 
             if ((x >= _width) || (y >= _height)) {
-
                 throw new CellOutOfField(new Point(x, y));
             }
 
@@ -141,15 +177,13 @@ namespace PacMan_model.level {
             //  if old cell is cell with cost
             //  if new cell is not cell with cost
             //  decrement number of cells with costs
-            if ( (_cells[y * _width + x] is ICellWithCost) && (false == (cell is ICellWithCost)) ) {
-
+            if ((_cells[y * _width + x] is ICellWithCost) && (false == (cell is ICellWithCost))) {
                 --_numberOfDots;
             }
-            //  if old cell is not cell with cost
-            //  if new cell is cell with cost
-            //  increment number of cell 
-            else if ( (false == (_cells[y * _width + x] is ICellWithCost)) && (cell is ICellWithCost)) {
-
+                //  if old cell is not cell with cost
+                //  if new cell is cell with cost
+                //  increment number of cell 
+            else if ((false == (_cells[y * _width + x] is ICellWithCost)) && (cell is ICellWithCost)) {
                 ++_numberOfDots;
             }
 
@@ -168,11 +202,9 @@ namespace PacMan_model.level {
             SetCell(p.GetX(), p.GetY(), cell);
         }
 
-        private void CalculateDots()
-        {
+        private void CalculateDots() {
             // ReSharper disable once UnusedVariable
-            foreach (var cell in _cells.OfType<ICellWithCost>())
-            {
+            foreach (var cell in _cells.OfType<ICellWithCost>()) {
                 ++_numberOfDots;
             }
         }
@@ -184,13 +216,11 @@ namespace PacMan_model.level {
         public event EventHandler<FieldStateChangedEventArs> FieldState;
         public event EventHandler DotsEnds;
 
-        public void ForceNotify()
-        {
+        public void ForceNotify() {
             NotifyChangedStatement();
         }
 
         private void OnStatementChangedNotify(FieldStateChangedEventArs e) {
-            
             if (null == e) {
                 throw new ArgumentNullException("e");
             }
@@ -203,17 +233,14 @@ namespace PacMan_model.level {
         }
 
         private void NotifyChangedStatement() {
-
             if (0 == _numberOfDots) {
                 OnDotsEnds();
-
             }
             else {
-                OnStatementChangedNotify(new FieldStateChangedEventArs(this)); 
+                OnStatementChangedNotify(new FieldStateChangedEventArs(this));
             }
         }
 
         #endregion
-
     }
 }
