@@ -11,14 +11,13 @@ using PacMan_model.level;
 using PacMan_model.util;
 
 namespace PacMan_gui.Controllers {
-    internal class GameController : IDirectionEventObserver {
+    internal sealed class GameController : IDirectionEventObserver {
         private static readonly string RootDir = Directory.GetCurrentDirectory();
         private readonly string _pathToCompany = RootDir + "\\Company";
         private readonly string _pathToGhosts = RootDir + "\\AI";
 
         private static readonly IDictionary<Key, Direction> KeyToDirection;
         private static readonly ISet<Key> PauseKeys;
-//        private Brush _canvasColorBeforePause = ColorResolver.StalkingColor;
 
         static GameController() {
             //TODO: refactor when settings will be added
@@ -133,7 +132,7 @@ namespace PacMan_gui.Controllers {
             if (_game.IsFinished()) {
                 MessageBox.Show(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
 
-                _game.Stop();
+                _game.Dispose();
 
                 _onGameEndCallback(_game.GetGameScore());
             }
@@ -200,11 +199,11 @@ namespace PacMan_gui.Controllers {
         }
 
         private void OnBack(object sender, EventArgs eventArgs) {
-            _game.Stop();
+            _game.Dispose();
             _onGameEndCallback(-1);
         }
 
-        protected virtual void NotifyDirectionChanged(DirectionChangedEventArgs e) {
+        private void NotifyDirectionChanged(DirectionChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
             }

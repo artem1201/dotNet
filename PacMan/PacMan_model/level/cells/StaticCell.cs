@@ -20,10 +20,10 @@ namespace PacMan_model.level.cells {
         /// </summary>
         /// <param name="pacman">pacman which is moved</param>
         /// <param name="field">field where pacman is moved</param>
-        public abstract void HandlePacmanMovement(IPacMan pacman, IField field);
+        internal abstract void HandlePacmanMovement(IPacMan pacman, IField field);
 
 
-        public abstract bool IsFreeForMoving();
+        internal abstract bool IsFreeForMoving();
     }
 
     public enum StaticCellType {
@@ -72,7 +72,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.FreeSpace;
         }
 
-        public override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -80,7 +80,7 @@ namespace PacMan_model.level.cells {
             pacman.StartMovingTo(Position);
         }
 
-        public override bool IsFreeForMoving() {
+        internal override bool IsFreeForMoving() {
             return true;
         }
     }
@@ -94,9 +94,9 @@ namespace PacMan_model.level.cells {
             return StaticCellType.Wall;
         }
 
-        public override void HandlePacmanMovement(IPacMan pacman, IField field) {}
+        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {}
 
-        public override bool IsFreeForMoving() {
+        internal override bool IsFreeForMoving() {
             return false;
         }
     }
@@ -129,7 +129,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.PacDot;
         }
 
-        public override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -146,7 +146,7 @@ namespace PacMan_model.level.cells {
                 });
         }
 
-        public override bool IsFreeForMoving() {
+        internal override bool IsFreeForMoving() {
             return true;
         }
     }
@@ -166,7 +166,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.Energizer;
         }
 
-        public override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -184,7 +184,7 @@ namespace PacMan_model.level.cells {
                 });
         }
 
-        public override bool IsFreeForMoving() {
+        internal override bool IsFreeForMoving() {
             return true;
         }
 

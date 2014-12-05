@@ -2,7 +2,7 @@
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
-    public interface IGhost : ICellWithCost, IGhostObserverable {
+    internal interface IGhost : ICellWithCost, IGhostObserverable {
 
         
 

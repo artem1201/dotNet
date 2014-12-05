@@ -2,7 +2,7 @@
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
-    public interface IPacMan : IPacManObserverable {
+    internal interface IPacMan : IPacManObserverable {
 
 
 

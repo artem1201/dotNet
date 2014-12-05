@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace PacMan_model.level {
-    public interface IGame {
+    public interface IGame : IDisposable {
 
         
 
@@ -12,7 +12,6 @@ namespace PacMan_model.level {
 
         void Start();
         void Pause();
-        void Stop();
 
         bool IsOn();
 

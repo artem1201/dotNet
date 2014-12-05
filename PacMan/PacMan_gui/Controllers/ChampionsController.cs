@@ -4,9 +4,9 @@ using PacMan_gui.ViewModel.champions;
 using PacMan_model.champions;
 
 namespace PacMan_gui.Controllers {
-    internal class ChampionsController {
+    internal sealed class ChampionsController {
         private readonly ChampionsTableView _championsTableView;
-        private ChampionsTable _championsTable;
+//        private ChampionsTable _championsTable;
 
         private readonly ChampionsViewModel _championsViewModel;
 
@@ -14,7 +14,7 @@ namespace PacMan_gui.Controllers {
 
         public ChampionsController(ChampionsTableView championsTableView, ChampionsTable championsTable, Action onExit) {
             _championsTableView = championsTableView;
-            _championsTable = championsTable;
+//            _championsTable = championsTable;
             _onExit = onExit;
 
             _championsViewModel = new ChampionsViewModel(championsTable);

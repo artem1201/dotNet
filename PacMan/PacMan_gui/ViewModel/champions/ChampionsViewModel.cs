@@ -5,7 +5,7 @@ using PacMan_gui.Annotations;
 using PacMan_model.champions;
 
 namespace PacMan_gui.ViewModel.champions {
-    internal class ChampionsViewModel {
+    internal sealed class ChampionsViewModel {
         public ObservableCollection<ChampionsTableItem> ChampionsTableItems { get; private set; }
 
         #region Initialization

@@ -12,7 +12,7 @@ namespace PacMan_model.level {
         //  directory where levels are
         private string _pathToLevels;
 
-        private Ticker _ticker;
+        private readonly Ticker _ticker;
 
         //  current level of company
         private ILevel _currentLevel;
@@ -94,9 +94,7 @@ namespace PacMan_model.level {
         }
 
         public bool LoadNextLevel() {
-            //_ticker.Stop();
-
-            _ticker.Dispose();
+            _ticker.Stop();
 
             if (_levelFiles.Length - 1 == _currentLevelNumber) {
                 return false;
@@ -121,8 +119,6 @@ namespace PacMan_model.level {
                 }
             }
 
-            _ticker = new Ticker(DoATick);
-
             return true;
         }
 
@@ -142,10 +138,6 @@ namespace PacMan_model.level {
 //                _currentLevel.Pause();
 //            }
             _ticker.Stop();
-        }
-
-        public void Stop() {
-            _ticker.Dispose();
         }
 
         public bool IsOn() {
@@ -317,5 +309,9 @@ namespace PacMan_model.level {
         }
 
         #endregion
+
+        public void Dispose() {
+            _ticker.Dispose();
+        }
     }
 }
