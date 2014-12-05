@@ -15,7 +15,7 @@ namespace PacMan_gui.View {
     public partial class MainWindowContent {
         private readonly MainWindow _mainWindow;
 
-        private readonly IChampionsTable _championsTable;
+        private readonly ChampionsTable _championsTable;
         private readonly ChampionsTableView _championsTableView;
         private readonly ChampionsController _championsController;
 

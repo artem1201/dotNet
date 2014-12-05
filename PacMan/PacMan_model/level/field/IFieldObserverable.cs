@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace PacMan_model.level.field {
-    public interface IFieldObserverable {
+    public interface IFieldObserverable : IDisposable {
 
         event EventHandler<FieldStateChangedEventArs> FieldState;
         event EventHandler DotsEnds;

@@ -21,14 +21,15 @@ namespace PacMan_model.level.cells.ghosts {
         private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
         private GhostBehavior _currentBehavior;
 
-
-        private GhostBehavior CurrentBehavior {
-            get { return _currentBehavior; }
-            set {
-                _currentBehavior = value;
-                _ghost.SetSpeed(_currentBehavior.GetSpeed());
+        private void SetCurrentBehavior(GhostBehavior behavior) {
+            if (null == behavior) {
+                throw new ArgumentNullException("behavior");
             }
+
+            _currentBehavior = behavior;
+            _ghost.SetSpeed(_currentBehavior.GetSpeed());
         }
+
 
         private MovingCell _target;
         private INotChanebleableField _field;
@@ -130,11 +131,11 @@ namespace PacMan_model.level.cells.ghosts {
         #region Behavior
 
         public void MakeStalker() {
-            CurrentBehavior = _ghostBehaviorFactory.GetStalkerBehavior(_name, _field, _target);
+            SetCurrentBehavior(_ghostBehaviorFactory.GetStalkerBehavior(_name, _field, _target));
         }
 
         public void MakeFrighted() {
-            CurrentBehavior = _ghostBehaviorFactory.GetFrightedBehavior(_name, _field, _target);
+            SetCurrentBehavior(_ghostBehaviorFactory.GetFrightedBehavior(_name, _field, _target));
         }
 
         #endregion
@@ -164,7 +165,7 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void StartMoving() {
-            _nextPosition = CurrentBehavior.GetNextPoint(_ghost.GetPosition());
+            _nextPosition = _currentBehavior.GetNextPoint(_ghost.GetPosition());
 
             KeepMoving();
         }

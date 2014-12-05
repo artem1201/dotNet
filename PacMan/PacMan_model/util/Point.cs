@@ -1,31 +1,26 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace PacMan_model.util {
-
-    public class Point : IEquatable<Point>
-    {
+    public sealed class Point : IEquatable<Point> {
         private int _x;
-        private int _y; 
+        private int _y;
 
         public Point(int x, int y) {
-
-            if (x < 0) {
-                throw new ArgumentOutOfRangeException("x");
-            }
-
-            if (y < 0) {
-                throw new ArgumentOutOfRangeException("y");
-            }
+//            if (x < 0) {
+//                throw new ArgumentOutOfRangeException("x");
+//            }
+//
+//            if (y < 0) {
+//                throw new ArgumentOutOfRangeException("y");
+//            }
 
             _x = x;
             _y = y;
-
         }
 
         public bool Equals(Point other) {
-            if (other == null) {
+            if (null == other) {
                 return false;
             }
             return _x == other._x && _y == other._y;
@@ -49,17 +44,22 @@ namespace PacMan_model.util {
     }
 
     //TODO: remove if it is default
-    public class PointComparer : IEqualityComparer<Point>
-    {
-        public bool Equals(Point x, Point y)
-        {
+    public class PointComparer : IEqualityComparer<Point> {
+        public bool Equals(Point x, Point y) {
+            if (null == x) {
+                throw new ArgumentNullException("x");
+            }
+            if (null == y) {
+                throw new ArgumentNullException("y");
+            }
             return x.Equals(y);
         }
 
-        public int GetHashCode(Point obj)
-        {
+        public int GetHashCode(Point obj) {
+            if (null == obj) {
+                throw new ArgumentNullException("obj");
+            }
             return obj.GetHashCode();
         }
     }
-    
 }

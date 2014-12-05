@@ -4,7 +4,7 @@ using PacMan_model.level.cells;
 using PacMan_model.util;
 
 namespace PacMan_model.level.field {
-    public interface IField : INotChanebleableField, IFieldObserverable, IDisposable {
+    public interface IField : INotChanebleableField, IFieldObserverable {
         void Init(int width, int height, IList<StaticCell> cells);
 
         int GetNumberOfDots();

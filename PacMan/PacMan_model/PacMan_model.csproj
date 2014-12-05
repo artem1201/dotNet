@@ -71,13 +71,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="champions\ChampionsTable.cs" />
-    <Compile Include="champions\IChampionsTable.cs" />
     <Compile Include="champions\IChampionsTableOberverable.cs" />
     <Compile Include="level\cells\Cell.cs" />
     <Compile Include="level\cells\ghosts\Ghost.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehaviorFactory.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehavior.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostFrightedBehavior.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostRandomFrightedBehavior.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostStalkerBehavior.cs" />
     <Compile Include="level\cells\ghosts\GhostFactory.cs" />
     <Compile Include="level\cells\ghosts\IGhost.cs" />

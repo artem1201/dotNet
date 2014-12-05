@@ -10,7 +10,7 @@ namespace PacMan_gui.ViewModel.champions {
 
         #region Initialization
 
-        public ChampionsViewModel(IChampionsTableOberverable championsTableOberverable) {
+        public ChampionsViewModel(ChampionsTable championsTableOberverable) {
             ChampionsTableItems = new ObservableCollection<ChampionsTableItem>();
 
             championsTableOberverable.ChampionsTableState += OnChampionsTableStateChanges;
@@ -19,7 +19,6 @@ namespace PacMan_gui.ViewModel.champions {
         }
 
         #endregion
-
 
         #region Events
 
@@ -36,10 +35,10 @@ namespace PacMan_gui.ViewModel.champions {
                         ChampionsTableItems.Clear();
 
                         foreach (var champion in championsTableChangedEventArs.Champions) {
-                            ChampionsTableItems.Add(new ChampionsTableItem(champion.Item2, champion.Item1));
+                            ChampionsTableItems.Add(new ChampionsTableItem(champion.GetName(), champion.GetScore()));
                         }
                     }));
-            }
+        }
 
         #endregion
     }

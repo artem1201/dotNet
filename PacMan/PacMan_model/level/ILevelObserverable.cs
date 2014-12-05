@@ -5,7 +5,7 @@ using PacMan_model.level.cells.pacman;
 using PacMan_model.level.field;
 
 namespace PacMan_model.level {
-    public interface ILevelObserverable {
+    public interface ILevelObserverable : IDisposable {
 
         event EventHandler<LevelStateChangedEventArgs> LevelState;
         void ForceNotify();

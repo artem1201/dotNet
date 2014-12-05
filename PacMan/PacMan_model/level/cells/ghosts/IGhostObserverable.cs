@@ -2,7 +2,7 @@
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
-    public interface IGhostObserverable {
+    public interface IGhostObserverable : IDisposable {
 
         event EventHandler<GhostStateChangedEventArgs> GhostState;
         void ForceNotify();

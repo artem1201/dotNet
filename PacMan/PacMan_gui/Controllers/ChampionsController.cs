@@ -4,16 +4,15 @@ using PacMan_gui.ViewModel.champions;
 using PacMan_model.champions;
 
 namespace PacMan_gui.Controllers {
-    class ChampionsController {
-
+    internal class ChampionsController {
         private readonly ChampionsTableView _championsTableView;
-        private IChampionsTable _championsTable;
-         
+        private ChampionsTable _championsTable;
+
         private readonly ChampionsViewModel _championsViewModel;
 
         private readonly Action _onExit;
 
-        public ChampionsController(ChampionsTableView championsTableView, IChampionsTable championsTable, Action onExit) {
+        public ChampionsController(ChampionsTableView championsTableView, ChampionsTable championsTable, Action onExit) {
             _championsTableView = championsTableView;
             _championsTable = championsTable;
             _onExit = onExit;
@@ -22,13 +21,11 @@ namespace PacMan_gui.Controllers {
         }
 
         public void Run() {
-            
             SetBinding();
             _championsTableView.ChampionsTableExit += OnExit;
         }
 
         private void SetBinding() {
-
             _championsTableView.ChampionsDataGrid.ItemsSource = _championsViewModel.ChampionsTableItems;
         }
 

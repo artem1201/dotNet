@@ -17,7 +17,7 @@ namespace PacMan_model.level.cells.pacman {
         private IField _field;
 
         //  last direction where pacman was moved
-        private Direction _currentDirection = Direction.Left;
+        private Direction _currentDirection = Direction.Directions[Direction.Left];
 
         //  number of tick (from 0 to pacman's-current-speed tiks)
         private int _currentTick;
@@ -76,14 +76,18 @@ namespace PacMan_model.level.cells.pacman {
         /// </summary>
         /// <param name="nextDirection">direction, where player will be moved</param>
         public void Move(Direction nextDirection) {
+            if (null == nextDirection) {
+                throw new ArgumentNullException("nextDirection");
+            }
             //  if pacman is on its move
             if (0 != _currentTick) {
                 KeepMoving();
             }
                 //  else pacman stops
             else {
-                var cellInNextDirection = _field.GetCell(_pacman.GetPosition().GetNearByDirection(nextDirection));
-                var cellInCurrentDirection = _field.GetCell(_pacman.GetPosition().GetNearByDirection(_currentDirection));
+
+                var cellInNextDirection = _field.GetCell(nextDirection.GetNear(_pacman.GetPosition()));
+                var cellInCurrentDirection = _field.GetCell(_currentDirection.GetNear(_pacman.GetPosition()));
 
                 if (cellInNextDirection.IsFreeForMoving()) {
                     _currentDirection = nextDirection;
@@ -97,38 +101,6 @@ namespace PacMan_model.level.cells.pacman {
                     cellInCurrentDirection.HandlePacmanMovement(this, _field);
                 }
             }
-        }
-
-        /// <summary>
-        ///     moves pacman in left direction on set field
-        ///     one call is one tick
-        /// </summary>
-        public void MoveLeft() {
-            Move(Direction.Left);
-        }
-
-        /// <summary>
-        ///     moves pacman in right direction on set field
-        ///     one call is one tick
-        /// </summary>
-        public void MoveRight() {
-            Move(Direction.Right);
-        }
-
-        /// <summary>
-        ///     moves pacman in up direction on set field
-        ///     one call is one tick
-        /// </summary>
-        public void MoveUp() {
-            Move(Direction.Up);
-        }
-
-        /// <summary>
-        ///     moves pacman in down direction on set field
-        ///     one call is one tick
-        /// </summary>
-        public void MoveDown() {
-            Move(Direction.Down);
         }
 
         public void StartMovingTo(Point newPosition, Action onEndOfMovement = null) {

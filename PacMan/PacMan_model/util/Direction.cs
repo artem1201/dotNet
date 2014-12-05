@@ -1,68 +1,56 @@
 using System;
 
 namespace PacMan_model.util {
-    /*
-     * <summary>
-     *  direction of moving objects on field
-     * </summary>
-     */
 
-    public enum Direction {
-        Left
-        ,
-        Right
-        ,
-        Up
-        ,
-        Down
-    }
+    public sealed class Direction {
+        private readonly Point _basisVector;
 
-    public static class DirectoinUtil {
-        public static Point GetLeftOf(this Point p) {
-            return new Point(p.GetX() - 1, p.GetY());
+        private Direction(Point point) {
+            _basisVector = point;
         }
 
-        public static Point GetRightOf(this Point p) {
-            return new Point(p.GetX() + 1, p.GetY());
-        }
+        public static int Up = 0;
+        public static int Down = 1;
+        public static int Left = 2;
+        public static int Right = 3;
 
-        public static Point GetBelowOf(this Point p) {
-            return new Point(p.GetX(), p.GetY() - 1);
-        }
+        public static Direction[] Directions = {
+            new Direction(new Point(0, 1)),
+            new Direction(new Point(0, -1)),
+            new Direction(new Point(-1, 0)),
+            new Direction(new Point(1, 0))
+        };
 
-        public static Point GetAboveOf(this Point p) {
-            return new Point(p.GetX(), p.GetY() + 1);
-        }
+        
 
-        public static Point GetNearByDirection(this Point p, Direction direction) {
-            switch (direction) {
-                case Direction.Left:
-                    return p.GetLeftOf();
-                case Direction.Right:
-                    return p.GetRightOf();
-                case Direction.Up:
-                    return p.GetAboveOf();
-                case Direction.Down:
-                    return p.GetBelowOf();
-                default:
-                    throw new ArgumentException("unknown direction" + direction.ToString());
+        public Point GetNear(Point point) {
+            if (null == point) {
+                throw new ArgumentNullException("point");
             }
+            return new Point(_basisVector.GetX() + point.GetX(), _basisVector.GetY() + point.GetY());
         }
 
-        public static bool IsLeftOf(this Point point, Point otherPoint) {
-            return point.GetLeftOf().Equals(otherPoint);
-        }
+        /// <summary>
+        /// Called on some direction
+        /// if you can move from second point to first point due to this direction
+        /// method returns true
+        /// </summary>
+        /// <param name="goal">point where you may will be</param>
+        /// <param name="start">point where you may be</param>
+        /// <returns>
+        /// if you can move from second point to first point due to this direction
+        /// method returns true
+        /// else return false
+        /// </returns>
+        public bool IsDirectionFromOneNeighborToSecond(Point goal, Point start) {
+            if (null == goal) {
+                throw new ArgumentNullException("goal");
+            }
+            if (null == start) {
+                throw new ArgumentNullException("start");
+            }
 
-        public static bool IsRightOf(this Point point, Point otherPoint) {
-            return point.GetRightOf().Equals(otherPoint);
-        }
-
-        public static bool IsAboveOf(this Point point, Point otherPoint) {
-            return point.GetAboveOf().Equals(otherPoint);
-        }
-
-        public static bool IsBelowOf(this Point point, Point otherPoint) {
-            return point.GetBelowOf().Equals(otherPoint);
+            return GetNear(start).Equals(goal);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using PacMan_model.level;
+using PacMan_model.level.field;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class FieldViewModel {

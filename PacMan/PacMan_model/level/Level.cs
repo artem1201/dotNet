@@ -13,7 +13,7 @@ namespace PacMan_model.level {
 
         //  depends on user input
         //  determines pacman's direction
-        private Direction? _currentDirection;
+        private Direction _currentDirection;
 
         private readonly IField _field;
 
@@ -102,9 +102,11 @@ namespace PacMan_model.level {
         #region Ticking
 
         public void DoATick() {
+
             if (null != _currentDirection) {
-                _pacman.Move(_currentDirection.Value);
+                _pacman.Move(_currentDirection);    
             }
+            
 
             CheckDeath();
 

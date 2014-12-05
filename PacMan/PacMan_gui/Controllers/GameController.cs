@@ -21,15 +21,16 @@ namespace PacMan_gui.Controllers {
 //        private Brush _canvasColorBeforePause = ColorResolver.StalkingColor;
 
         static GameController() {
+            //TODO: refactor when settings will be added
             KeyToDirection = new Dictionary<Key, Direction> {
-                {Key.W, Direction.Down},
-                {Key.A, Direction.Left},
-                {Key.S, Direction.Up},
-                {Key.D, Direction.Right},
-                {Key.Up, Direction.Down},
-                {Key.Left, Direction.Left},
-                {Key.Down, Direction.Up},
-                {Key.Right, Direction.Right}
+                {Key.W, Direction.Directions[Direction.Down]},
+                {Key.A, Direction.Directions[Direction.Left]},
+                {Key.S, Direction.Directions[Direction.Up]},
+                {Key.D, Direction.Directions[Direction.Right]},
+                {Key.Up, Direction.Directions[Direction.Down]},
+                {Key.Left, Direction.Directions[Direction.Left]},
+                {Key.Down, Direction.Directions[Direction.Up]},
+                {Key.Right, Direction.Directions[Direction.Right]}
             };
 
             PauseKeys = new HashSet<Key> {Key.P, Key.Space};
