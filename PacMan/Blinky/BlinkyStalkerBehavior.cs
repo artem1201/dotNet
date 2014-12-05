@@ -4,6 +4,7 @@ using System.Linq;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.level.field;
+using PacMan_model.level.pathFinding;
 using PacMan_model.util;
 
 namespace Blinky
