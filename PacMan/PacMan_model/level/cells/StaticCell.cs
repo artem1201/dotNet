@@ -23,7 +23,7 @@ namespace PacMan_model.level.cells {
         internal abstract void HandlePacmanMovement(IPacMan pacman, IField field);
 
 
-        internal abstract bool IsFreeForMoving();
+        public abstract bool IsFreeForMoving();
     }
 
     public enum StaticCellType {
@@ -80,7 +80,7 @@ namespace PacMan_model.level.cells {
             pacman.StartMovingTo(Position);
         }
 
-        internal override bool IsFreeForMoving() {
+        public override bool IsFreeForMoving() {
             return true;
         }
     }
@@ -96,7 +96,7 @@ namespace PacMan_model.level.cells {
 
         internal override void HandlePacmanMovement(IPacMan pacman, IField field) {}
 
-        internal override bool IsFreeForMoving() {
+        public override bool IsFreeForMoving() {
             return false;
         }
     }
@@ -146,7 +146,7 @@ namespace PacMan_model.level.cells {
                 });
         }
 
-        internal override bool IsFreeForMoving() {
+        public override bool IsFreeForMoving() {
             return true;
         }
     }
@@ -184,7 +184,7 @@ namespace PacMan_model.level.cells {
                 });
         }
 
-        internal override bool IsFreeForMoving() {
+        public override bool IsFreeForMoving() {
             return true;
         }
 

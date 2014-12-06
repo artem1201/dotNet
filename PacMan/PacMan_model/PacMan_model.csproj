@@ -77,8 +77,9 @@
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehaviorFactory.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehavior.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostFrightedBehavior.cs" />
-    <Compile Include="level\cells\ghosts\ghostBehavior\GhostRandomFrightedBehavior.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostRandomBehavior.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostStalkerBehavior.cs" />
+    <Compile Include="level\cells\ghosts\ghostBehavior\GhostStraightGoBehavior.cs" />
     <Compile Include="level\cells\ghosts\GhostFactory.cs" />
     <Compile Include="level\cells\ghosts\IGhost.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\IGhostBehaviorFactory.cs" />

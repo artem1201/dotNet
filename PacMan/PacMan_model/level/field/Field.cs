@@ -129,13 +129,40 @@ namespace PacMan_model.level.field {
                 .Zip(Direction.Directions, (point, direction) => direction.GetNear(point));
         }
 
-//        private bool ContainsCellAtPoint(Point cellPoint) {
+//        public IEnumerable<StaticCell> GetRemoteNeighbors(Point cellPoint, int distance) {
 //            if (null == cellPoint) {
 //                throw new ArgumentNullException("cellPoint");
 //            }
-//
-//            return ContainsCellAtPoint(cellPoint.GetX(), cellPoint.GetY());
+//            if ((0 >= distance) || (distance >= (_width - cellPoint.GetX()))
+//                || (distance >= (_height - cellPoint.GetY()))) {
+//                throw new ArgumentOutOfRangeException("distance");
+//            }
+//            return GetRemoteNeighborsPoints(cellPoint, distance).Select(GetCell);
 //        }
+//
+//        public IEnumerable<Point> GetRemoteNeighborsPoints(Point cellPoint, int distance) {
+//            if (null == cellPoint) {
+//                throw new ArgumentNullException("cellPoint");
+//            }
+//            if ((0 >= distance) || (distance >= (_width - cellPoint.GetX()))
+//                || (distance >= (_height - cellPoint.GetY()))) {
+//                throw new ArgumentOutOfRangeException("distance");
+//            }
+//            if (!ContainsCellAtPoint(cellPoint)) {
+//                throw new ArgumentException("field does not contain sent cell");
+//            }
+//
+//
+//            return Direction.GetSquareAround(cellPoint, distance);
+//        }
+
+        private bool ContainsCellAtPoint(Point cellPoint) {
+            if (null == cellPoint) {
+                throw new ArgumentNullException("cellPoint");
+            }
+
+            return ContainsCellAtPoint(cellPoint.GetX(), cellPoint.GetY());
+        }
 
         private bool ContainsCellAtPoint(int x, int y) {
             return ((x >= 0) && (y >= 0) && (x < _width) && (y < _height));

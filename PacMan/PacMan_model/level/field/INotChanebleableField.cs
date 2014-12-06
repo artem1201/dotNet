@@ -13,9 +13,13 @@ namespace PacMan_model.level.field {
 
         IList<StaticCell> GetCells();
 
-        IEnumerable<StaticCell> GetNeighbors(Point cellPoint);
 
+        IEnumerable<StaticCell> GetNeighbors(Point cellPoint);
         IEnumerable<Point> GetNeighborsPoints(Point cellPoint);
+
+
+//        IEnumerable<StaticCell> GetRemoteNeighbors(Point cellPoint, int distance);
+//        IEnumerable<Point> GetRemoteNeighborsPoints(Point cellPoint, int distance);
     }
 
 

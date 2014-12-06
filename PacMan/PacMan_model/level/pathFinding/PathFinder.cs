@@ -15,7 +15,7 @@ namespace PacMan_model.level.pathFinding {
             INotChanebleableField field) {
             return field.GetNeighbors(currentPoint)
                 .Where(neighbor => neighbor.IsFreeForMoving())
-                .OrderBy(neighbor => EuclidMetrict(neighbor.GetPosition(), goalPoint))
+                .OrderBy(neighbor => (neighbor.GetPosition().EuclidMetrict(goalPoint)))
                 .Select(neighbor => neighbor.GetPosition());
         }
 
@@ -26,14 +26,6 @@ namespace PacMan_model.level.pathFinding {
             return neighbors.ElementAt(Random.Next() % neighbors.Count()).GetPosition();
         }
 
-
-        private static int ManhattanMetric(this Point first, Point second) {
-            return Math.Abs(first.GetX() - second.GetX()) + Math.Abs(first.GetY() - second.GetY());
-        }
-
-        private static double EuclidMetrict(this Point first, Point second) {
-            return
-                Math.Sqrt(Math.Pow(first.GetX() - second.GetX(), 2) + Math.Pow(first.GetY() - second.GetY(), 2));
-        }
+        
     }
 }
