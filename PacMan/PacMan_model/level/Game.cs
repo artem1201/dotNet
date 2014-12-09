@@ -12,7 +12,7 @@ namespace PacMan_model.level {
         //  directory where levels are
         private string _pathToLevels;
 
-        private readonly Ticker _ticker;
+        private Ticker _ticker;
 
         //  current level of company
         private ILevel _currentLevel;
@@ -57,10 +57,14 @@ namespace PacMan_model.level {
         public void NewGame(int bestScore) {
             _ticker.Stop();
 
+            if (_ticker.IsDisposed()) {
+                _ticker = new Ticker(DoATick);
+            }
+
             _isWon = false;
             _isFinished = false;
 
-            _observers.Clear();
+//            _observers.Clear();
 
             _bestScore = bestScore;
             _currentScore = 0;
@@ -283,12 +287,15 @@ namespace PacMan_model.level {
             private readonly Timer _timer;
             private readonly Action _tickAction;
 
+            private bool _isDisposed;
 
             public Ticker(Action tickAction) {
                 _tickAction = tickAction;
 
                 _timer = new Timer(Delay);
                 _timer.Elapsed += Tick;
+
+                _isDisposed = false;
             }
 
             public bool IsOn() {
@@ -310,6 +317,12 @@ namespace PacMan_model.level {
             public void Dispose() {
                 _timer.Stop();
                 _timer.Dispose();
+
+                _isDisposed = true;
+            }
+
+            public bool IsDisposed() {
+                return _isDisposed;
             }
         }
 

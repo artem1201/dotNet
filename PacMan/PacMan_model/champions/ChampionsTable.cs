@@ -10,7 +10,6 @@ namespace PacMan_model.champions {
         private static readonly string PathToChampions = RootDir + "\\" /*+ "\\Champions"*/;
         private static readonly string ChampionsFileName = PathToChampions + "Champions.txt";
 
-
         private const int MaxRecords = 10;
         private readonly IList<ChampionsRecord> _championsRecords = new List<ChampionsRecord>(MaxRecords);
 
@@ -169,6 +168,14 @@ namespace PacMan_model.champions {
             }
 
             NotifyChangedStatement();
+        }
+
+        #endregion
+
+        #region Getters
+
+        public int GetBestScore() {
+            return _championsRecords.First().GetScore();
         }
 
         #endregion

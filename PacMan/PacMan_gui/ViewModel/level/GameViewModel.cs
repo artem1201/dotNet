@@ -140,8 +140,16 @@ namespace PacMan_gui.ViewModel.level {
                 PacManViewModel.Init(game.Level.PacMan, FieldViewModel, onPacmanDeathAction);
             }
 
+            if (null != GhostViewModels) {
+                foreach (var ghostViewModel in GhostViewModels) {
+                    ghostViewModel.ClearCanvas();
+                }
+                GhostViewModels.Clear();
+            }
+            else {
+                GhostViewModels = new List<GhostViewModel>();
+            }
 
-            GhostViewModels = new List<GhostViewModel>(game.Level.Ghosts.Count);
 
             foreach (var ghostObserverable in game.Level.Ghosts) {
                 GhostViewModels.Add(new GhostViewModel(ghostObserverable, this, canvas, FieldViewModel));

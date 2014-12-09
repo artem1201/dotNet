@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using PacMan_gui.Annotations;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
@@ -16,27 +18,12 @@ namespace PacMan_gui.Controllers {
         private readonly string _pathToCompany = RootDir + "\\Company";
         private readonly string _pathToGhosts = RootDir + "\\AI";
 
-        private static readonly IDictionary<Key, Direction> KeyToDirection;
-        private static readonly ISet<Key> PauseKeys;
 
-        static GameController() {
-            //TODO: refactor when settings will be added
-            KeyToDirection = new Dictionary<Key, Direction> {
-                {Key.W, Direction.Directions[Direction.Down]},
-                {Key.A, Direction.Directions[Direction.Left]},
-                {Key.S, Direction.Directions[Direction.Up]},
-                {Key.D, Direction.Directions[Direction.Right]},
-                {Key.Up, Direction.Directions[Direction.Down]},
-                {Key.Left, Direction.Directions[Direction.Left]},
-                {Key.Down, Direction.Directions[Direction.Up]},
-                {Key.Right, Direction.Directions[Direction.Right]}
-            };
+        private readonly IDictionary<Key, Direction> _keysToDirection;
+        private readonly ISet<Key> _pauseKeys; 
 
-            PauseKeys = new HashSet<Key> {Key.P, Key.Space};
-        }
-
-        private IGame _game;
-        private GameViewModel _gameViewModel;
+        private readonly IGame _game;
+        private readonly GameViewModel _gameViewModel;
         private readonly GameView _gameView;
 
         //  is called when game is over
@@ -45,31 +32,58 @@ namespace PacMan_gui.Controllers {
 
         #region Initialization
 
-        public GameController(GameView gameView, Action<int> onGameEndCallback) {
-            if (null == gameView) {
-                throw new ArgumentNullException("gameView");
+        public GameController(/*GameView gameView,*/ Action<int> onGameEndCallback,
+            [NotNull] IDictionary<Key, Direction> keysToDirection,
+            [NotNull] ISet<Key> pauseKeys) {
+//            if (null == gameView) {
+//                throw new ArgumentNullException("gameView");
+//            }
+            if (null == keysToDirection) {
+                throw new ArgumentNullException("keysToDirection");
+            }
+            if (null == pauseKeys) {
+                throw new ArgumentNullException("pauseKeys");
             }
 
             _onGameEndCallback = onGameEndCallback;
+            
 
-            _gameView = gameView;
+            _keysToDirection = keysToDirection;
+            _pauseKeys = pauseKeys;
+
+
+            _gameView = new GameView(keysToDirection.Keys.Concat(pauseKeys).ToArray());
             _gameView.GameViewSizeChanged += OnGameViewSizeChanged;
-        }
-
-        public void Run() {
-            _game = new Game(_pathToCompany, _pathToGhosts, 0);
-            _game.RegisterOnDirectionObserver(this);
-            _game.LevelFinished += OnLevelFinished;
-//            _game.Level.PacMan.PacmanState += OnPacManChanged;
-
-            _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas(), OnPacmanDeath);
-            RedrawGame();
-            BindDataWithGameView();
-
             _gameView.ControlOccurs += OnControlEvent;
             _gameView.BackPressed += OnBack;
 
+
+            _game = new Game(_pathToCompany, _pathToGhosts, 0);
+            _game.RegisterOnDirectionObserver(this);
+            _game.LevelFinished += OnLevelFinished;
+
+
+            _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas(), OnPacmanDeath);
+            BindDataWithGameView();
+        }
+
+        public void Run(int bestScore) {
+            
+            _game.NewGame(bestScore);
+            _gameViewModel.Init(_game, _gameView.GameCanvas, OnPacmanDeath);
+
+            RedrawGame();
+            
+
             _game.Start();
+        }
+
+        #endregion
+
+        #region Getters
+
+        public GameView GetGameView() {
+            return _gameView;
         }
 
         #endregion
@@ -176,19 +190,16 @@ namespace PacMan_gui.Controllers {
                 throw new ArgumentNullException("e");
             }
 
-            if (KeyToDirection.ContainsKey(e.PushedKey)) {
-                var directionChangedArgs = new DirectionChangedEventArgs(KeyToDirection[e.PushedKey]);
+            if (_keysToDirection.ContainsKey(e.PushedKey)) {
+                var directionChangedArgs = new DirectionChangedEventArgs(_keysToDirection[e.PushedKey]);
                 NotifyDirectionChanged(directionChangedArgs);
             }
-            else if (PauseKeys.Contains(e.PushedKey)) {
+            else if (_pauseKeys.Contains(e.PushedKey)) {
                 if (_game.IsOn()) {
                     _game.Pause();
-//                    _canvasColorBeforePause = _gameView.GetGameFieldCanvas().Background;
-//                    _gameView.GetGameFieldCanvas().Background = ColorResolver.PauseColor;
                 }
                 else {
                     _game.Start();
-//                    _gameView.GetGameFieldCanvas().Background = _canvasColorBeforePause;
                 }
 
                 _gameViewModel.SetPaused(!_game.IsOn());

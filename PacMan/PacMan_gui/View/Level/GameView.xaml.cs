@@ -11,38 +11,24 @@ namespace PacMan_gui.View.Level {
     /// Interaction logic for GameView.xaml
     /// </summary>
     public partial class GameView {
-
-        private static readonly IList<Key> ControlKeys = new List<Key> {
-            Key.Up
-            , Key.Down
-            , Key.Left
-            , Key.Right
-            
-            , Key.P
-            , Key.Space
-
-            , Key.W
-            , Key.A
-            , Key.S
-            , Key.D
-        };
-
-        private readonly IDictionary<string, Key> _buttonNameToControlKey;
-
         public event EventHandler GameViewSizeChanged;
         public event EventHandler<ControlEventArs> ControlOccurs;
         public event EventHandler BackPressed;
-        
-        public GameView() {
+
+        private readonly ICollection<Key> _controlKeys;
+//        private readonly Func<Button, Key> _controlButtonToKey;
+
+        public GameView([NotNull] ICollection<Key> controlKeys/*, [NotNull] Func<Button, Key> controlButtonToKey*/) {
+            if (null == controlKeys) {
+                throw new ArgumentNullException("controlKeys");
+            }
+//            if (null == controlButtonToKey) {
+//                throw new ArgumentNullException("controlButtonToKey");
+//            }
             InitializeComponent();
 
-            _buttonNameToControlKey = new Dictionary<string, Key> {
-                {UpButton.Name, Key.Up},
-                {DownButton.Name, Key.Down},
-                {LeftButton.Name, Key.Left},
-                {RightButton.Name, Key.Right},
-                {PauseButton.Name, Key.P}
-            };
+            _controlKeys = controlKeys;
+//            _controlButtonToKey = controlButtonToKey;
         }
 
         public Canvas GetGameFieldCanvas() {
@@ -52,7 +38,6 @@ namespace PacMan_gui.View.Level {
         #region Events
 
         private void GameView_OnSizeChanged(object o, SizeChangedEventArgs e) {
-            
             /*
             if (null == o) {
                 throw new ArgumentNullException("o");
@@ -62,7 +47,7 @@ namespace PacMan_gui.View.Level {
             }
             */
 
-            
+
             EventArgs.Empty.Raise(this, ref GameViewSizeChanged);
         }
 
@@ -71,8 +56,7 @@ namespace PacMan_gui.View.Level {
                 throw new ArgumentNullException("e");
             }
 
-            if (ControlKeys.Contains(e.Key)) {
-
+            if (_controlKeys.Contains(e.Key)) {
                 (new ControlEventArs(e.Key)).Raise(this, ref ControlOccurs);
             }
         }
@@ -90,16 +74,12 @@ namespace PacMan_gui.View.Level {
             if (null == pressedButton) {
                 throw new ArgumentException("only buttons allowed");
             }
-            if (false == _buttonNameToControlKey.ContainsKey(pressedButton.Name)) {
-                throw new ArgumentException("unknown button clicked");
-            }
+            //TODO:
 
-            (new ControlEventArs(_buttonNameToControlKey[pressedButton.Name])).Raise(this, ref ControlOccurs);
+//            (new ControlEventArs(_controlButtonToKey(pressedButton))).Raise(this, ref ControlOccurs);
         }
 
         private void GameView_OnLoaded(object sender, RoutedEventArgs e) {
-            
-            
             var window = Window.GetWindow(this);
             if (window != null) {
                 window.KeyDown += GameView_OnKeyDown;
@@ -114,17 +94,14 @@ namespace PacMan_gui.View.Level {
         }
 
         private void BackButton_OnClick(object sender, RoutedEventArgs e) {
-
             EventArgs.Empty.Raise(this, ref BackPressed);
-
         }
+
         #endregion
     }
 
     public class ControlEventArs : EventArgs {
-
         public ControlEventArs(Key pushedKey) {
-
             PushedKey = pushedKey;
         }
 

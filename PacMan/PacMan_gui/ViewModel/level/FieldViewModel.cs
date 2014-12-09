@@ -89,7 +89,7 @@ namespace PacMan_gui.ViewModel.level {
             }
         }
 
-        private void ClearCanvas() {
+        public void ClearCanvas() {
             foreach (var addedShape in _addedShapes.Where(addedShape => _canvas.Children.Contains(addedShape))) {
                 _canvas.Children.Remove(addedShape);
             }

@@ -109,7 +109,7 @@ namespace PacMan_gui.ViewModel.level {
             _canvas.Children.Add(_addedShape);
         }
 
-        private void ClearCanvas() {
+        public void ClearCanvas() {
             if ((_addedShape != null) && _canvas.Children.Contains(_addedShape)) {
                 _canvas.Children.Remove(_addedShape);
             }

@@ -63,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="Controllers\ChampionsController.cs" />
     <Compile Include="ViewModel\champions\ChampionsViewModel.cs" />
+    <Compile Include="ViewModel\settings\SettingsViewModel.cs" />
     <Compile Include="View\About\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
@@ -71,6 +72,9 @@
     </Compile>
     <Compile Include="View\MainWindowContent.xaml.cs">
       <DependentUpon>MainWindowContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Settings\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Page Include="View\About\AboutBox.xaml">
       <SubType>Designer</SubType>
@@ -111,6 +115,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Settings\Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -139,9 +147,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="View\Settings\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\PacMan_model\PacMan_model.csproj">
       <Project>{e764cc30-fe4d-4c1f-bf25-1ff6f073fa06}</Project>

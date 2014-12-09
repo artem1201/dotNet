@@ -6,6 +6,7 @@ using PacMan_gui.Controllers;
 using PacMan_gui.View.About;
 using PacMan_gui.View.Champions;
 using PacMan_gui.View.Level;
+using PacMan_gui.ViewModel.settings;
 using PacMan_model.champions;
 
 namespace PacMan_gui.View {
@@ -15,10 +16,15 @@ namespace PacMan_gui.View {
     public partial class MainWindowContent {
         private readonly MainWindow _mainWindow;
 
+
+        private readonly GameController _gameController;
+
+
         private readonly ChampionsTable _championsTable;
         private readonly ChampionsTableView _championsTableView;
         private readonly ChampionsController _championsController;
 
+        private readonly SettingsViewModel _settingsViewModel;
 
         private readonly AboutBox _aboutBox;
 
@@ -33,9 +39,15 @@ namespace PacMan_gui.View {
             _mainWindow = mainWindow;
             Application.Current.Exit += (sender, args) => OnExit();
 
+
             _championsTable = new ChampionsTable();
             _championsTableView = new ChampionsTableView();
             _championsController = new ChampionsController(_championsTableView, _championsTable, OnBackToMainWindow);
+
+            _settingsViewModel = new SettingsViewModel();
+
+
+            _gameController = new GameController(OnGameEnds, _settingsViewModel.KeysToDirection, _settingsViewModel.PauseKeys);
 
             _aboutBox = new AboutBox(OnBackToMainWindow);
         }
@@ -51,12 +63,18 @@ namespace PacMan_gui.View {
         #region Playing
 
         private void PlayButton_OnClick(object sender, RoutedEventArgs e) {
-            _mainWindow.ContentControl.Content = new GameView();
+            _mainWindow.ContentControl.Content = _gameController.GetGameView();
 
-            (_mainWindow.ContentControl.Content as GameView).Loaded += delegate {
-                var gameController = new GameController(_mainWindow.ContentControl.Content as GameView, OnGameEnds);
-                gameController.Run();
-            };
+            var gameView = _mainWindow.ContentControl.Content as GameView;
+            if (null != gameView) {
+                gameView.Loaded += delegate {
+
+                    _gameController.Run(_championsTable.GetBestScore());
+                };
+            }
+            else {
+                throw new Exception("game view has not been loaded");
+            }
         }
 
         private void OnGameEnds(int gameScore) {
