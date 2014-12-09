@@ -2,10 +2,8 @@
 
 namespace PacMan_model.level {
     public interface IGame : IDisposable {
-
-        
-
-        void NewGame(int bestScore, string pathToLevels = null);
+        void NewGame(int bestScore);
+        void NewGame(int bestScore, string pathToLevels);
         bool LoadNextLevel();
 
         ILevelObserverable Level { get; }
@@ -32,9 +30,21 @@ namespace PacMan_model.level {
 
     public class InvalidLevelDirectory : Exception {
         public InvalidLevelDirectory(string directoryName) {
+            if (null == directoryName) {
+                throw new ArgumentNullException("directoryName");
+            }
             DirectoryName = directoryName;
         }
 
+        public InvalidLevelDirectory(string directoryName, Exception reason) : this(directoryName) {
+            if (null == reason) {
+                throw new ArgumentNullException("reason");
+            }
+            CausException = reason;
+        }
+
         public string DirectoryName { get; private set; }
+
+        public Exception CausException { get; private set; }
     }
 }

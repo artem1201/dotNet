@@ -54,11 +54,7 @@ namespace PacMan_model.level {
             NewGame(bestScore, pathToLevels);
         }
 
-        public void NewGame(int bestScore, string pathToLevels = null) {
-            if (null != pathToLevels) {
-                _pathToLevels = pathToLevels;
-            }
-
+        public void NewGame(int bestScore) {
             _ticker.Stop();
 
             _isWon = false;
@@ -73,8 +69,8 @@ namespace PacMan_model.level {
             try {
                 _levelFiles = Directory.GetFiles(_pathToLevels);
             }
-            catch (DirectoryNotFoundException) {
-                throw new InvalidLevelDirectory(_pathToLevels);
+            catch (Exception e) {
+                throw new InvalidLevelDirectory(_pathToLevels, e);
             }
 
             if (0 == _levelFiles.Length) {
@@ -83,6 +79,15 @@ namespace PacMan_model.level {
 
             _currentLevelNumber = -1;
             LoadNextLevel();
+        }
+
+        public void NewGame(int bestScore, string pathToLevels) {
+            if (null == pathToLevels) {
+                throw new ArgumentNullException("pathToLevels");
+            }
+            _pathToLevels = pathToLevels;
+
+            NewGame(bestScore);
         }
 
         #endregion
