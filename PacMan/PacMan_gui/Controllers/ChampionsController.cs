@@ -1,27 +1,43 @@
 ﻿using System;
+using PacMan_gui.Annotations;
 using PacMan_gui.View.Champions;
 using PacMan_gui.ViewModel.champions;
 using PacMan_model.champions;
 
 namespace PacMan_gui.Controllers {
-    internal sealed class ChampionsController {
+    internal sealed class ChampionsController : IDisposable {
+        
+        private readonly ChampionsTable _championsTable;
         private readonly ChampionsTableView _championsTableView;
-//        private ChampionsTable _championsTable;
-
         private readonly ChampionsViewModel _championsViewModel;
 
         private readonly Action _onExit;
 
-        public ChampionsController(ChampionsTableView championsTableView, ChampionsTable championsTable, Action onExit) {
-            _championsTableView = championsTableView;
-//            _championsTable = championsTable;
+        public ChampionsController([NotNull] Action onExit) {
+            if (null == onExit) {
+                throw new ArgumentNullException("onExit");
+            }
+            _championsTableView = new ChampionsTableView();
+            
+            _championsTable = new ChampionsTable();
+            
             _onExit = onExit;
 
-            _championsViewModel = new ChampionsViewModel(championsTable);
+            _championsViewModel = new ChampionsViewModel(_championsTable);
+
+            SetBinding();
+        }
+
+        public ChampionsTableView GetChampionsTableView() {
+            return _championsTableView;
+        }
+
+        public ChampionsTable GetChampionsTable() {
+            return _championsTable;
         }
 
         public void Run() {
-            SetBinding();
+            
             _championsTableView.ChampionsTableExit += OnExit;
         }
 
@@ -31,6 +47,10 @@ namespace PacMan_gui.Controllers {
 
         private void OnExit(object sender, EventArgs e) {
             _onExit();
+        }
+
+        public void Dispose() {
+            _championsTable.Dispose();
         }
     }
 }

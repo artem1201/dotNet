@@ -71,7 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="champions\ChampionsTable.cs" />
-    <Compile Include="champions\IChampionsTableOberverable.cs" />
+    <Compile Include="champions\IChampionsTableObserverable.cs" />
     <Compile Include="level\cells\Cell.cs" />
     <Compile Include="level\cells\ghosts\Ghost.cs" />
     <Compile Include="level\cells\ghosts\ghostBehavior\GhostBehaviorFactory.cs" />

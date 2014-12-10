@@ -4,10 +4,8 @@ using System.Windows;
 using PacMan_gui.Annotations;
 using PacMan_gui.Controllers;
 using PacMan_gui.View.About;
-using PacMan_gui.View.Champions;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.settings;
-using PacMan_model.champions;
 
 namespace PacMan_gui.View {
     /// <summary>
@@ -20,13 +18,14 @@ namespace PacMan_gui.View {
         private readonly GameController _gameController;
 
 
-        private readonly ChampionsTable _championsTable;
-        private readonly ChampionsTableView _championsTableView;
         private readonly ChampionsController _championsController;
+
 
         private readonly SettingsViewModel _settingsViewModel;
 
+
         private readonly AboutBox _aboutBox;
+
 
         #region Initialization
 
@@ -40,14 +39,14 @@ namespace PacMan_gui.View {
             Application.Current.Exit += (sender, args) => OnExit();
 
 
-            _championsTable = new ChampionsTable();
-            _championsTableView = new ChampionsTableView();
-            _championsController = new ChampionsController(_championsTableView, _championsTable, OnBackToMainWindow);
+            _championsController = new ChampionsController(OnBackToMainWindow);
+
 
             _settingsViewModel = new SettingsViewModel();
 
 
             _gameController = new GameController(OnGameEnds, _settingsViewModel.KeysToDirection, _settingsViewModel.PauseKeys);
+
 
             _aboutBox = new AboutBox(OnBackToMainWindow);
         }
@@ -69,7 +68,7 @@ namespace PacMan_gui.View {
             if (null != gameView) {
                 gameView.Loaded += delegate {
 
-                    _gameController.Run(_championsTable.GetBestScore());
+                    _gameController.Run(_championsController.GetChampionsTable().GetBestScore());
                 };
             }
             else {
@@ -80,7 +79,7 @@ namespace PacMan_gui.View {
         private void OnGameEnds(int gameScore) {
             OnBackToMainWindow();
 
-            if (_championsTable.IsNewRecord(gameScore)) {
+            if (_championsController.GetChampionsTable().IsNewRecord(gameScore)) {
                 AddNewRecord(gameScore);
             }
         }
@@ -96,7 +95,7 @@ namespace PacMan_gui.View {
 
         private void OnExit() {
             //  save champions to file
-            _championsTable.Dispose();
+            _championsController.Dispose();
         }
 
         #endregion
@@ -130,7 +129,7 @@ namespace PacMan_gui.View {
 
             if (_addNewRecord) {
                 //  add new champion
-                _championsTable.AddNewResult(score, _newChampionName);
+                _championsController.GetChampionsTable().AddNewResult(score, _newChampionName);
             }
 
             //  clean champion name
@@ -160,7 +159,7 @@ namespace PacMan_gui.View {
         }
 
         private void ChampionsButton_OnClick(object sender, RoutedEventArgs e) {
-            _mainWindow.ContentControl.Content = _championsTableView;
+            _mainWindow.ContentControl.Content = _championsController.GetChampionsTableView();
 
             _championsController.Run();
         }

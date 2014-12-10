@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace PacMan_model.champions {
-    public interface IChampionsTableOberverable {
+    public interface IChampionsTableObserverable : IDisposable {
         event EventHandler<ChampionsTableChangedEventArs> ChampionsTableState;
         void ForceNotify();
 

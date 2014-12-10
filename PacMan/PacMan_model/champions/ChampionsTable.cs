@@ -5,7 +5,7 @@ using System.Linq;
 using PacMan_model.util;
 
 namespace PacMan_model.champions {
-    public sealed class ChampionsTable : IChampionsTableOberverable {
+    public sealed class ChampionsTable : IChampionsTableObserverable {
         private static readonly string RootDir = Directory.GetCurrentDirectory();
         private static readonly string PathToChampions = RootDir + "\\" /*+ "\\Champions"*/;
         private static readonly string ChampionsFileName = PathToChampions + "Champions.txt";
