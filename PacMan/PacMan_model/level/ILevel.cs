@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PacMan_model.level {
+﻿namespace PacMan_model.level {
     internal interface ILevel : ILevelObserverable {
 
         LevelCondition GetLevelCondition();

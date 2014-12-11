@@ -6,7 +6,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d"
         SizeChanged="GameView_OnSizeChanged"
-        Loaded="GameView_OnLoaded">
+             KeyDown="GameView_OnKeyDown"
+             Loaded="GameView_OnLoaded">
     <UserControl.Resources>
         <system:String x:Key="ScoreLabel">Score</system:String>
         <system:String x:Key="CompanyScoreLabel">Company Score</system:String>
@@ -37,19 +38,19 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Name="UpButton" Content="Up" Grid.Column="1" Grid.Row="0" Click="ControlButton_OnClick"/>
-                <Button Name="LeftButton" Content="Left" Grid.Column="0" Grid.Row="1" Click="ControlButton_OnClick"/>
-                <Button Name="DownButton" Content="Down" Grid.Column="1" Grid.Row="1" Click="ControlButton_OnClick"/>
-                <Button Name="RightButton" Content="Right" Grid.Column="2" Grid.Row="1" Click="ControlButton_OnClick"/>
+                <Button Name="UpButton" Content="Up" Grid.Column="1" Grid.Row="0"/>
+                <Button Name="LeftButton" Content="Left" Grid.Column="0" Grid.Row="1"/>
+                <Button Name="DownButton" Content="Down" Grid.Column="1" Grid.Row="1"/>
+                <Button Name="RightButton" Content="Right" Grid.Column="2" Grid.Row="1"/>
             </Grid>
-            
-            <Button Name="PauseButton" Content="Pause" Margin="5" Click="PauseButton_OnClick"/>
+
+            <Button Name="PauseButton" Content="Pause" Margin="5"/>
 
             
 
         </StackPanel>
 
-        <Button Grid.Column="0" Name="BackButton" Content="Back" Margin="5" VerticalAlignment="Bottom" Click="BackButton_OnClick"/>
+        <Button Grid.Column="0" Name="BackButton" Content="Back" Margin="5" VerticalAlignment="Bottom"/>
 
         <StackPanel Grid.Column="2">
             <Label Content="{StaticResource ScoreLabel}" FontSize="16"/>

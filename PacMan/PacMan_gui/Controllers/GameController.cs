@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
@@ -20,7 +20,9 @@ namespace PacMan_gui.Controllers {
 
 
         private readonly IDictionary<Key, Direction> _keysToDirection;
-        private readonly ISet<Key> _pauseKeys; 
+        private readonly ISet<Key> _pauseKeys;
+
+        private readonly IDictionary<Button, Direction> _directionButtonToDirection;
 
         private readonly IGame _game;
         private readonly GameViewModel _gameViewModel;
@@ -32,12 +34,10 @@ namespace PacMan_gui.Controllers {
 
         #region Initialization
 
-        public GameController(/*GameView gameView,*/ Action<int> onGameEndCallback,
+        public GameController(
+            Action<int> onGameEndCallback,
             [NotNull] IDictionary<Key, Direction> keysToDirection,
             [NotNull] ISet<Key> pauseKeys) {
-//            if (null == gameView) {
-//                throw new ArgumentNullException("gameView");
-//            }
             if (null == keysToDirection) {
                 throw new ArgumentNullException("keysToDirection");
             }
@@ -46,17 +46,32 @@ namespace PacMan_gui.Controllers {
             }
 
             _onGameEndCallback = onGameEndCallback;
-            
+
 
             _keysToDirection = keysToDirection;
             _pauseKeys = pauseKeys;
 
 
-            _gameView = new GameView(keysToDirection.Keys.Concat(pauseKeys).ToArray());
+            _gameView = new GameView();
             _gameView.GameViewSizeChanged += OnGameViewSizeChanged;
-            _gameView.ControlOccurs += OnControlEvent;
-            _gameView.BackPressed += OnBack;
 
+
+            _onBackButtonCommand = new OnBackButtonCommand(OnBackAction);
+
+            _onPauseButtonCommand = new OnPauseButtonCommand(DoPause);
+            _onDirectionButtonCommand = new OnDirectionButtonCommand(OnDirectionButtonAction);
+
+            _onPauseKeyCommand = new OnPauseKeyCommand(DoPause);
+            _onDirectionKeyCommand = new OnDirectionKeyCommand(OnDirectionKeyAction);
+
+            //TODO: hardcoded directions and button
+            //add buttons for directions dynamicly
+            _directionButtonToDirection = new Dictionary<Button, Direction> {
+                {_gameView.UpButton, Direction.Directions[Direction.Down]},
+                {_gameView.DownButton, Direction.Directions[Direction.Up]},
+                {_gameView.LeftButton, Direction.Directions[Direction.Left]},
+                {_gameView.RightButton, Direction.Directions[Direction.Right]}
+            };
 
             _game = new Game(_pathToCompany, _pathToGhosts, 0);
             _game.RegisterOnDirectionObserver(this);
@@ -64,16 +79,16 @@ namespace PacMan_gui.Controllers {
 
 
             _gameViewModel = new GameViewModel(_game, _gameView.GetGameFieldCanvas(), OnPacmanDeath);
-            BindDataWithGameView();
         }
 
         public void Run(int bestScore) {
-            
             _game.NewGame(bestScore);
             _gameViewModel.Init(_game, _gameView.GameCanvas, OnPacmanDeath);
 
+            BindDataWithGameView();
+
             RedrawGame();
-            
+
 
             _game.Start();
         }
@@ -90,7 +105,13 @@ namespace PacMan_gui.Controllers {
 
         #region Binding
 
+        private bool _isBinded;
+
         private void BindDataWithGameView() {
+            if (_isBinded) {
+                return;
+            }
+
             BindTextBlock(_gameView.ScoreTextBlock, _gameViewModel, "CurrentLevelScore");
             BindTextBlock(_gameView.CompanyScoreTextBlock, _gameViewModel, "CurrentScore");
             BindTextBlock(_gameView.BestScoreTextBlock, _gameViewModel, "BestScore");
@@ -104,6 +125,20 @@ namespace PacMan_gui.Controllers {
                 _gameViewModel,
                 "Condition",
                 new ColorResolver.LevelConditionToColorConverter());
+
+            BindControlButton(_gameView.PauseButton, _onPauseButtonCommand);
+            BindControlButton(_gameView.BackButton, _onBackButtonCommand);
+
+            //TODO: hardcode again
+            BindControlButton(_gameView.UpButton, _onDirectionButtonCommand);
+            BindControlButton(_gameView.DownButton, _onDirectionButtonCommand);
+            BindControlButton(_gameView.LeftButton, _onDirectionButtonCommand);
+            BindControlButton(_gameView.RightButton, _onDirectionButtonCommand);
+
+            BindKeys(_gameView, _onPauseKeyCommand, _pauseKeys);
+            BindKeys(_gameView, _onDirectionKeyCommand, _keysToDirection.Keys);
+
+            _isBinded = true;
         }
 
         private static void BindTextBlock(TextBlock element, Object source, string propertyName) {
@@ -118,6 +153,177 @@ namespace PacMan_gui.Controllers {
             IValueConverter converter) {
             var binding = new Binding(propertyName) {Source = source, Converter = converter};
             canvas.SetBinding(Panel.BackgroundProperty, binding);
+        }
+
+        private static void BindControlButton(ButtonBase button, ICommand command) {
+            button.Command = command;
+            button.CommandParameter = button;
+        }
+
+        private static void BindKeys(GameView gameView, ICommand command, IEnumerable<Key> pauseKeys) {
+            foreach (var pauseKey in pauseKeys) {
+                gameView.AddKeyBinding(new KeyBinding {Command = command, CommandParameter = pauseKey, Key = pauseKey});
+            }
+        }
+
+        #endregion
+
+        #region Commands
+
+        private readonly ICommand _onPauseButtonCommand;
+        private readonly ICommand _onBackButtonCommand;
+        private readonly ICommand _onDirectionButtonCommand;
+
+        private readonly ICommand _onPauseKeyCommand;
+        private readonly ICommand _onDirectionKeyCommand;
+
+        private class OnBackButtonCommand : ICommand {
+            private readonly Action _onBackAction;
+
+            public OnBackButtonCommand(Action onBackAction) {
+                _onBackAction = onBackAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute(object parameter) {
+                _onBackAction();
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private class OnPauseButtonCommand : ICommand {
+            private readonly Action _onPauseAction;
+
+            public OnPauseButtonCommand(Action onPauseAction) {
+                _onPauseAction = onPauseAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute(object parameter) {
+                _onPauseAction();
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private class OnDirectionButtonCommand : ICommand {
+            private readonly Action<Button> _onDirectionButtonAction;
+
+            public OnDirectionButtonCommand(Action<Button> onDirectionButtonAction) {
+                _onDirectionButtonAction = onDirectionButtonAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute([NotNull] object parameter) {
+                if (null == parameter) {
+                    throw new ArgumentNullException("parameter");
+                }
+
+                var directionButton = parameter as Button;
+                if (null == directionButton) {
+                    throw new ArgumentException("parameter of OnDirectionButtonCommand can be only button");
+                }
+
+                _onDirectionButtonAction(directionButton);
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private class OnPauseKeyCommand : ICommand {
+            private readonly Action _onPauseAction;
+
+            public OnPauseKeyCommand(Action onPauseAction) {
+                _onPauseAction = onPauseAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute(object parameter) {
+                _onPauseAction();
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private class OnDirectionKeyCommand : ICommand {
+            private readonly Action<Key> _onDirectionKeyAction;
+
+            public OnDirectionKeyCommand(Action<Key> onDirectionKeyAction) {
+                _onDirectionKeyAction = onDirectionKeyAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute([NotNull] object parameter) {
+                if (null == parameter) {
+                    throw new ArgumentNullException("parameter");
+                }
+
+                if (false == parameter is Key) {
+                    throw new ArgumentException("parameter of OnDirectionKeyCommand can be only Key");
+                }
+
+                _onDirectionKeyAction((Key) parameter);
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        #endregion
+
+        #region Actions
+
+        private void OnDirectionKeyAction(Key directionKey) {
+            if (_keysToDirection.ContainsKey(directionKey)) {
+                NotifyDirectionChanged(new DirectionChangedEventArgs(_keysToDirection[directionKey]));
+            }
+            else {
+                throw new ArgumentException("unknown key tries to be direction key");
+            }
+        }
+
+        private void OnDirectionButtonAction([NotNull] Button directionButton) {
+            if (null == directionButton) {
+                throw new ArgumentNullException("directionButton");
+            }
+
+            if (_directionButtonToDirection.ContainsKey(directionButton)) {
+                NotifyDirectionChanged(new DirectionChangedEventArgs(_directionButtonToDirection[directionButton]));
+            }
+            else {
+                throw new ArgumentException("unknown button tries to be direction button");
+            }
+        }
+
+        private void DoPause() {
+            if (_game.IsOn()) {
+                _game.Pause();
+            }
+            else {
+                _game.Start();
+            }
+
+            _gameViewModel.SetPaused(!_game.IsOn());
+        }
+
+        private void OnBackAction() {
+            _game.Dispose();
+            _onGameEndCallback(-1);
         }
 
         #endregion
@@ -184,35 +390,6 @@ namespace PacMan_gui.Controllers {
         }
 
         public event EventHandler<DirectionChangedEventArgs> DirectionChanged;
-
-        private void OnControlEvent(Object sender, ControlEventArs e) {
-            if (null == e) {
-                throw new ArgumentNullException("e");
-            }
-
-            if (_keysToDirection.ContainsKey(e.PushedKey)) {
-                var directionChangedArgs = new DirectionChangedEventArgs(_keysToDirection[e.PushedKey]);
-                NotifyDirectionChanged(directionChangedArgs);
-            }
-            else if (_pauseKeys.Contains(e.PushedKey)) {
-                if (_game.IsOn()) {
-                    _game.Pause();
-                }
-                else {
-                    _game.Start();
-                }
-
-                _gameViewModel.SetPaused(!_game.IsOn());
-            }
-            else {
-                throw new ArgumentException("unknown key pushed");
-            }
-        }
-
-        private void OnBack(object sender, EventArgs eventArgs) {
-            _game.Dispose();
-            _onGameEndCallback(-1);
-        }
 
         private void NotifyDirectionChanged(DirectionChangedEventArgs e) {
             if (null == e) {
