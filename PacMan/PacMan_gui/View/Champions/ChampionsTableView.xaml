@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         
         <Label Grid.Row="0" Content="{StaticResource ChampionsTitle}" Style="{StaticResource MainLableStyle}"/>
-        <DataGrid Grid.Row="1" Name="ChampionsDataGrid" Style="{StaticResource ChampionsTableStyle}" ItemsSource="{Binding IsAsync=True}"/>
+        <DataGrid Grid.Row="1" Name="ChampionsDataGrid" Style="{StaticResource ChampionsTableStyle}" ItemsSource="{Binding IsAsync=True}" IsReadOnly="True"/>
 
         <Button Grid.Row="2" Name="ExitButton" Click="ExitButton_OnClick" HorizontalAlignment="Center" MinWidth="200" VerticalAlignment="Bottom" Style="{StaticResource CommonButtonStyle}">Back</Button>
     </Grid>

@@ -47,10 +47,10 @@ namespace PacMan_model.champions {
                     return new ChampionsRecord(name, score);
                 }
                 catch (ArgumentException) {
-                    throw new InvalidChampionsSource("invalid line: " + PathToChampions);
+                    throw new InvalidChampionsSource("invalid line: " + str + " in champions file " + PathToChampions);
                 }
                 catch (FormatException) {
-                    throw new InvalidChampionsSource("invalid line: " + PathToChampions);
+                    throw new InvalidChampionsSource("invalid line: " + " in champions file " + PathToChampions);
                 }
             }
 
@@ -67,8 +67,6 @@ namespace PacMan_model.champions {
             }
         }
 
-        private bool _isInit;
-
         public ChampionsTable() {
             LoadFromFile();
         }
@@ -79,6 +77,7 @@ namespace PacMan_model.champions {
             if (!File.Exists(ChampionsFileName)) {
                 return;
             }
+
             using (var input = File.OpenText(ChampionsFileName)) {
                 while (!input.EndOfStream) {
                     var readLine = input.ReadLine();
@@ -90,8 +89,6 @@ namespace PacMan_model.champions {
                     AddNewResult(ChampionsRecord.FromString(readLine));
                 }
             }
-
-            _isInit = true;
         }
 
         public void SaveToFile() {
@@ -175,6 +172,11 @@ namespace PacMan_model.champions {
         #region Getters
 
         public int GetBestScore() {
+
+            if (0 == _championsRecords.Count) {
+                return 0;
+            }
+
             return _championsRecords.First().GetScore();
         }
 
@@ -189,10 +191,6 @@ namespace PacMan_model.champions {
         }
 
         private void NotifyChangedStatement() {
-            if (!_isInit) {
-                return;
-            }
-
             OnStatementChangedNotify(new ChampionsTableChangedEventArs(_championsRecords));
         }
 

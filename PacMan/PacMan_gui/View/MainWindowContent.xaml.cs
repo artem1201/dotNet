@@ -38,8 +38,13 @@ namespace PacMan_gui.View {
             _mainWindow = mainWindow;
             Application.Current.Exit += (sender, args) => OnExit();
 
-
-            _championsController = new ChampionsController(OnBackToMainWindow);
+            try {
+                _championsController = new ChampionsController(OnBackToMainWindow);
+            }
+            catch (Exception) {
+                MessageBox.Show("existed champions file is invalid, new file is used");
+            }
+            
 
 
             _settingsViewModel = new SettingsViewModel();
