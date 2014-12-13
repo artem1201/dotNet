@@ -7,9 +7,12 @@ namespace PacMan_gui.View.Champions {
     /// Interaction logic for ChampionsTable.xaml
     /// </summary>
     public partial class ChampionsTableView {
+        public MainWindow MainWindow { get; private set; }
         public ChampionsTableView() {
             InitializeComponent();
         }
+
+
 
         public EventHandler ChampionsTableExit;
 
@@ -19,6 +22,14 @@ namespace PacMan_gui.View.Champions {
 
         private void NotifyExit() {
             EventArgs.Empty.Raise(this, ref ChampionsTableExit);
+        }
+
+        private void ChampionsTableView_OnLoaded(object sender, RoutedEventArgs e) {
+            MainWindow = Window.GetWindow(this) as MainWindow;
+
+            if (null == MainWindow) {
+                throw new Exception("only window of class MainWindow is able to hadle champions table");
+            }
         }
     }
 }

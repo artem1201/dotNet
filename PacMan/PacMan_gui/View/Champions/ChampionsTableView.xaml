@@ -4,7 +4,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:system="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             Loaded="ChampionsTableView_OnLoaded">
 
     <UserControl.Resources>
         <system:String x:Key="ChampionsTitle">Champions</system:String>
@@ -12,9 +13,9 @@
     
     <Grid HorizontalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         
         <Label Grid.Row="0" Content="{StaticResource ChampionsTitle}" Style="{StaticResource MainLableStyle}"/>

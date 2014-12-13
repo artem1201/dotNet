@@ -5,6 +5,7 @@ using PacMan_gui.Annotations;
 using PacMan_gui.Controllers;
 using PacMan_gui.View.About;
 using PacMan_gui.View.Level;
+using PacMan_gui.View.Settings;
 using PacMan_gui.ViewModel.settings;
 
 namespace PacMan_gui.View {
@@ -17,15 +18,11 @@ namespace PacMan_gui.View {
 
         private readonly GameController _gameController;
 
-
         private readonly ChampionsController _championsController;
 
-
-        private readonly SettingsViewModel _settingsViewModel;
-
+        private readonly SettingsController _settingsController;
 
         private readonly AboutBox _aboutBox;
-
 
         #region Initialization
 
@@ -44,13 +41,14 @@ namespace PacMan_gui.View {
             catch (Exception) {
                 MessageBox.Show("existed champions file is invalid, new file is used");
             }
-            
 
 
-            _settingsViewModel = new SettingsViewModel();
+            _settingsController = new SettingsController(OnBackToMainWindow);
 
-
-            _gameController = new GameController(OnGameEnds, _settingsViewModel.KeysToDirection, _settingsViewModel.PauseKeys);
+            _gameController = new GameController(
+                OnGameEnds,
+                _settingsController.GetSettingsViewModel().KeysToDirection,
+                _settingsController.GetSettingsViewModel().PauseKeys);
 
 
             _aboutBox = new AboutBox(OnBackToMainWindow);
@@ -71,10 +69,8 @@ namespace PacMan_gui.View {
 
             var gameView = _mainWindow.ContentControl.Content as GameView;
             if (null != gameView) {
-                gameView.Loaded += delegate {
-
-                    _gameController.Run(_championsController.GetChampionsTable().GetBestScore());
-                };
+                gameView.Loaded +=
+                    delegate { _gameController.Run(_championsController.GetChampionsTable().GetBestScore()); };
             }
             else {
                 throw new Exception("game view has not been loaded");
@@ -174,6 +170,14 @@ namespace PacMan_gui.View {
 
             //  notify name has been entered
             _nameEnteredEvent.Set();
+        }
+
+        #endregion
+
+        #region Settings
+
+        private void SettingsButton_OnClick(object sender, RoutedEventArgs e) {
+            _mainWindow.ContentControl.Content = _settingsController.GetSettingsView();
         }
 
         #endregion

@@ -1,12 +1,12 @@
 using System;
 
 namespace PacMan_model.util {
-
     public sealed class Direction {
         private readonly Point _basisVector;
-
-        private Direction(Point point) {
+        private readonly int _id;
+        private Direction(Point point, int id) {
             _basisVector = point;
+            _id = id;
         }
 
         public static int Up = 0;
@@ -15,13 +15,24 @@ namespace PacMan_model.util {
         public static int Right = 3;
 
         public static Direction[] Directions = {
-            new Direction(new Point(0, 1)),
-            new Direction(new Point(0, -1)),
-            new Direction(new Point(-1, 0)),
-            new Direction(new Point(1, 0))
+            new Direction(new Point(0, 1), Up),
+            new Direction(new Point(0, -1), Down),
+            new Direction(new Point(-1, 0), Left),
+            new Direction(new Point(1, 0), Right)
         };
 
-        
+        private static readonly string[] DirectionNames = {
+            "Up",
+            "Down",
+            "Left",
+            "Right"
+        };
+
+        public string GetName() {
+            return DirectionNames[_id];
+        }
+
+
         /// <summary>
         /// returns point which is neighbor of sent point by direction
         /// </summary>
@@ -53,7 +64,9 @@ namespace PacMan_model.util {
                 throw new ArgumentOutOfRangeException("distance");
             }
 
-            return new Point(distance * _basisVector.GetX() + point.GetX(), distance * _basisVector.GetY() + point.GetY());
+            return new Point(
+                distance * _basisVector.GetX() + point.GetX(),
+                distance * _basisVector.GetY() + point.GetY());
         }
 
         /// <summary>

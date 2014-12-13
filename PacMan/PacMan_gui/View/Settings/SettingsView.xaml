@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="PacMan_gui.View.Settings.SettingsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+             Loaded="SettingsView_OnLoaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Style="{StaticResource MainLableStyle}" Content="{StaticResource ApplicationLable}" Grid.Row="0"/>
+        <DataGrid Grid.Row="1" Name="KeysSettingsDataGrid" Style="{StaticResource SettingsTableStyle}" AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Action" Binding="{Binding ActionName}"/>
+                <DataGridTemplateColumn Header="FirstKey">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource CommonButtonStyle}" Content="{Binding FirstKey}" Command="{Binding DataContext.OnFirstKeyChangingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding ActionName}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                </DataGrid.Columns>
+        </DataGrid>
+
+        
+        <Button Grid.Row="2" Name="ExitButton" HorizontalAlignment="Center" MinWidth="200" VerticalAlignment="Bottom" Style="{StaticResource CommonButtonStyle}">Back</Button>
+        <Border Grid.Row="3" BorderThickness="1" BorderBrush="Black">
+            <TextBlock   Style="{StaticResource AuxiliaryTextStyle}" Text="{Binding SettingsState}"/>
+        </Border>
+    </Grid>
+</UserControl>

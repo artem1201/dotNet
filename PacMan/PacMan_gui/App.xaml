@@ -12,26 +12,40 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="FontSize" Value="32"/>
             <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="10"/>
         </Style>
-        
+
+        <Style x:Key="AuxiliaryTextStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontStyle" Value="Italic"/>
+        </Style>
         <Style x:Key="CommonButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="FontSize" Value="24"/>
         </Style>
 
-        <Style x:Key="ChampionsTableRowStyle" TargetType="DataGridRow">
+        <Style x:Key="CommonRowStyle" TargetType="DataGridRow">
             <Setter Property="FontSize" Value="24"/>
         </Style>
 
-        <Style x:Key="ChampionsTableHeaderStyle" TargetType="DataGridRowHeader">
+        <Style x:Key="CommonHeaderStyle" TargetType="DataGridRowHeader">
             <Setter Property="FontSize" Value="24"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
 
         <Style x:Key="ChampionsTableStyle" TargetType="DataGrid">
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="RowStyle" Value="{StaticResource ChampionsTableRowStyle}"/>
-            <Setter Property="RowHeaderStyle" Value="{StaticResource ChampionsTableHeaderStyle}"/>
+            <Setter Property="RowStyle" Value="{StaticResource CommonRowStyle}"/>
+            <Setter Property="RowHeaderStyle" Value="{StaticResource CommonHeaderStyle}"/>
+            <Setter Property="Margin" Value="20"/>
+        </Style>
+
+        <Style x:Key="SettingsTableStyle" TargetType="DataGrid">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="RowStyle" Value="{StaticResource CommonRowStyle}"/>
+            <Setter Property="RowHeaderStyle" Value="{StaticResource CommonHeaderStyle}"/>
+            <Setter Property="Margin" Value="20"/>
         </Style>
 
     </Application.Resources>

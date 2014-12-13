@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d"
-        SizeChanged="GameView_OnSizeChanged">
+        SizeChanged="GameView_OnSizeChanged"
+             Loaded="GameView_OnLoaded">
     <UserControl.Resources>
         <system:String x:Key="ScoreLabel">Score</system:String>
         <system:String x:Key="CompanyScoreLabel">Company Score</system:String>

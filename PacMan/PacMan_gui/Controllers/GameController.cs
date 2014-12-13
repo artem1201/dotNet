@@ -148,32 +148,86 @@ namespace PacMan_gui.Controllers {
             _isBinded = true;
         }
 
-        private static void BindTextBlock(TextBlock element, Object source, string propertyName) {
+        private static void BindTextBlock(
+            [NotNull] TextBlock element,
+            [NotNull] Object source,
+            [NotNull] string propertyName) {
+            if (null == element) {
+                throw new ArgumentNullException("element");
+            }
+            if (null == source) {
+                throw new ArgumentNullException("source");
+            }
+            if (null == propertyName) {
+                throw new ArgumentNullException("propertyName");
+            }
             var binding = new Binding(propertyName) {Source = source};
             element.SetBinding(TextBlock.TextProperty, binding);
         }
 
         private static void BindCanvasBackGround(
-            Canvas canvas,
-            Object source,
-            string propertyName,
-            IValueConverter converter) {
+            [NotNull] Canvas canvas,
+            [NotNull] Object source,
+            [NotNull] string propertyName,
+            [NotNull] IValueConverter converter) {
+            if (null == canvas) {
+                throw new ArgumentNullException("canvas");
+            }
+            if (null == source) {
+                throw new ArgumentNullException("source");
+            }
+            if (null == propertyName) {
+                throw new ArgumentNullException("propertyName");
+            }
+            if (null == converter) {
+                throw new ArgumentNullException("converter");
+            }
             var binding = new Binding(propertyName) {Source = source, Converter = converter};
             canvas.SetBinding(Panel.BackgroundProperty, binding);
         }
 
-        private static void BindControlButton(ButtonBase button, ICommand command) {
+        private static void BindControlButton([NotNull] ButtonBase button, [NotNull] ICommand command) {
+            if (null == button) {
+                throw new ArgumentNullException("button");
+            }
+            if (null == command) {
+                throw new ArgumentNullException("command");
+            }
             button.Command = command;
             button.CommandParameter = button;
         }
 
-        private static void BindKeys(GameView gameView, ICommand command, IEnumerable<Key> keys) {
+        private static void BindKeys(
+            [NotNull] GameView gameView,
+            [NotNull] ICommand command,
+            [NotNull] IEnumerable<Key> keys) {
+            if (null == gameView) {
+                throw new ArgumentNullException("gameView");
+            }
+            if (null == command) {
+                throw new ArgumentNullException("command");
+            }
+            if (null == keys) {
+                throw new ArgumentNullException("keys");
+            }
             foreach (var key in keys) {
                 gameView.AddKeyBinding(new KeyBinding {Command = command, CommandParameter = key, Key = key});
             }
         }
 
-        private static void UnbindKeys(GameView gameView, ICommand command, IEnumerable<Key> keys) {
+        private static void UnbindKeys(
+            [NotNull] GameView gameView,
+            [NotNull] ICommand command,
+            [NotNull] IEnumerable<Key> keys) {
+            if (null == gameView) {
+                throw new ArgumentNullException("gameView");
+            }
+            if (null == command) {
+                throw new ArgumentNullException("command");
+            }
+            if (null == keys) {
+                throw new ArgumentNullException("keys");
+            }
             foreach (var key in keys) {
                 gameView.RemoveBindingByKeyAndCommand(key, command);
             }
@@ -192,17 +246,17 @@ namespace PacMan_gui.Controllers {
 
         private readonly IStopableCommand[] _stopableCommands;
 
-        private void StopCommands() {
-            foreach (var stopableCommand in _stopableCommands) {
-                stopableCommand.SetCanExecute(false);
-            }
-        }
-
-        private void StartCommands() {
-            foreach (var stopableCommand in _stopableCommands) {
-                stopableCommand.SetCanExecute(true);
-            }
-        }
+//        private void StopCommands() {
+//            foreach (var stopableCommand in _stopableCommands) {
+//                stopableCommand.SetCanExecute(false);
+//            }
+//        }
+//
+//        private void StartCommands() {
+//            foreach (var stopableCommand in _stopableCommands) {
+//                stopableCommand.SetCanExecute(true);
+//            }
+//        }
 
         private interface IStopableCommand : ICommand {
             void SetCanExecute(bool canExecute);
@@ -349,26 +403,7 @@ namespace PacMan_gui.Controllers {
 
         #region Actions
 
-        private void ShowMessage([NotNull] string message) {
-            if (null == message) {
-                throw new ArgumentNullException("message");
-            }
-            StopCommands();
-            MessageBox.Show(message);
-            StartCommands();
-        }
-
-        private void ShowMessage([NotNull] string message, [NotNull] string title) {
-            if (null == message) {
-                throw new ArgumentNullException("message");
-            }
-            if (null == title) {
-                throw new ArgumentNullException("title");
-            }
-            StopCommands();
-            MessageBox.Show(message, title);
-            StartCommands();
-        }
+        
 
         private void OnDirectionKeyAction(Key directionKey) {
             if (_keysToDirection.ContainsKey(directionKey)) {
@@ -438,13 +473,13 @@ namespace PacMan_gui.Controllers {
             //  handle viewing next level and start it
 
             if (_game.IsFinished()) {
-                ShowMessage(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
+                _gameView.MainWindow.ShowMessage(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
 
                 Dispose();
                 _onGameEndCallback(_game.GetGameScore());
             }
             else {
-                ShowMessage("You win this level! Try next one", "Level finished");
+                _gameView.MainWindow.ShowMessage("You win this level! Try next one", "Level finished");
 
                 _game.LoadNextLevel();
                 _gameViewModel.Init(_game, _gameView.GetGameFieldCanvas());
@@ -469,7 +504,7 @@ namespace PacMan_gui.Controllers {
 
         private void OnPacmanDeath(int livesNumber) {
             if (0 != livesNumber) {
-                ShowMessage("You have been died! Only " + livesNumber + " lives left");
+                _gameView.MainWindow.ShowMessage("You have been died! Only " + livesNumber + " lives left");
 
                 _game.Start();
             }
