@@ -15,8 +15,8 @@ namespace PacMan_model.util {
         public static int Right = 3;
 
         public static Direction[] Directions = {
-            new Direction(new Point(0, 1), Up),
-            new Direction(new Point(0, -1), Down),
+            new Direction(new Point(0, -1), Up),
+            new Direction(new Point(0, 1), Down),
             new Direction(new Point(-1, 0), Left),
             new Direction(new Point(1, 0), Right)
         };
