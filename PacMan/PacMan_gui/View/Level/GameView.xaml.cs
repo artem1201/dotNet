@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,8 +13,11 @@ namespace PacMan_gui.View.Level {
     public partial class GameView {
         public event EventHandler GameViewSizeChanged;
 
+        private Window _windowOfGameView;
+
         public GameView() {
             InitializeComponent();
+            _windowOfGameView = Window.GetWindow(this);
         }
 
         public Canvas GetGameFieldCanvas() {
@@ -20,14 +25,39 @@ namespace PacMan_gui.View.Level {
         }
 
         public void AddKeyBinding(KeyBinding binding) {
-            var window = Window.GetWindow(this);
-            if (window != null) {
-                window.InputBindings.Add(
-                    binding);
-            }
-            else {
-                throw new ArgumentException("GameView has no window");
-            }
+            _windowOfGameView = Window.GetWindow(this);
+
+            Application.Current.Dispatcher.Invoke(
+                () => {
+                    if (null != _windowOfGameView) {
+                        _windowOfGameView.InputBindings.Add(
+                            binding);
+                    }
+                    else {
+                        throw new ArgumentException("GameView has no window");
+                    }
+                });
+        }
+
+        public void RemoveBindingByKeyAndCommand(Key key, ICommand command) {
+            Application.Current.Dispatcher.Invoke(
+                () => {
+                    if (null != _windowOfGameView) {
+                        IList<KeyBinding> bindingsToRemove =
+                            _windowOfGameView.InputBindings.OfType<KeyBinding>()
+                                .Where(
+                                    keyBinding => (keyBinding.Command.Equals(command)) && (keyBinding.Key.Equals(key)))
+                                .ToList();
+
+
+                        foreach (var keyBinding in bindingsToRemove) {
+                            _windowOfGameView.InputBindings.Remove(keyBinding);
+                        }
+                    }
+                    else {
+                        throw new ArgumentException("GameView has no window");
+                    }
+                });
         }
 
         #region Events
@@ -47,17 +77,6 @@ namespace PacMan_gui.View.Level {
         }
 
         #endregion
-
-        private void GameView_OnKeyDown(object sender, KeyEventArgs e) {
-            //throw new NotImplementedException();
-        }
-
-        private void GameView_OnLoaded(object sender, RoutedEventArgs e) {
-            var window = Window.GetWindow(this);
-            if (window != null) {
-                window.KeyDown += GameView_OnKeyDown;
-            }
-        }
     }
 
     public class ControlEventArs : EventArgs {

@@ -48,7 +48,7 @@
             VerticalAlignment="Center">
                 <StackPanel>
                     <TextBlock Margin="5" Text="{StaticResource WinnerMessage}" FontWeight="DemiBold"/>
-                    <TextBox MinWidth="150" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="InputNameTextBox"/>
+                    <TextBox MinWidth="150" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="InputNameTextBox" UndoLimit="2" MaxLength="20"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <Button x:Name="OkButton" Margin="5" Content="Ok" Background="{x:Null}" Click="OkButton_OnClick"/>
                         <Button x:Name="NoButton" Margin="5" Content="No" Background="{x:Null}" Click="NoButton_OnClick"/>

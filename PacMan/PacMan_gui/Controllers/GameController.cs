@@ -64,6 +64,14 @@ namespace PacMan_gui.Controllers {
             _onPauseKeyCommand = new OnPauseKeyCommand(DoPause);
             _onDirectionKeyCommand = new OnDirectionKeyCommand(OnDirectionKeyAction);
 
+            _stopableCommands = new[] {
+                _onBackButtonCommand,
+                _onPauseButtonCommand,
+                _onDirectionButtonCommand,
+                _onPauseKeyCommand,
+                _onDirectionKeyCommand
+            };
+
             //TODO: hardcoded directions and button
             //add buttons for directions dynamicly
             _directionButtonToDirection = new Dictionary<Button, Direction> {
@@ -89,7 +97,6 @@ namespace PacMan_gui.Controllers {
 
             RedrawGame();
 
-
             _game.Start();
         }
 
@@ -108,6 +115,9 @@ namespace PacMan_gui.Controllers {
         private bool _isBinded;
 
         private void BindDataWithGameView() {
+            BindKeys(_gameView, _onPauseKeyCommand, _pauseKeys);
+            BindKeys(_gameView, _onDirectionKeyCommand, _keysToDirection.Keys);
+
             if (_isBinded) {
                 return;
             }
@@ -135,9 +145,6 @@ namespace PacMan_gui.Controllers {
             BindControlButton(_gameView.LeftButton, _onDirectionButtonCommand);
             BindControlButton(_gameView.RightButton, _onDirectionButtonCommand);
 
-            BindKeys(_gameView, _onPauseKeyCommand, _pauseKeys);
-            BindKeys(_gameView, _onDirectionKeyCommand, _keysToDirection.Keys);
-
             _isBinded = true;
         }
 
@@ -160,9 +167,15 @@ namespace PacMan_gui.Controllers {
             button.CommandParameter = button;
         }
 
-        private static void BindKeys(GameView gameView, ICommand command, IEnumerable<Key> pauseKeys) {
-            foreach (var pauseKey in pauseKeys) {
-                gameView.AddKeyBinding(new KeyBinding {Command = command, CommandParameter = pauseKey, Key = pauseKey});
+        private static void BindKeys(GameView gameView, ICommand command, IEnumerable<Key> keys) {
+            foreach (var key in keys) {
+                gameView.AddKeyBinding(new KeyBinding {Command = command, CommandParameter = key, Key = key});
+            }
+        }
+
+        private static void UnbindKeys(GameView gameView, ICommand command, IEnumerable<Key> keys) {
+            foreach (var key in keys) {
+                gameView.RemoveBindingByKeyAndCommand(key, command);
             }
         }
 
@@ -170,22 +183,46 @@ namespace PacMan_gui.Controllers {
 
         #region Commands
 
-        private readonly ICommand _onPauseButtonCommand;
-        private readonly ICommand _onBackButtonCommand;
-        private readonly ICommand _onDirectionButtonCommand;
+        private readonly IStopableCommand _onPauseButtonCommand;
+        private readonly IStopableCommand _onBackButtonCommand;
+        private readonly IStopableCommand _onDirectionButtonCommand;
 
-        private readonly ICommand _onPauseKeyCommand;
-        private readonly ICommand _onDirectionKeyCommand;
+        private readonly IStopableCommand _onPauseKeyCommand;
+        private readonly IStopableCommand _onDirectionKeyCommand;
 
-        private class OnBackButtonCommand : ICommand {
+        private readonly IStopableCommand[] _stopableCommands;
+
+        private void StopCommands() {
+            foreach (var stopableCommand in _stopableCommands) {
+                stopableCommand.SetCanExecute(false);
+            }
+        }
+
+        private void StartCommands() {
+            foreach (var stopableCommand in _stopableCommands) {
+                stopableCommand.SetCanExecute(true);
+            }
+        }
+
+        private interface IStopableCommand : ICommand {
+            void SetCanExecute(bool canExecute);
+        }
+
+        private class OnBackButtonCommand : IStopableCommand {
+            private bool _canExecute;
             private readonly Action _onBackAction;
 
-            public OnBackButtonCommand(Action onBackAction) {
+            public OnBackButtonCommand(Action onBackAction, bool canExecute = true) {
                 _onBackAction = onBackAction;
+                _canExecute = canExecute;
+            }
+
+            public void SetCanExecute(bool canExecute) {
+                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return true;
+                return _canExecute;
             }
 
             public void Execute(object parameter) {
@@ -195,15 +232,21 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnPauseButtonCommand : ICommand {
+        private class OnPauseButtonCommand : IStopableCommand {
+            private bool _canExecute;
             private readonly Action _onPauseAction;
 
-            public OnPauseButtonCommand(Action onPauseAction) {
+            public OnPauseButtonCommand(Action onPauseAction, bool canExecute = true) {
                 _onPauseAction = onPauseAction;
+                _canExecute = canExecute;
+            }
+
+            public void SetCanExecute(bool canExecute) {
+                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return true;
+                return _canExecute;
             }
 
             public void Execute(object parameter) {
@@ -213,15 +256,21 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnDirectionButtonCommand : ICommand {
+        private class OnDirectionButtonCommand : IStopableCommand {
+            private bool _canExecute;
             private readonly Action<Button> _onDirectionButtonAction;
 
-            public OnDirectionButtonCommand(Action<Button> onDirectionButtonAction) {
+            public OnDirectionButtonCommand(Action<Button> onDirectionButtonAction, bool canExecute = true) {
                 _onDirectionButtonAction = onDirectionButtonAction;
+                _canExecute = canExecute;
+            }
+
+            public void SetCanExecute(bool canExecute) {
+                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return true;
+                return _canExecute;
             }
 
             public void Execute([NotNull] object parameter) {
@@ -240,15 +289,21 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnPauseKeyCommand : ICommand {
+        private class OnPauseKeyCommand : IStopableCommand {
+            private bool _canExecute;
             private readonly Action _onPauseAction;
 
-            public OnPauseKeyCommand(Action onPauseAction) {
+            public OnPauseKeyCommand(Action onPauseAction, bool canExecute = true) {
                 _onPauseAction = onPauseAction;
+                _canExecute = canExecute;
+            }
+
+            public void SetCanExecute(bool canExecute) {
+                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return true;
+                return _canExecute;
             }
 
             public void Execute(object parameter) {
@@ -258,15 +313,21 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnDirectionKeyCommand : ICommand {
+        private class OnDirectionKeyCommand : IStopableCommand {
+            private bool _canExecute;
             private readonly Action<Key> _onDirectionKeyAction;
 
-            public OnDirectionKeyCommand(Action<Key> onDirectionKeyAction) {
+            public OnDirectionKeyCommand(Action<Key> onDirectionKeyAction, bool canExecute = true) {
                 _onDirectionKeyAction = onDirectionKeyAction;
+                _canExecute = canExecute;
+            }
+
+            public void SetCanExecute(bool canExecute) {
+                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return true;
+                return _canExecute;
             }
 
             public void Execute([NotNull] object parameter) {
@@ -287,6 +348,27 @@ namespace PacMan_gui.Controllers {
         #endregion
 
         #region Actions
+
+        private void ShowMessage([NotNull] string message) {
+            if (null == message) {
+                throw new ArgumentNullException("message");
+            }
+            StopCommands();
+            MessageBox.Show(message);
+            StartCommands();
+        }
+
+        private void ShowMessage([NotNull] string message, [NotNull] string title) {
+            if (null == message) {
+                throw new ArgumentNullException("message");
+            }
+            if (null == title) {
+                throw new ArgumentNullException("title");
+            }
+            StopCommands();
+            MessageBox.Show(message, title);
+            StartCommands();
+        }
 
         private void OnDirectionKeyAction(Key directionKey) {
             if (_keysToDirection.ContainsKey(directionKey)) {
@@ -321,8 +403,14 @@ namespace PacMan_gui.Controllers {
             _gameViewModel.SetPaused(!_game.IsOn());
         }
 
-        private void OnBackAction() {
+        private void Dispose() {
             _game.Dispose();
+            UnbindKeys(_gameView, _onPauseKeyCommand, _pauseKeys);
+            UnbindKeys(_gameView, _onDirectionKeyCommand, _keysToDirection.Keys);
+        }
+
+        private void OnBackAction() {
+            Dispose();
             _onGameEndCallback(-1);
         }
 
@@ -350,17 +438,15 @@ namespace PacMan_gui.Controllers {
             //  handle viewing next level and start it
 
             if (_game.IsFinished()) {
-                MessageBox.Show(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
+                ShowMessage(_game.IsWon() ? "You win all levels!" : "You fail!", "Level finished");
 
-                _game.Dispose();
-
+                Dispose();
                 _onGameEndCallback(_game.GetGameScore());
             }
             else {
-                MessageBox.Show("You win this level! Try next one", "Level finished");
+                ShowMessage("You win this level! Try next one", "Level finished");
 
                 _game.LoadNextLevel();
-
                 _gameViewModel.Init(_game, _gameView.GetGameFieldCanvas());
 
                 RedrawGame();
@@ -383,7 +469,7 @@ namespace PacMan_gui.Controllers {
 
         private void OnPacmanDeath(int livesNumber) {
             if (0 != livesNumber) {
-                MessageBox.Show("You have been died! Only " + livesNumber + " lives left");
+                ShowMessage("You have been died! Only " + livesNumber + " lives left");
 
                 _game.Start();
             }
