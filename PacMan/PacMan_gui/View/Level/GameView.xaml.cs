@@ -28,15 +28,10 @@ namespace PacMan_gui.View.Level {
             if (null == binding) {
                 throw new ArgumentNullException("binding");
             }
-             Application.Current.Dispatcher.Invoke(
+            Application.Current.Dispatcher.Invoke(
                 () => {
-//                    if (null != MainWindow) {
-                        MainWindow.InputBindings.Add(
-                            binding);
-//                    }
-//                    else {
-//                        throw new ArgumentException("GameView has no window");
-//                    }
+                    MainWindow.InputBindings.Add(
+                        binding);
                 });
         }
 
@@ -46,21 +41,16 @@ namespace PacMan_gui.View.Level {
             }
             Application.Current.Dispatcher.Invoke(
                 () => {
-//                    if (null != MainWindow) {
-                        IList<KeyBinding> bindingsToRemove =
-                            MainWindow.InputBindings.OfType<KeyBinding>()
-                                .Where(
-                                    keyBinding => (keyBinding.Command.Equals(command)) && (keyBinding.Key.Equals(key)))
-                                .ToList();
+                    IList<KeyBinding> bindingsToRemove =
+                        MainWindow.InputBindings.OfType<KeyBinding>()
+                            .Where(
+                                keyBinding => (keyBinding.Command.Equals(command)) && (keyBinding.Key.Equals(key)))
+                            .ToList();
 
 
-                        foreach (var keyBinding in bindingsToRemove) {
-                            MainWindow.InputBindings.Remove(keyBinding);
-                        }
-//                    }
-//                    else {
-//                        throw new ArgumentException("GameView has no window");
-//                    }
+                    foreach (var keyBinding in bindingsToRemove) {
+                        MainWindow.InputBindings.Remove(keyBinding);
+                    }
                 });
         }
 
@@ -85,8 +75,7 @@ namespace PacMan_gui.View.Level {
         private void GameView_OnLoaded(object sender, RoutedEventArgs e) {
             MainWindow = Window.GetWindow(this) as MainWindow;
 
-            if (null == MainWindow)
-            {
+            if (null == MainWindow) {
                 throw new Exception("only window of class MainWindow is able to hadle game view");
             }
         }

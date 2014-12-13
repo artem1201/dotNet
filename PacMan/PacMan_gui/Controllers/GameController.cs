@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -63,14 +62,6 @@ namespace PacMan_gui.Controllers {
 
             _onPauseKeyCommand = new OnPauseKeyCommand(DoPause);
             _onDirectionKeyCommand = new OnDirectionKeyCommand(OnDirectionKeyAction);
-
-            _stopableCommands = new[] {
-                _onBackButtonCommand,
-                _onPauseButtonCommand,
-                _onDirectionButtonCommand,
-                _onPauseKeyCommand,
-                _onDirectionKeyCommand
-            };
 
             //TODO: hardcoded directions and button
             //add buttons for directions dynamicly
@@ -237,46 +228,22 @@ namespace PacMan_gui.Controllers {
 
         #region Commands
 
-        private readonly IStopableCommand _onPauseButtonCommand;
-        private readonly IStopableCommand _onBackButtonCommand;
-        private readonly IStopableCommand _onDirectionButtonCommand;
+        private readonly ICommand _onPauseButtonCommand;
+        private readonly ICommand _onBackButtonCommand;
+        private readonly ICommand _onDirectionButtonCommand;
 
-        private readonly IStopableCommand _onPauseKeyCommand;
-        private readonly IStopableCommand _onDirectionKeyCommand;
+        private readonly ICommand _onPauseKeyCommand;
+        private readonly ICommand _onDirectionKeyCommand;
 
-        private readonly IStopableCommand[] _stopableCommands;
-
-//        private void StopCommands() {
-//            foreach (var stopableCommand in _stopableCommands) {
-//                stopableCommand.SetCanExecute(false);
-//            }
-//        }
-//
-//        private void StartCommands() {
-//            foreach (var stopableCommand in _stopableCommands) {
-//                stopableCommand.SetCanExecute(true);
-//            }
-//        }
-
-        private interface IStopableCommand : ICommand {
-            void SetCanExecute(bool canExecute);
-        }
-
-        private class OnBackButtonCommand : IStopableCommand {
-            private bool _canExecute;
+        private class OnBackButtonCommand : ICommand {
             private readonly Action _onBackAction;
 
-            public OnBackButtonCommand(Action onBackAction, bool canExecute = true) {
+            public OnBackButtonCommand(Action onBackAction) {
                 _onBackAction = onBackAction;
-                _canExecute = canExecute;
-            }
-
-            public void SetCanExecute(bool canExecute) {
-                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return _canExecute;
+                return true;
             }
 
             public void Execute(object parameter) {
@@ -286,21 +253,15 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnPauseButtonCommand : IStopableCommand {
-            private bool _canExecute;
+        private class OnPauseButtonCommand : ICommand {
             private readonly Action _onPauseAction;
 
-            public OnPauseButtonCommand(Action onPauseAction, bool canExecute = true) {
+            public OnPauseButtonCommand(Action onPauseAction) {
                 _onPauseAction = onPauseAction;
-                _canExecute = canExecute;
-            }
-
-            public void SetCanExecute(bool canExecute) {
-                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return _canExecute;
+                return true;
             }
 
             public void Execute(object parameter) {
@@ -310,21 +271,15 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnDirectionButtonCommand : IStopableCommand {
-            private bool _canExecute;
+        private class OnDirectionButtonCommand : ICommand {
             private readonly Action<Button> _onDirectionButtonAction;
 
-            public OnDirectionButtonCommand(Action<Button> onDirectionButtonAction, bool canExecute = true) {
+            public OnDirectionButtonCommand(Action<Button> onDirectionButtonAction) {
                 _onDirectionButtonAction = onDirectionButtonAction;
-                _canExecute = canExecute;
-            }
-
-            public void SetCanExecute(bool canExecute) {
-                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return _canExecute;
+                return true;
             }
 
             public void Execute([NotNull] object parameter) {
@@ -343,21 +298,15 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnPauseKeyCommand : IStopableCommand {
-            private bool _canExecute;
+        private class OnPauseKeyCommand : ICommand {
             private readonly Action _onPauseAction;
 
-            public OnPauseKeyCommand(Action onPauseAction, bool canExecute = true) {
+            public OnPauseKeyCommand(Action onPauseAction) {
                 _onPauseAction = onPauseAction;
-                _canExecute = canExecute;
-            }
-
-            public void SetCanExecute(bool canExecute) {
-                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return _canExecute;
+                return true;
             }
 
             public void Execute(object parameter) {
@@ -367,21 +316,15 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnDirectionKeyCommand : IStopableCommand {
-            private bool _canExecute;
+        private class OnDirectionKeyCommand : ICommand {
             private readonly Action<Key> _onDirectionKeyAction;
 
-            public OnDirectionKeyCommand(Action<Key> onDirectionKeyAction, bool canExecute = true) {
+            public OnDirectionKeyCommand(Action<Key> onDirectionKeyAction) {
                 _onDirectionKeyAction = onDirectionKeyAction;
-                _canExecute = canExecute;
-            }
-
-            public void SetCanExecute(bool canExecute) {
-                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return _canExecute;
+                return true;
             }
 
             public void Execute([NotNull] object parameter) {
@@ -402,8 +345,6 @@ namespace PacMan_gui.Controllers {
         #endregion
 
         #region Actions
-
-        
 
         private void OnDirectionKeyAction(Key directionKey) {
             if (_keysToDirection.ContainsKey(directionKey)) {

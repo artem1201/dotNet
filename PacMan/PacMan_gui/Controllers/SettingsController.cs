@@ -1,16 +1,16 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
 using PacMan_gui.View.Settings;
 using PacMan_gui.ViewModel.settings;
 
-namespace PacMan_gui.Controllers
-{
+namespace PacMan_gui.Controllers {
     internal class SettingsController {
-
         private readonly SettingsView _settingsView;
         private readonly SettingsViewModel _settingsViewModel;
 
+        //  is called when settings view has been closed
         private readonly Action _onExit;
 
         public SettingsController([NotNull] Action onExit) {
@@ -21,7 +21,7 @@ namespace PacMan_gui.Controllers
 
 
             _settingsView = new SettingsView();
-            _settingsViewModel = new SettingsViewModel();
+            _settingsViewModel = new SettingsViewModel(_settingsView);
 
             _settingsView.DataContext = _settingsViewModel;
             _settingsView.KeysSettingsDataGrid.ItemsSource = _settingsViewModel.KeySettingsItems;
@@ -33,8 +33,8 @@ namespace PacMan_gui.Controllers
         #region Bindings
 
         private class OnBackButtonCommand : ICommand {
-
             private readonly Action _onBackAction;
+
             public OnBackButtonCommand([NotNull] Action onBackAction) {
                 if (null == onBackAction) {
                     throw new ArgumentNullException("onBackAction");
@@ -71,10 +71,21 @@ namespace PacMan_gui.Controllers
 
         private void OnBackToMainWindow() {
             
-            //TODO: ask if i should save changes
-            
-            _settingsViewModel.SaveChanges();
 
+            if (_settingsViewModel.IsChanged) {
+
+                var result = MessageBox.Show(_settingsView.MainWindow, "save changes?", "", MessageBoxButton.YesNoCancel);
+
+                if (MessageBoxResult.Cancel.Equals(result)) {
+                    return;
+                }
+                if (MessageBoxResult.Yes.Equals(result)) {
+                    _settingsViewModel.SaveChanges();
+                }
+                else if (MessageBoxResult.No.Equals(result)) {
+                    _settingsViewModel.Refresh();
+                }
+            }
             _onExit();
         }
 
