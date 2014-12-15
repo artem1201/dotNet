@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
+using PacMan_gui.View;
 using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
@@ -84,7 +85,7 @@ namespace PacMan_gui.Controllers {
                 _game = new Game(_pathToCompany, _pathToGhosts, 0);
             }
             catch (CannotPlayGameException e) {
-                MessageBox.Show(e.GetMessage(), "Error");
+                _gameView.MainWindow.ShowMessage(e.GetMessage(), "Error");
                 terminateAppAction();
                 return;
             }

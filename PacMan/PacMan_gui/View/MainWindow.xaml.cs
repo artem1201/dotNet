@@ -11,25 +11,47 @@ namespace PacMan_gui.View {
             InitializeComponent();
             ContentControl.Content = new MainWindowContent(this);
         }
+    }
 
-        public void ShowMessage([NotNull] string message) {
-            if (null == message) {
+    public static class WindowUtil {
+        public static void ShowMessage(this Window window, [NotNull] string message)
+        {
+            if (null == message)
+            {
                 throw new ArgumentNullException("message");
             }
 
-            Application.Current.Dispatcher.Invoke(
-                () => { MessageBox.Show(this, message); });
+            if (null != window) {
+                Application.Current.Dispatcher.Invoke(
+                    () => { MessageBox.Show(window, message); });
+            }
+            else {
+                Application.Current.Dispatcher.Invoke(
+                    () => { MessageBox.Show(message); });
+            }
+
+
         }
 
-        public void ShowMessage([NotNull] string message, [NotNull] string title) {
-            if (null == message) {
+        public static void ShowMessage(this Window window, [NotNull] string message, [NotNull] string title)
+        {
+            if (null == message)
+            {
                 throw new ArgumentNullException("message");
             }
-            if (null == title) {
+            if (null == title)
+            {
                 throw new ArgumentNullException("title");
             }
-            Application.Current.Dispatcher.Invoke(
-                () => { MessageBox.Show(this, message, title); });
+
+            if (null != window) {
+                Application.Current.Dispatcher.Invoke(
+                    () => { MessageBox.Show(window, message, title); });
+            }
+            else {
+                MessageBox.Show(message, title);
+            }
+
         }
     }
 }
