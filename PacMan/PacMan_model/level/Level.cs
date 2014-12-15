@@ -23,10 +23,6 @@ namespace PacMan_model.level {
         //  if Stalking is set - ghost stalks pacman
         //  if Fright is set - pacman is able to eat ghosts
         private LevelCondition _condition = LevelCondition.Stalking;
-        //  time for firighted mode in ms
-        //        private const int FrightedTimeMs = 5000;
-        //        private readonly Timer _frightedTimer;
-
 
         private int _currentFrightedModeTicksNumber;
 
@@ -48,9 +44,6 @@ namespace PacMan_model.level {
             _field = field;
             _ghosts = ghosts;
 
-            //            _frightedTimer = new Timer(FrightedTimeMs) {AutoReset = false};
-            //            _frightedTimer.Elapsed += OnFrightedModeEnds;
-
             PacMan = _pacman;
             Field = field;
             Ghosts = new List<IGhostObserverable>(_ghosts.Count);
@@ -70,13 +63,7 @@ namespace PacMan_model.level {
         public void Dispose() {
             UnsubsrcibeAll();
 
-            //            _frightedTimer.Stop();
-            //            _frightedTimer.Dispose();
             _currentDirection = null;
-
-            //            _pacman = null;
-            //            _field = null;
-            //            _ghosts.Clear();
         }
 
         private void UnsubsrcibeAll() {
@@ -114,7 +101,6 @@ namespace PacMan_model.level {
                 ghost.Move();
             }
 
-            //TODO: move this calling in event when someone of pacman or ghosts changes place
             CheckDeath();
 
             if (LevelCondition.Fright == _condition) {
@@ -152,20 +138,6 @@ namespace PacMan_model.level {
         }
 
         #endregion
-
-        //        public void Pause() {
-        //
-        //            if (_frightedTimer.Enabled) {
-        //                _frightedTimer.Stop();    
-        //            }
-        //        }
-        //
-        //        public void Resume() {
-        //
-        //            if (LevelCondition.Fright == _condition) {
-        //                _frightedTimer.Start();    
-        //            }
-        //        }
 
         #region Events
 
@@ -205,30 +177,10 @@ namespace PacMan_model.level {
         private void OnEnergizerEaten(Object sender, EventArgs e) {
             _currentFrightedModeTicksNumber = 0;
 
-            //            _frightedTimer.Stop();
-            //            _frightedTimer.Start();
-
             if (LevelCondition.Fright != _condition) {
                 ChangeToFrightCondition();
             }
-
-
-            //            switch (_condition) {
-            //                case LevelCondition.Stalking:
-            //                    ChangeToFrightCondition();
-            //                    break;
-            //                case LevelCondition.Fright:
-            //                    ChangeToStalkingCondition();
-            //                    break;
-            //                default:
-            //                    throw new InvalidEnumArgumentException(Resources.Level_OnEnergizerEaten_unknown_level_condition__ + _condition.ToString());
-            //            }
         }
-
-        //        private void OnFrightedModeEnds(Object parameter, ElapsedEventArgs elapsedEventArgs) {
-        //            
-        //            ChangeToStalkingCondition();
-        //        }
 
         private void OnDirectionChanged(Object sender, DirectionChangedEventArgs e) {
             if (null == e) {
