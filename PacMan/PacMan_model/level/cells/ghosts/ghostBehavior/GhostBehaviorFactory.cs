@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using PacMan_model.level.field;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
     internal sealed class GhostBehaviorFactory : IGhostBehaviorFactory {
-
         private readonly string _pathToGhostsBehaviors;
 
         //  key is ghost name, pair is two ghost's behaviors - staking and frightening
-        private readonly IDictionary<string, Tuple<Type, Type>> _ghostsBehaviors = new Dictionary<string, Tuple<Type, Type>>();
+        private readonly IDictionary<string, Tuple<Type, Type>> _ghostsBehaviors =
+            new Dictionary<string, Tuple<Type, Type>>();
 
         //  contains names of ghosts ordered by difficulty which were loaded
         //  must be not empty
@@ -20,7 +21,6 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         #region Initialization
 
         public GhostBehaviorFactory(string pathToGhostsBehaviors) {
-
             _pathToGhostsBehaviors = pathToGhostsBehaviors;
 
             try {
@@ -29,8 +29,6 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             catch (DirectoryNotFoundException) {
                 throw new InvalidBehaviorsDirectory(pathToGhostsBehaviors);
             }
-
-            
         }
 
         #endregion
@@ -42,7 +40,6 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         }
 
         public string GetGhostNameByNumber(int ghostNumber) {
-
             if (ghostNumber < 0) {
                 throw new ArgumentOutOfRangeException("ghostNumber");
             }
@@ -66,14 +63,12 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             }
 
             if (!_ghostsBehaviors.ContainsKey(name)) {
-                throw new UnknownGhostName(name);    
+                throw new UnknownGhostName(name);
             }
             return Activator.CreateInstance(_ghostsBehaviors[name].Item1, field, target) as GhostStalkerBehavior;
-            
         }
 
         public GhostFrightedBehavior GetFrightedBehavior(string name, INotChanebleableField field, MovingCell target) {
-
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
@@ -91,7 +86,11 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             return Activator.CreateInstance(_ghostsBehaviors[name].Item2, field, target) as GhostFrightedBehavior;
         }
 
-        public GhostBehavior GetBehavior(string name, INotChanebleableField field, MovingCell target, bool isFrightModeEnabled = false) {
+        public GhostBehavior GetBehavior(
+            string name,
+            INotChanebleableField field,
+            MovingCell target,
+            bool isFrightModeEnabled = false) {
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
@@ -112,7 +111,6 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         #region Behavior by number
 
         public GhostStalkerBehavior GetStalkerBehavior(int ghostNumber, INotChanebleableField field, MovingCell target) {
-
             if (null == field) {
                 throw new ArgumentNullException("field");
             }
@@ -123,8 +121,10 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             return GetStalkerBehavior(GetGhostNameByNumber(ghostNumber), field, target);
         }
 
-        public GhostFrightedBehavior GetFrightedBehavior(int ghostNumber, INotChanebleableField field, MovingCell target) {
-
+        public GhostFrightedBehavior GetFrightedBehavior(
+            int ghostNumber,
+            INotChanebleableField field,
+            MovingCell target) {
             if (null == field) {
                 throw new ArgumentNullException("field");
             }
@@ -135,8 +135,11 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             return GetFrightedBehavior(GetGhostNameByNumber(ghostNumber), field, target);
         }
 
-        public GhostBehavior GetBehavior(int ghostNumber, INotChanebleableField field, MovingCell target, bool isFrightModeEnabled = false) {
-
+        public GhostBehavior GetBehavior(
+            int ghostNumber,
+            INotChanebleableField field,
+            MovingCell target,
+            bool isFrightModeEnabled = false) {
             if (null == field) {
                 throw new ArgumentNullException("field");
             }
@@ -154,39 +157,66 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         #region Loading from file
 
         private void LoadBehaviorsFromFiles(string[] behaviorFiles) {
-
             if (0 == behaviorFiles.Length) {
                 throw new InvalidBehaviorsDirectory(_pathToGhostsBehaviors);
             }
 
-            foreach (var behaviorFile in behaviorFiles) {
-                LoadBehaviorFromFile(behaviorFile);
+            foreach (var behaviorFile in behaviorFiles.Where(IsAssemblyVerified)) {
+                try {
+                    LoadBehaviorFromFile(behaviorFile);
+                }
+                catch (Exception e) {
+                    if (GhostAlreadyExitstsErrorMessage.Equals(e.Message)) {
+                        //TODO: show message that ghost with passed name exists or ignore    
+                    }
+                    else {
+                        throw;
+                    }
+                }
             }
 
             //  find which ghosts were loaded
             _orderedLoadedGhostNames = (
-                from name 
-                in GhostsInfo.OrderedPossibleGhostNames 
-                where _ghostsBehaviors.ContainsKey(name) 
-                select  name
-            ).ToArray();
+                from name
+                    in GhostsInfo.OrderedPossibleGhostNames
+                where _ghostsBehaviors.ContainsKey(name)
+                select name
+                ).ToArray();
         }
+
+        #region Verification
+
+        [DllImport("mscoree.dll", CharSet = CharSet.Unicode)]
+        private static extern bool StrongNameSignatureVerificationEx(
+            [MarshalAs(UnmanagedType.LPWStr)] string wszFilePath,
+            [MarshalAs(UnmanagedType.U1)] bool fForceVerification,
+            [MarshalAs(UnmanagedType.U1)] out bool pfWasVerified);
+
+        private static bool IsAssemblyVerified(string path) {
+            bool result;
+            return StrongNameSignatureVerificationEx(path, true, out result);
+        }
+
+        #endregion
+
+        private const string GhostAlreadyExitstsErrorMessage = "ghost already exists";
 
         private void LoadBehaviorFromFile(string path) {
             if (null == path) {
                 throw new ArgumentNullException("path");
             }
 
-            var dll = Assembly.LoadFile(path);
-            //TODO: verify assembly
+            var ghostAssembly = Assembly.LoadFile(path);
+            var ghostName = ghostAssembly.GetName().Name;
+            if (_ghostsBehaviors.ContainsKey(ghostName)) {
+                throw new Exception(GhostAlreadyExitstsErrorMessage);
+            }
 
-            var ghostName = dll.GetName().Name;
             Type stalkerBehavior = null;
             Type frightedBehavior = null;
 
             //  load first of IGhostStaklerBehavior and GhostFrightedBehavior in assembly
-            foreach (var exportedType in dll.GetExportedTypes()) {
-                
+            foreach (var exportedType in ghostAssembly.GetExportedTypes()) {
                 if (exportedType.IsSubclassOf(typeof (GhostStalkerBehavior))) {
                     if (null != stalkerBehavior) {
                         continue;
@@ -197,7 +227,7 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                         break;
                     }
                 }
-                else if (exportedType.IsSubclassOf(typeof(GhostFrightedBehavior))) {
+                else if (exportedType.IsSubclassOf(typeof (GhostFrightedBehavior))) {
                     if (null != frightedBehavior) {
                         continue;
                     }
