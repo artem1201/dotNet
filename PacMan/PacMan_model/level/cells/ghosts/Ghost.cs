@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.level.field;
 using PacMan_model.util;
@@ -59,7 +60,7 @@ namespace PacMan_model.level.cells.ghosts {
 
             _ghostBehaviorFactory = ghostBehaviorFactory;
 
-            _ghost = new GhostCell(startPosition);
+            _ghost = new GhostCell(startPosition, FindCurrentDirection);
 
             _target = target;
             _field = field;
@@ -116,13 +117,11 @@ namespace PacMan_model.level.cells.ghosts {
             return Cost;
         }
 
-        public Point GetPosition()
-        {
+        public Point GetPosition() {
             return _ghost.GetPosition();
         }
 
-        public string GetName()
-        {
+        public string GetName() {
             return _name;
         }
 
@@ -183,9 +182,19 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         private void Stop() {
-
-           _currentTick = 0;
+            _currentTick = 0;
             _nextPosition = null;
+        }
+
+        private Direction FindCurrentDirection() {
+            if (null != _nextPosition) {
+                return
+                    Direction.Directions.FirstOrDefault(
+                        direction => direction.IsDirectionFromOneNeighborToSecond(_nextPosition, _ghost.GetPosition()));
+            }
+
+
+            return Direction.DefaultDirection;
         }
 
         #endregion
@@ -216,14 +225,17 @@ namespace PacMan_model.level.cells.ghosts {
         #region As Cell
 
         private class GhostCell : MovingCell {
+            //  way to find current direction from outer class
+            private readonly Func<Direction> _getCurrentDirectionFunc;
             //  number of ticks per one movement
             private int _currentSpeed;
 
-            public GhostCell(Point startPosition)
+            public GhostCell(Point startPosition, Func<Direction> getCurrentDirectionFunc)
                 : base(startPosition) {
-                if (null == startPosition) {
-                    throw new ArgumentNullException("startPosition");
+                if (null == getCurrentDirectionFunc) {
+                    throw new ArgumentNullException("getCurrentDirectionFunc");
                 }
+                _getCurrentDirectionFunc = getCurrentDirectionFunc;
             }
 
 
@@ -256,6 +268,10 @@ namespace PacMan_model.level.cells.ghosts {
             /// <returns>number of ticks per one movement</returns>
             public override int GetSpeed() {
                 return _currentSpeed;
+            }
+
+            public override Direction GetCurrentDirection() {
+                return _getCurrentDirectionFunc();
             }
 
 

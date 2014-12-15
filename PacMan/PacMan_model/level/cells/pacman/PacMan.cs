@@ -17,7 +17,7 @@ namespace PacMan_model.level.cells.pacman {
         private IField _field;
 
         //  last direction where pacman was moved
-        private Direction _currentDirection = Direction.Directions[Direction.Left];
+        private Direction _currentDirection = Direction.DefaultDirection;
 
         //  number of tick (from 0 to pacman's-current-speed tiks)
         private int _currentTick;
@@ -37,7 +37,7 @@ namespace PacMan_model.level.cells.pacman {
             }
             _field = field;
 
-            _pacman = new PacManCell(startPosition, TicksResolver.PacmanTicksPerMove);
+            _pacman = new PacManCell(startPosition, TicksResolver.PacmanTicksPerMove, GetCurrentDirection);
         }
 
         public PacMan(IField field, Point startPosition, int lives) : this(field, startPosition) {
@@ -159,6 +159,10 @@ namespace PacMan_model.level.cells.pacman {
             }
         }
 
+        private Direction GetCurrentDirection() {
+            return _currentDirection;
+        }
+
         #endregion
 
         #region Getters
@@ -213,9 +217,10 @@ namespace PacMan_model.level.cells.pacman {
         private class PacManCell : MovingCell {
             //  number of ticks per second
             private readonly int _currentSpeed;
+            private readonly Func<Direction> _getCurrentDirectionFunc;
 
 
-            public PacManCell(Point startPosition, int initialSpeed)
+            public PacManCell(Point startPosition, int initialSpeed, Func<Direction> getCurrentDirectionFunc)
                 : base(startPosition) {
                 if (null == startPosition) {
                     throw new ArgumentNullException("startPosition");
@@ -225,6 +230,7 @@ namespace PacMan_model.level.cells.pacman {
                 }
 
                 _currentSpeed = initialSpeed;
+                _getCurrentDirectionFunc = getCurrentDirectionFunc;
             }
 
 /*
@@ -239,6 +245,10 @@ namespace PacMan_model.level.cells.pacman {
             /// <returns>number of ticks per one movement</returns>
             public override int GetSpeed() {
                 return _currentSpeed;
+            }
+
+            public override Direction GetCurrentDirection() {
+                return _getCurrentDirectionFunc();
             }
 
             public void MoveTo(Point newPosition) {

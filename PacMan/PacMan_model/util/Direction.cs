@@ -21,6 +21,8 @@ namespace PacMan_model.util {
             new Direction(new Point(1, 0), Right)
         };
 
+        public static readonly Direction DefaultDirection = Directions[Left];
+
         private static readonly string[] DirectionNames = {
             "Up",
             "Down",

@@ -22,7 +22,9 @@ namespace PacMan_model.level.cells {
         public Point GetStartPosition() {
             return _startPosition;
         }
-
+        
         public abstract int GetSpeed();
+
+        public abstract Direction GetCurrentDirection();
     }
 }
