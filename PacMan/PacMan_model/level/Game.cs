@@ -118,7 +118,13 @@ namespace PacMan_model.level {
                     _currentLevel.Dispose();
                 }
 
-                _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
+                try {
+                    _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
+                }
+                catch (InvalidLevelSource e) {
+                    throw new CannotPlayGameException("Invalid level source: " + _levelFiles[_currentLevelNumber] + ", cause " + e.GetMessage());
+                }
+
 
                 _currentLevel.PacMan.PacmanState += OnPacManChanged;
                 _currentLevel.Field.DotsEnds += OnDotsEnds;

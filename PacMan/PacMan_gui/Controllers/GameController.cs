@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
@@ -10,6 +10,10 @@ using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
 using PacMan_model.util;
+using Binding = System.Windows.Data.Binding;
+using Button = System.Windows.Controls.Button;
+using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
+using Panel = System.Windows.Controls.Panel;
 
 namespace PacMan_gui.Controllers {
     internal sealed class GameController : IDirectionEventObserver {
@@ -35,8 +39,12 @@ namespace PacMan_gui.Controllers {
 
         public GameController(
             Action<int> onGameEndCallback,
+            [NotNull] Action terminateAppAction,
             [NotNull] IDictionary<Key, Direction> keysToDirection,
             [NotNull] ISet<Key> pauseKeys) {
+            if (null == terminateAppAction) {
+                throw new ArgumentNullException("terminateAppAction");
+            }
             if (null == keysToDirection) {
                 throw new ArgumentNullException("keysToDirection");
             }
@@ -72,7 +80,14 @@ namespace PacMan_gui.Controllers {
                 {_gameView.RightButton, Direction.Directions[Direction.Right]}
             };
 
-            _game = new Game(_pathToCompany, _pathToGhosts, 0);
+            try {
+                _game = new Game(_pathToCompany, _pathToGhosts, 0);
+            }
+            catch (CannotPlayGameException e) {
+                MessageBox.Show(e.GetMessage(), "Error");
+                terminateAppAction();
+                return;
+            }
             _game.RegisterOnDirectionObserver(this);
             _game.LevelFinished += OnLevelFinished;
 
@@ -81,7 +96,13 @@ namespace PacMan_gui.Controllers {
         }
 
         public void Run(int bestScore) {
-            _game.NewGame(bestScore);
+            try {
+                _game.NewGame(bestScore);
+            }
+            catch (CannotPlayGameException e) {
+                _gameView.MainWindow.ShowMessage(e.GetMessage(), "Error");
+                OnBackAction();
+            }
             _gameViewModel.Init(_game, _gameView.GameCanvas, OnPacmanDeath);
 
             BindDataWithGameView();
@@ -422,7 +443,14 @@ namespace PacMan_gui.Controllers {
             else {
                 _gameView.MainWindow.ShowMessage("You win this level! Try next one", "Level finished");
 
-                _game.LoadNextLevel();
+                try {
+                    _game.LoadNextLevel();
+                }
+                catch (CannotPlayGameException e) {
+                    _gameView.MainWindow.ShowMessage(e.GetMessage(), "Error");
+                    OnBackAction();
+                    return;
+                }
                 _gameViewModel.Init(_game, _gameView.GetGameFieldCanvas());
 
                 RedrawGame();

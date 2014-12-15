@@ -28,6 +28,22 @@ namespace PacMan_model.level {
         void RegisterOnDirectionObserver(IDirectionEventObserver directionEventObserver);
     }
 
+    public class CannotPlayGameException : Exception {
+
+        protected string GameMessage;
+
+        internal CannotPlayGameException() {
+        }
+
+        internal CannotPlayGameException(string message) {
+            GameMessage = message;
+        }
+
+        public virtual string GetMessage() {
+            return GameMessage;
+        }
+    }
+
     public class InvalidLevelDirectory : Exception {
         public InvalidLevelDirectory(string directoryName) {
             if (null == directoryName) {

@@ -5,8 +5,6 @@ using PacMan_gui.Annotations;
 using PacMan_gui.Controllers;
 using PacMan_gui.View.About;
 using PacMan_gui.View.Level;
-using PacMan_gui.View.Settings;
-using PacMan_gui.ViewModel.settings;
 
 namespace PacMan_gui.View {
     /// <summary>
@@ -16,13 +14,13 @@ namespace PacMan_gui.View {
         private readonly MainWindow _mainWindow;
 
 
-        private readonly GameController _gameController;
+        private GameController _gameController;
 
-        private readonly ChampionsController _championsController;
+        private ChampionsController _championsController;
 
-        private readonly SettingsController _settingsController;
+        private SettingsController _settingsController;
 
-        private readonly AboutBox _aboutBox;
+        private AboutBox _aboutBox;
 
         #region Initialization
 
@@ -33,6 +31,18 @@ namespace PacMan_gui.View {
             InitializeComponent();
 
             _mainWindow = mainWindow;
+            
+
+            InitNestedElemets();
+        }
+
+        private bool _areElementsInitialized;
+        private void InitNestedElemets() {
+
+            if (_areElementsInitialized) {
+                return;
+            }
+
             Application.Current.Exit += (sender, args) => OnExit();
 
             try {
@@ -47,13 +57,18 @@ namespace PacMan_gui.View {
 
             _gameController = new GameController(
                 OnGameEnds,
+                () => {
+                    OnExit();
+                    _mainWindow.Close();
+                },
                 _settingsController.GetSettingsViewModel().KeysToDirection,
                 _settingsController.GetSettingsViewModel().PauseKeys);
 
 
             _aboutBox = new AboutBox(OnBackToMainWindow);
-        }
 
+            _areElementsInitialized = true;
+        }
         #endregion
 
         //  changes content of window to main window

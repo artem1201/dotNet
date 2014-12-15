@@ -190,14 +190,12 @@ namespace PacMan_model.level {
     }
 
 
-    public class InvalidLevelSource : Exception {
+    public class InvalidLevelSource : CannotPlayGameException {
         private readonly int _line = -1;
         private readonly int _column = -1;
 
-        private readonly string _message;
-
         internal InvalidLevelSource(string message) {
-            _message = message;
+            GameMessage = message;
         }
 
         internal InvalidLevelSource(int line, int colum) {
@@ -205,8 +203,8 @@ namespace PacMan_model.level {
             _column = colum;
         }
 
-        public string GetMessage() {
-            return _message ?? Where();
+        public override string GetMessage() {
+            return GameMessage ?? Where();
         }
 
         /// <summary>
