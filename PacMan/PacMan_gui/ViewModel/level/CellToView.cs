@@ -73,7 +73,7 @@ namespace PacMan_gui.ViewModel.level {
                     new Point(width / 4, height / 2),
                     new Point(width / 2, (3 * height) / 4),
                     new Point((3 * width) / 4, height / 2),
-                    new Point(width / 4, height / 4)
+                    new Point(width / 2, height / 4)
                 }
             };
         }
