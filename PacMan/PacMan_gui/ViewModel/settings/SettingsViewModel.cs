@@ -19,6 +19,8 @@ namespace PacMan_gui.ViewModel.settings {
     internal sealed class SettingsViewModel : INotifyPropertyChanged {
         private const string PauseActionName = "Pause";
 
+        private const Key CancelListenToKey = Key.Escape;
+
         private const string ViewState = "";
         private const string ChangeState = "press some key";
         private readonly SettingsView _settingsView;
@@ -145,6 +147,7 @@ namespace PacMan_gui.ViewModel.settings {
             InitObserverableCollectionFromKeysContainers();
         }
 
+        private bool _alreadyListening;
         private void OnFirstKeyChanging(string actionName) {
             var currentItem = KeySettingsItems.SingleOrDefault(item => item.ActionName.Equals(actionName));
 
@@ -152,20 +155,30 @@ namespace PacMan_gui.ViewModel.settings {
                 throw new Exception("user tries to change unknown action key");
             }
 
-            SettingsState = ChangeState;
-            _settingsView.StartListenToKeys(
-                key => {
-                    if (IsKeyAlreadyInUse(key)) {
-                        _settingsView.MainWindow.ShowMessage("key " + key + " is occupied, try another");
-                        return;
-                    }
+            if (!_alreadyListening) {
+                SettingsState = ChangeState;
+                _settingsView.StartListenToKeys(
+                    key => {
 
-                    currentItem.FirstKey = key;
-                    IsChanged = true;
+                        if (CancelListenToKey != key && !currentItem.ContainsKey(key)) {
+                            if (IsKeyAlreadyInUse(key)) {
+                                _settingsView.MainWindow.ShowMessage("key " + key + " is occupied, try another");
+                                return;
+                            }
 
-                    _settingsView.StopListenToKeys();
-                    SettingsState = ViewState;
-                });
+                            currentItem.FirstKey = key;
+                            IsChanged = true;
+                        }
+
+
+                        _settingsView.StopListenToKeys();
+                        SettingsState = ViewState;
+                        _alreadyListening = false;
+                    });
+
+                _alreadyListening = true;
+            }
+
         }
 
         private bool IsKeyAlreadyInUse(Key key) {

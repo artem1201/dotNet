@@ -15,9 +15,9 @@
         </Grid.RowDefinitions>
         <Label Style="{StaticResource MainLableStyle}" Content="{StaticResource ApplicationLable}" Grid.Row="0" />
         <DataGrid Grid.Row="1" Name="KeysSettingsDataGrid" Style="{StaticResource SettingsTableStyle}"
-                  AutoGenerateColumns="False" IsReadOnly="True">
+                  AutoGenerateColumns="False" IsReadOnly="True" Focusable="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Action" Binding="{Binding ActionName}" />
+                <DataGridTextColumn Header="Action" Binding="{Binding ActionName}"/>
                 <DataGridTemplateColumn Header="FirstKey">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
