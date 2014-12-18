@@ -166,9 +166,7 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
                     LoadBehaviorFromFile(behaviorFile);
                 }
                 catch (Exception e) {
-                    if (GhostAlreadyExitstsErrorMessage.Equals(e.Message)) {
-                        //TODO: show message that ghost with passed name exists or ignore    
-                    }
+                    if (GhostAlreadyExitstsErrorMessage.Equals(e.Message)) {}
                     else {
                         throw;
                     }
