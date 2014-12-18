@@ -27,14 +27,10 @@ namespace PacMan_model.level.cells {
     }
 
     public enum StaticCellType {
-        FreeSpace
-        ,
-        Wall
-        ,
-        PacDot
-        ,
-        Energizer
-        ,
+        FreeSpace,
+        Wall,
+        PacDot,
+        Energizer,
         Fruit
     }
 
@@ -54,11 +50,10 @@ namespace PacMan_model.level.cells {
                 case StaticCellType.Energizer:
                     return new Energizer(position);
                 case StaticCellType.Fruit:
-                    //TODO: add Fruit
-                    return new PacDot(position);
+                    return new Fruit(position);
                 default:
                     throw new InvalidEnumArgumentException(
-                        Resources.StaticCellFactory_CreateStaticCell_unknown_static_cell_type__ + type.ToString());
+                        Resources.StaticCellFactory_CreateStaticCell_unknown_static_cell_type__ + type);
             }
         }
     }
@@ -85,9 +80,7 @@ namespace PacMan_model.level.cells {
         }
     }
 
-
-    //TODO: make internal when testghost become depr.
-    public sealed class Wall : StaticCell {
+    internal sealed class Wall : StaticCell {
         public Wall(Point position) : base(position) {}
 
         public override StaticCellType GetCellType() {
@@ -193,7 +186,41 @@ namespace PacMan_model.level.cells {
         }
     }
 
-    //TODO: add fruits
+    internal sealed class Fruit : StaticCell, ICellWithCost {
+        private const int Cost = 100;
+
+
+        public Fruit(Point position) : base(position) {}
+
+        public int GetCost() {
+            return Cost;
+        }
+
+        public override StaticCellType GetCellType() {
+            return StaticCellType.PacDot;
+        }
+
+        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
+            if (null == pacman) {
+                throw new ArgumentNullException("pacman");
+            }
+            if (null == field) {
+                throw new ArgumentNullException("field");
+            }
+
+
+            pacman.StartMovingTo(
+                Position,
+                delegate {
+                    pacman.Eat(this);
+                    field.SetSell(Position, new FreeSpace(Position));
+                });
+        }
+
+        public override bool IsFreeForMoving() {
+            return true;
+        }
+    }
 
     #endregion
 }

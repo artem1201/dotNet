@@ -7,32 +7,14 @@ using System.Windows.Threading;
 using PacMan_gui.Annotations;
 using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
-using Point = PacMan_model.util.Point;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class PacManViewModel : INotifyPropertyChanged {
-        public Point Position { get; private set; }
-        public Direction Direction { get; private set; }
-
-        public int LivesNumber {
-            get { return _livesNumber; }
-            private set {
-                if (value == _livesNumber) {
-                    return;
-                }
-                _livesNumber = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-        public FieldViewModel FieldViewModel { get; set; }
-
         private readonly Canvas _canvas;
-        private IPacManObserverable _pacMan;
         private Shape _addedShape;
         private int _livesNumber;
         private Action<int> _onPacmanDeathAction;
+        private IPacManObserverable _pacMan;
 
         #region Initialization
 
@@ -56,8 +38,6 @@ namespace PacMan_gui.ViewModel.level {
 
             _canvas = canvas;
             Init(pacMan, fieldViewModel, onPacmanDeathAction);
-
-            //Redraw();
         }
 
         public void Init(IPacManObserverable pacMan, FieldViewModel fieldViewModel, Action<int> onPacmanDeathAction) {
@@ -82,6 +62,8 @@ namespace PacMan_gui.ViewModel.level {
 
         #region Events
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPacManChanged(Object sender, PacmanStateChangedEventArgs e) {
             if (null == e) {
                 throw new ArgumentNullException("e");
@@ -97,8 +79,6 @@ namespace PacMan_gui.ViewModel.level {
 
             _canvas.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(RedrawPacManOnCanvas));
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
@@ -120,8 +100,8 @@ namespace PacMan_gui.ViewModel.level {
             ClearCanvas();
 
 
-            double cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
-            double cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
+            var cellWidth = _canvas.ActualWidth / FieldViewModel.Width;
+            var cellHeight = _canvas.ActualHeight / FieldViewModel.Height;
             _addedShape = CellToView.PacmanToShape(cellWidth, cellHeight, Position.GetX(), Position.GetY());
 
             _canvas.Children.Add(_addedShape);
@@ -134,5 +114,22 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         #endregion
+
+        public Point Position { get; private set; }
+        public Direction Direction { get; private set; }
+
+        public int LivesNumber {
+            get { return _livesNumber; }
+            private set {
+                if (value == _livesNumber) {
+                    return;
+                }
+                _livesNumber = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+        public FieldViewModel FieldViewModel { get; set; }
     }
 }

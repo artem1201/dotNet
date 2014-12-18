@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
+using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
@@ -11,30 +12,24 @@ using PacMan_gui.View.Level;
 using PacMan_gui.ViewModel.level;
 using PacMan_model.level;
 using PacMan_model.util;
-using Binding = System.Windows.Data.Binding;
-using Button = System.Windows.Controls.Button;
-using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
-using Panel = System.Windows.Controls.Panel;
 
 namespace PacMan_gui.Controllers {
     internal sealed class GameController : IDirectionEventObserver {
         private static readonly string RootDir = Directory.GetCurrentDirectory();
-        private readonly string _pathToCompany = RootDir + "\\Company";
-        private readonly string _pathToGhosts = RootDir + "\\AI";
-
-
-        private readonly IDictionary<Key, Direction> _keysToDirection;
-        private readonly ISet<Key> _pauseKeys;
 
         private readonly IDictionary<Button, Direction> _directionButtonToDirection;
 
         private readonly IGame _game;
-        private readonly GameViewModel _gameViewModel;
         private readonly GameView _gameView;
+        private readonly GameViewModel _gameViewModel;
+        private readonly IDictionary<Key, Direction> _keysToDirection;
 
         //  is called when game is over
         //  parameters are best score and current score
         private readonly Action<int> _onGameEndCallback;
+        private readonly string _pathToCompany = RootDir + "\\Company";
+        private readonly string _pathToGhosts = RootDir + "\\AI";
+        private readonly ISet<Key> _pauseKeys;
 
         #region Initialization
 
@@ -72,14 +67,12 @@ namespace PacMan_gui.Controllers {
             _onPauseKeyCommand = new OnPauseKeyCommand(DoPause);
             _onDirectionKeyCommand = new OnDirectionKeyCommand(OnDirectionKeyAction);
 
-            //TODO: hardcoded directions and button
-            //add buttons for directions dynamicly
-            _directionButtonToDirection = new Dictionary<Button, Direction> {
-                {_gameView.UpButton, Direction.Directions[Direction.Down]},
-                {_gameView.DownButton, Direction.Directions[Direction.Up]},
-                {_gameView.LeftButton, Direction.Directions[Direction.Left]},
-                {_gameView.RightButton, Direction.Directions[Direction.Right]}
-            };
+            _directionButtonToDirection = new Dictionary<Button, Direction>();
+            foreach (var direction in Direction.Directions) {
+                var directionButton = new Button {Name = direction.GetName(), Content = direction.GetName()};
+                _directionButtonToDirection.Add(directionButton, direction);
+                _gameView.ForDirectionButtonsPanel.Children.Add(directionButton);
+            }
 
             try {
                 _game = new Game(_pathToCompany, _pathToGhosts, 0);
@@ -152,11 +145,9 @@ namespace PacMan_gui.Controllers {
             BindControlButton(_gameView.PauseButton, _onPauseButtonCommand);
             BindControlButton(_gameView.BackButton, _onBackButtonCommand);
 
-            //TODO: hardcode again
-            BindControlButton(_gameView.UpButton, _onDirectionButtonCommand);
-            BindControlButton(_gameView.DownButton, _onDirectionButtonCommand);
-            BindControlButton(_gameView.LeftButton, _onDirectionButtonCommand);
-            BindControlButton(_gameView.RightButton, _onDirectionButtonCommand);
+            foreach (var directionButton in _gameView.ForDirectionButtonsPanel.Children.OfType<Button>()) {
+                BindControlButton(directionButton, _onDirectionButtonCommand);
+            }
 
             _isBinded = true;
         }
@@ -250,14 +241,14 @@ namespace PacMan_gui.Controllers {
 
         #region Commands
 
-        private readonly ICommand _onPauseButtonCommand;
         private readonly ICommand _onBackButtonCommand;
         private readonly ICommand _onDirectionButtonCommand;
 
-        private readonly ICommand _onPauseKeyCommand;
         private readonly ICommand _onDirectionKeyCommand;
+        private readonly ICommand _onPauseButtonCommand;
+        private readonly ICommand _onPauseKeyCommand;
 
-        private class OnBackButtonCommand : ICommand {
+        private sealed class OnBackButtonCommand : ICommand {
             private readonly Action _onBackAction;
 
             public OnBackButtonCommand(Action onBackAction) {
@@ -275,25 +266,7 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnPauseButtonCommand : ICommand {
-            private readonly Action _onPauseAction;
-
-            public OnPauseButtonCommand(Action onPauseAction) {
-                _onPauseAction = onPauseAction;
-            }
-
-            public bool CanExecute(object parameter) {
-                return true;
-            }
-
-            public void Execute(object parameter) {
-                _onPauseAction();
-            }
-
-            public event EventHandler CanExecuteChanged;
-        }
-
-        private class OnDirectionButtonCommand : ICommand {
+        private sealed class OnDirectionButtonCommand : ICommand {
             private readonly Action<Button> _onDirectionButtonAction;
 
             public OnDirectionButtonCommand(Action<Button> onDirectionButtonAction) {
@@ -320,25 +293,7 @@ namespace PacMan_gui.Controllers {
             public event EventHandler CanExecuteChanged;
         }
 
-        private class OnPauseKeyCommand : ICommand {
-            private readonly Action _onPauseAction;
-
-            public OnPauseKeyCommand(Action onPauseAction) {
-                _onPauseAction = onPauseAction;
-            }
-
-            public bool CanExecute(object parameter) {
-                return true;
-            }
-
-            public void Execute(object parameter) {
-                _onPauseAction();
-            }
-
-            public event EventHandler CanExecuteChanged;
-        }
-
-        private class OnDirectionKeyCommand : ICommand {
+        private sealed class OnDirectionKeyCommand : ICommand {
             private readonly Action<Key> _onDirectionKeyAction;
 
             public OnDirectionKeyCommand(Action<Key> onDirectionKeyAction) {
@@ -359,6 +314,42 @@ namespace PacMan_gui.Controllers {
                 }
 
                 _onDirectionKeyAction((Key) parameter);
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private sealed class OnPauseButtonCommand : ICommand {
+            private readonly Action _onPauseAction;
+
+            public OnPauseButtonCommand(Action onPauseAction) {
+                _onPauseAction = onPauseAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute(object parameter) {
+                _onPauseAction();
+            }
+
+            public event EventHandler CanExecuteChanged;
+        }
+
+        private sealed class OnPauseKeyCommand : ICommand {
+            private readonly Action _onPauseAction;
+
+            public OnPauseKeyCommand(Action onPauseAction) {
+                _onPauseAction = onPauseAction;
+            }
+
+            public bool CanExecute(object parameter) {
+                return true;
+            }
+
+            public void Execute(object parameter) {
+                _onPauseAction();
             }
 
             public event EventHandler CanExecuteChanged;
@@ -432,6 +423,8 @@ namespace PacMan_gui.Controllers {
 
         #region Events
 
+        public event EventHandler<DirectionChangedEventArgs> DirectionChanged;
+
         private void OnLevelFinished(object sender, EventArgs emptyEventArgs) {
             //  handle viewing next level and start it
 
@@ -461,14 +454,6 @@ namespace PacMan_gui.Controllers {
         }
 
         private void OnGameViewSizeChanged(Object o, EventArgs e) {
-            /*
-            if (null == o) {
-                throw new ArgumentNullException("o");
-            }
-            if (null == e) {
-                throw new ArgumentNullException("e");
-            }
-            */
             RedrawGame();
         }
 
@@ -479,8 +464,6 @@ namespace PacMan_gui.Controllers {
                 _game.Start();
             }
         }
-
-        public event EventHandler<DirectionChangedEventArgs> DirectionChanged;
 
         private void NotifyDirectionChanged(DirectionChangedEventArgs e) {
             if (null == e) {

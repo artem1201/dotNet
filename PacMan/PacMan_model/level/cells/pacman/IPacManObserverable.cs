@@ -3,15 +3,18 @@ using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
     public interface IPacManObserverable : IDisposable {
-
         event EventHandler<PacmanStateChangedEventArgs> PacmanState;
 
         void ForceNotify();
     }
 
-    public class PacmanStateChangedEventArgs : EventArgs {
-
-        public PacmanStateChangedEventArgs(Point position, Direction direction, int lives, int score, bool hasDied = false) {
+    public sealed class PacmanStateChangedEventArgs : EventArgs {
+        public PacmanStateChangedEventArgs(
+            Point position,
+            Direction direction,
+            int lives,
+            int score,
+            bool hasDied = false) {
             if (null == position) {
                 throw new ArgumentNullException("position");
             }

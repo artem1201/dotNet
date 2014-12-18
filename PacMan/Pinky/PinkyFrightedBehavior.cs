@@ -3,8 +3,7 @@ using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.level.field;
 using PacMan_model.util;
 
-namespace Pinky
-{
+namespace Pinky {
     public sealed class PinkyFrightedBehavior : GhostFrightedBehavior {
         private const int Speed = 14;
 

@@ -49,8 +49,6 @@ namespace PacMan_model.level.field {
             _cells = cells;
 
             CalculateDots();
-
-            //NotifyChangedStatement();
         }
 
         #endregion
@@ -59,11 +57,6 @@ namespace PacMan_model.level.field {
 
         public void Dispose() {
             UnsubsrcibeAll();
-
-//            _cells.Clear();
-//
-//            _width = 0;
-//            _height = 0;
         }
 
         private void UnsubsrcibeAll() {
@@ -129,40 +122,6 @@ namespace PacMan_model.level.field {
                 .Zip(Direction.Directions, (point, direction) => direction.GetNear(point));
         }
 
-//        public IEnumerable<StaticCell> GetRemoteNeighbors(Point cellPoint, int distance) {
-//            if (null == cellPoint) {
-//                throw new ArgumentNullException("cellPoint");
-//            }
-//            if ((0 >= distance) || (distance >= (_width - cellPoint.GetX()))
-//                || (distance >= (_height - cellPoint.GetY()))) {
-//                throw new ArgumentOutOfRangeException("distance");
-//            }
-//            return GetRemoteNeighborsPoints(cellPoint, distance).Select(GetCell);
-//        }
-//
-//        public IEnumerable<Point> GetRemoteNeighborsPoints(Point cellPoint, int distance) {
-//            if (null == cellPoint) {
-//                throw new ArgumentNullException("cellPoint");
-//            }
-//            if ((0 >= distance) || (distance >= (_width - cellPoint.GetX()))
-//                || (distance >= (_height - cellPoint.GetY()))) {
-//                throw new ArgumentOutOfRangeException("distance");
-//            }
-//            if (!ContainsCellAtPoint(cellPoint)) {
-//                throw new ArgumentException("field does not contain sent cell");
-//            }
-//
-//
-//            return Direction.GetSquareAround(cellPoint, distance);
-//        }
-
-        private bool ContainsCellAtPoint(Point cellPoint) {
-            if (null == cellPoint) {
-                throw new ArgumentNullException("cellPoint");
-            }
-
-            return ContainsCellAtPoint(cellPoint.GetX(), cellPoint.GetY());
-        }
 
         private bool ContainsCellAtPoint(int x, int y) {
             return ((x >= 0) && (y >= 0) && (x < _width) && (y < _height));

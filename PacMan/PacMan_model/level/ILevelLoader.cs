@@ -2,7 +2,6 @@
 
 namespace PacMan_model.level {
     internal interface ILevelLoader {
-
         ILevel LoadFromSource(Stream source);
     }
 }

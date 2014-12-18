@@ -8,15 +8,9 @@ using PacMan_model.level.field;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class FieldViewModel {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-
-        //private INotChanebleableField _field;
-
+        private readonly IList<Shape> _addedShapes = new List<Shape>();
         private readonly Canvas _canvas;
         private IFieldObserverable _fieldObserverable;
-
-        private readonly IList<Shape> _addedShapes = new List<Shape>();
 
         #region Initialization
 
@@ -29,8 +23,6 @@ namespace PacMan_gui.ViewModel.level {
             }
             _canvas = canvas;
             Init(fieldObserverable);
-
-            //Redraw();
         }
 
         public void Init(IFieldObserverable newFieldObserverable) {
@@ -55,8 +47,6 @@ namespace PacMan_gui.ViewModel.level {
             Width = e.Field.GetWidth();
             Height = e.Field.GetHeight();
 
-            //System.Console.WriteLine("call redraw field on: " + Width + ":" + Height);
-
             _canvas.Dispatcher.BeginInvoke(
                 DispatcherPriority.Send,
                 new Action<INotChanebleableField>(RedrawFieldOnCanvas),
@@ -73,10 +63,8 @@ namespace PacMan_gui.ViewModel.level {
 
 
         private void RedrawFieldOnCanvas(INotChanebleableField field) {
-            double cellWidth = (_canvas.ActualWidth / field.GetWidth());
-            double cellHeigth = (_canvas.ActualHeight / field.GetHeight());
-
-            //System.Console.WriteLine("redraw field on: " + field.GetWidth() + ":" + field.GetHeight());
+            var cellWidth = (_canvas.ActualWidth / field.GetWidth());
+            var cellHeigth = (_canvas.ActualHeight / field.GetHeight());
 
             ClearCanvas();
 
@@ -98,5 +86,8 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         #endregion
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
     }
 }

@@ -10,7 +10,7 @@ namespace PacMan_gui.ViewModel.champions {
 
         #region Initialization
 
-        public ChampionsViewModel(ChampionsTable championsTableOberverable) {
+        public ChampionsViewModel(IChampionsTableObserverable championsTableOberverable) {
             ChampionsTableItems = new ObservableCollection<ChampionsTableItem>();
 
             championsTableOberverable.ChampionsTableState += OnChampionsTableStateChanges;
@@ -43,7 +43,7 @@ namespace PacMan_gui.ViewModel.champions {
         #endregion
     }
 
-    internal class ChampionsTableItem {
+    internal sealed class ChampionsTableItem {
         public ChampionsTableItem([NotNull] string name, int score) {
             if (null == name) {
                 throw new ArgumentNullException("name");

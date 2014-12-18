@@ -3,9 +3,6 @@ using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
     internal interface IGhost : ICellWithCost, IGhostObserverable {
-
-        
-
         void SetTarget(MovingCell target);
         void SetField(INotChanebleableField field);
 
@@ -21,8 +18,5 @@ namespace PacMan_model.level.cells.ghosts {
         void Restart();
 
         void Die();
-
     }
-
-    
 }

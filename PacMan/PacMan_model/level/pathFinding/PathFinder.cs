@@ -6,8 +6,7 @@ using PacMan_model.util;
 
 namespace PacMan_model.level.pathFinding {
     public static class PathFinder {
-
-        private readonly static Random Random = new Random((int) DateTime.Now.Ticks);
+        private static readonly Random Random = new Random((int) DateTime.Now.Ticks);
 
         public static IEnumerable<Point> GetOrderedClosesNeighbors(
             this Point currentPoint,
@@ -25,7 +24,5 @@ namespace PacMan_model.level.pathFinding {
 
             return neighbors.ElementAt(Random.Next() % neighbors.Count()).GetPosition();
         }
-
-        
     }
 }

@@ -6,7 +6,6 @@ using PacMan_model.champions;
 
 namespace PacMan_gui.Controllers {
     internal sealed class ChampionsController : IDisposable {
-        
         private readonly ChampionsTable _championsTable;
         private readonly ChampionsTableView _championsTableView;
         private readonly ChampionsViewModel _championsViewModel;
@@ -18,14 +17,18 @@ namespace PacMan_gui.Controllers {
                 throw new ArgumentNullException("onExit");
             }
             _championsTableView = new ChampionsTableView();
-            
+
             _championsTable = new ChampionsTable();
-            
+
             _onExit = onExit;
 
             _championsViewModel = new ChampionsViewModel(_championsTable);
 
             SetBinding();
+        }
+
+        public void Dispose() {
+            _championsTable.Dispose();
         }
 
         public ChampionsTableView GetChampionsTableView() {
@@ -37,7 +40,6 @@ namespace PacMan_gui.Controllers {
         }
 
         public void Run() {
-            
             _championsTableView.ChampionsTableExit += OnExit;
         }
 
@@ -47,10 +49,6 @@ namespace PacMan_gui.Controllers {
 
         private void OnExit(object sender, EventArgs e) {
             _onExit();
-        }
-
-        public void Dispose() {
-            _championsTable.Dispose();
         }
     }
 }

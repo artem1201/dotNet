@@ -3,9 +3,6 @@ using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
     internal interface IPacMan : IPacManObserverable {
-
-
-
         void Move(Direction nextDirection);
 
         Point GetPosition();
@@ -20,7 +17,4 @@ namespace PacMan_model.level.cells.pacman {
 
         void Die();
     }
-
-
-    
 }

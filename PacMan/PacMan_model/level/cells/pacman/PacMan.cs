@@ -85,7 +85,6 @@ namespace PacMan_model.level.cells.pacman {
             }
                 //  else pacman stops
             else {
-
                 var cellInNextDirection = _field.GetCell(nextDirection.GetNear(_pacman.GetPosition()));
                 var cellInCurrentDirection = _field.GetCell(_currentDirection.GetNear(_pacman.GetPosition()));
 
@@ -233,12 +232,6 @@ namespace PacMan_model.level.cells.pacman {
                 _getCurrentDirectionFunc = getCurrentDirectionFunc;
             }
 
-/*
-            public void SetSpeed(int newSpeed) {
-                _currentSpeed = newSpeed;
-            }
-*/
-
             /// <summary>
             /// returns number of ticks per one movement
             /// </summary>
@@ -257,13 +250,6 @@ namespace PacMan_model.level.cells.pacman {
                 }
                 Position = newPosition;
             }
-
-/*
-            public void MoveTo(int x, int y) {
-                Position.SetX(x);
-                Position.SetY(y);
-            }
-*/
         }
 
         #endregion

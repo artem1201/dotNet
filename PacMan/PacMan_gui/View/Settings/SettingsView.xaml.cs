@@ -5,14 +5,16 @@ using PacMan_gui.Annotations;
 
 namespace PacMan_gui.View.Settings {
     /// <summary>
-    /// Interaction logic for SettingsView.xaml
+    ///     Interaction logic for SettingsView.xaml
     /// </summary>
-    public partial class SettingsView {
-        public MainWindow MainWindow { get; private set; }
+    public sealed partial class SettingsView {
+        private Action<Key> _onKeyPressedAction;
 
         public SettingsView() {
             InitializeComponent();
         }
+
+        public MainWindow MainWindow { get; private set; }
 
         private void SettingsView_OnLoaded(object sender, RoutedEventArgs e) {
             MainWindow = Window.GetWindow(this) as MainWindow;
@@ -22,7 +24,6 @@ namespace PacMan_gui.View.Settings {
             }
         }
 
-        private Action<Key> _onKeyPressedAction;
         public void StartListenToKeys([NotNull] Action<Key> onKeyPressedAction) {
             if (null == onKeyPressedAction) {
                 throw new ArgumentNullException("onKeyPressedAction");

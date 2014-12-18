@@ -8,21 +8,21 @@ using PacMan_gui.View.Level;
 
 namespace PacMan_gui.View {
     /// <summary>
-    /// Interaction logic for MainWindowContent.xaml
+    ///     Interaction logic for MainWindowContent.xaml
     /// </summary>
     public partial class MainWindowContent {
         private readonly MainWindow _mainWindow;
+        private AboutBox _aboutBox;
 
-
-        private GameController _gameController;
 
         private ChampionsController _championsController;
+        private GameController _gameController;
 
         private SettingsController _settingsController;
 
-        private AboutBox _aboutBox;
-
         #region Initialization
+
+        private bool _areElementsInitialized;
 
         public MainWindowContent([NotNull] MainWindow mainWindow) {
             if (null == mainWindow) {
@@ -31,14 +31,12 @@ namespace PacMan_gui.View {
             InitializeComponent();
 
             _mainWindow = mainWindow;
-            
+
 
             InitNestedElemets();
         }
 
-        private bool _areElementsInitialized;
         private void InitNestedElemets() {
-
             if (_areElementsInitialized) {
                 return;
             }
@@ -69,6 +67,7 @@ namespace PacMan_gui.View {
 
             _areElementsInitialized = true;
         }
+
         #endregion
 
         //  changes content of window to main window
@@ -120,9 +119,9 @@ namespace PacMan_gui.View {
 
         private static readonly string ChampionNameEmpty = String.Empty;
 
-        private string _newChampionName = ChampionNameEmpty;
-        private bool _addNewRecord;
         private readonly AutoResetEvent _nameEnteredEvent = new AutoResetEvent(false);
+        private bool _addNewRecord;
+        private string _newChampionName = ChampionNameEmpty;
 
         private void AddNewRecord(int score) {
             //  show input box

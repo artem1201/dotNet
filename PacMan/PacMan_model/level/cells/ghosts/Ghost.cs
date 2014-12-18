@@ -64,8 +64,6 @@ namespace PacMan_model.level.cells.ghosts {
 
             _target = target;
             _field = field;
-
-            //MakeStalker();
         }
 
         #endregion
@@ -237,23 +235,6 @@ namespace PacMan_model.level.cells.ghosts {
                 }
                 _getCurrentDirectionFunc = getCurrentDirectionFunc;
             }
-
-
-/*
-            public GhostCell(Point startPosition, int speed)
-                : base(startPosition)
-            {
-                if (null == startPosition)
-                {
-                    throw new ArgumentNullException("startPosition");
-                }
-                if (speed <= 0)
-                {
-                    throw new ArgumentOutOfRangeException("speed");
-                }
-                _currentSpeed = speed;
-            }
-*/
 
             public void SetSpeed(int speed) {
                 if (speed <= 0) {

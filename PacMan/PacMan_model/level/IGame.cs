@@ -29,11 +29,9 @@ namespace PacMan_model.level {
     }
 
     public class CannotPlayGameException : Exception {
-
         protected string GameMessage;
 
-        internal CannotPlayGameException() {
-        }
+        internal CannotPlayGameException() {}
 
         internal CannotPlayGameException(string message) {
             GameMessage = message;
@@ -44,7 +42,7 @@ namespace PacMan_model.level {
         }
     }
 
-    public class InvalidLevelDirectory : Exception {
+    public sealed class InvalidLevelDirectory : Exception {
         public InvalidLevelDirectory(string directoryName) {
             if (null == directoryName) {
                 throw new ArgumentNullException("directoryName");

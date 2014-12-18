@@ -12,6 +12,126 @@ namespace PacMan_gui.ViewModel.level {
         private const string PausedMessage = "Paused";
         private const string NotPausedMessage = "";
 
+        private int _bestScore;
+        private LevelCondition _condition;
+        private int _currentLevelScore;
+        private int _currentScore;
+        private IGame _game;
+        private string _pausedMessage;
+
+        #region Initialization
+
+        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
+            if (null == game) {
+                throw new ArgumentNullException("game");
+            }
+            if (null == canvas) {
+                throw new ArgumentNullException("canvas");
+            }
+            if (null == onPacmanDeathAction) {
+                throw new ArgumentNullException("onPacmanDeathAction");
+            }
+
+
+            Init(game, canvas, onPacmanDeathAction);
+
+            BestScore = game.GetBestScore();
+            CurrentScore = game.GetGameScore();
+            CurrentLevelScore = game.GetLevelScore();
+            SetPaused(false);
+        }
+
+        public void Init([NotNull] IGame game, [NotNull] Canvas canvas, Action<int> onPacmanDeathAction = null) {
+            _game = game;
+
+            game.Level.LevelState += OnLevelChanged;
+            game.Level.PacMan.PacmanState += OnPacManChanged;
+
+            if (null == FieldViewModel) {
+                FieldViewModel = new FieldViewModel(game.Level.Field, canvas);
+            }
+            else {
+                FieldViewModel.Init(game.Level.Field);
+            }
+
+            if (null == PacManViewModel) {
+                if (onPacmanDeathAction != null) {
+                    PacManViewModel = new PacManViewModel(
+                        game.Level.PacMan,
+                        canvas,
+                        FieldViewModel,
+                        onPacmanDeathAction);
+                }
+                else {
+                    throw new ArgumentNullException("onPacmanDeathAction");
+                }
+            }
+            else {
+                PacManViewModel.Init(game.Level.PacMan, FieldViewModel, onPacmanDeathAction);
+            }
+
+            if (null != GhostViewModels) {
+                foreach (var ghostViewModel in GhostViewModels) {
+                    ghostViewModel.ClearCanvas();
+                }
+                GhostViewModels.Clear();
+            }
+            else {
+                GhostViewModels = new List<GhostViewModel>();
+            }
+
+
+            foreach (var ghostObserverable in game.Level.Ghosts) {
+                GhostViewModels.Add(new GhostViewModel(ghostObserverable, this, canvas, FieldViewModel));
+            }
+        }
+
+        #endregion
+
+        #region Events
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPacManChanged(
+            [NotNull] object sender,
+            [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
+            if (null == pacmanStateChangedEventArgs) {
+                throw new ArgumentNullException("pacmanStateChangedEventArgs");
+            }
+
+
+            //  change scores
+            BestScore = _game.GetBestScore();
+            CurrentScore = _game.GetGameScore();
+            CurrentLevelScore = _game.GetLevelScore();
+        }
+
+        private void OnLevelChanged(Object sender, LevelStateChangedEventArgs e) {
+            if (null == e) {
+                throw new ArgumentNullException("e");
+            }
+
+            Condition = e.Condition;
+        }
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            var handler = PropertyChanged;
+            if (handler != null) {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
+
+        #region Redrawing
+
+        public void Redraw() {
+            _game.Level.ForceNotify();
+        }
+
+        #endregion
+
         public PacManViewModel PacManViewModel { get; private set; }
         public FieldViewModel FieldViewModel { get; private set; }
         public IList<GhostViewModel> GhostViewModels { get; private set; }
@@ -75,139 +195,6 @@ namespace PacMan_gui.ViewModel.level {
 
         public void SetPaused(bool paused) {
             Paused = paused ? PausedMessage : NotPausedMessage;
-        }
-
-        #endregion
-
-        //private readonly Canvas _canvas;
-        private IGame _game;
-        private int _bestScore;
-        private int _currentScore;
-        private int _currentLevelScore;
-        private LevelCondition _condition;
-        private string _pausedMessage;
-
-        #region Initialization
-
-        public GameViewModel([NotNull] IGame game, [NotNull] Canvas canvas, [NotNull] Action<int> onPacmanDeathAction) {
-            if (null == game) {
-                throw new ArgumentNullException("game");
-            }
-            if (null == canvas) {
-                throw new ArgumentNullException("canvas");
-            }
-            if (null == onPacmanDeathAction) {
-                throw new ArgumentNullException("onPacmanDeathAction");
-            }
-            //_canvas = canvas;
-
-
-            Init(game, canvas, onPacmanDeathAction);
-
-            BestScore = game.GetBestScore();
-            CurrentScore = game.GetGameScore();
-            CurrentLevelScore = game.GetLevelScore();
-            SetPaused(false);
-            //Redraw();
-        }
-
-        public void Init([NotNull] IGame game, [NotNull] Canvas canvas, Action<int> onPacmanDeathAction = null) {
-            _game = game;
-
-            game.Level.LevelState += OnLevelChanged;
-            game.Level.PacMan.PacmanState += OnPacManChanged;
-
-            if (null == FieldViewModel) {
-                FieldViewModel = new FieldViewModel(game.Level.Field, canvas);
-            }
-            else {
-                FieldViewModel.Init(game.Level.Field);
-            }
-
-            if (null == PacManViewModel) {
-                if (onPacmanDeathAction != null) {
-                    PacManViewModel = new PacManViewModel(
-                        game.Level.PacMan,
-                        canvas,
-                        FieldViewModel,
-                        onPacmanDeathAction);
-                }
-                else {
-                    throw new ArgumentNullException("onPacmanDeathAction");
-                }
-            }
-            else {
-                PacManViewModel.Init(game.Level.PacMan, FieldViewModel, onPacmanDeathAction);
-            }
-
-            if (null != GhostViewModels) {
-                foreach (var ghostViewModel in GhostViewModels) {
-                    ghostViewModel.ClearCanvas();
-                }
-                GhostViewModels.Clear();
-            }
-            else {
-                GhostViewModels = new List<GhostViewModel>();
-            }
-
-
-            foreach (var ghostObserverable in game.Level.Ghosts) {
-                GhostViewModels.Add(new GhostViewModel(ghostObserverable, this, canvas, FieldViewModel));
-            }
-        }
-
-        #endregion
-
-        #region Events
-
-        private void OnPacManChanged(
-            [NotNull] object sender,
-            [NotNull] PacmanStateChangedEventArgs pacmanStateChangedEventArgs) {
-//            if (null == sender) {
-//                throw new ArgumentNullException("sender");
-//            }
-
-            if (null == pacmanStateChangedEventArgs) {
-                throw new ArgumentNullException("pacmanStateChangedEventArgs");
-            }
-
-
-            //  change scores
-            BestScore = _game.GetBestScore();
-            CurrentScore = _game.GetGameScore();
-            CurrentLevelScore = _game.GetLevelScore();
-        }
-
-        private void OnLevelChanged(Object sender, LevelStateChangedEventArgs e) {
-            if (null == e) {
-                throw new ArgumentNullException("e");
-            }
-
-            Condition = e.Condition;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
-            var handler = PropertyChanged;
-            if (handler != null) {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        #endregion
-
-        #region Redrawing
-
-        public void Redraw() {
-            _game.Level.ForceNotify();
-//            FieldViewModel.Redraw();
-//            PacManViewModel.Redraw();
-//
-//            foreach (var ghostViewModel in GhostViewModels) {
-//                ghostViewModel.Redraw();
-//            }
         }
 
         #endregion

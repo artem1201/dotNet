@@ -9,16 +9,15 @@ using PacMan_model.util;
 
 namespace PacMan_gui.ViewModel.level {
     internal sealed class GhostViewModel {
+        private readonly Canvas _canvas;
+        private readonly GameViewModel _gameViewModel;
+        private Shape _addedShape;
+
+        private IGhostObserverable _ghost;
         public Point Position { get; private set; }
         public string Name { get; private set; }
 
         public FieldViewModel FieldViewModel { get; set; }
-
-        private readonly Canvas _canvas;
-        private Shape _addedShape;
-
-        private IGhostObserverable _ghost;
-        private readonly GameViewModel _gameViewModel;
 
         private LevelCondition LevelCondition {
             get { return _gameViewModel.Condition; }
@@ -47,8 +46,6 @@ namespace PacMan_gui.ViewModel.level {
             _canvas = canvas;
 
             Init(ghost, fieldViewModel);
-
-            //Redraw();
         }
 
         public void Init(

@@ -3,35 +3,32 @@ using System;
 namespace PacMan_model.util {
     public sealed class Direction {
         private readonly Point _basisVector;
-        private readonly int _id;
-        private Direction(Point point, int id) {
+        private readonly string _name;
+
+        private Direction(Point point, string name) {
+            if (null == name) {
+                throw new ArgumentNullException("name");
+            }
             _basisVector = point;
-            _id = id;
+            _name = name;
         }
 
-        public static int Up = 0;
-        public static int Down = 1;
-        public static int Left = 2;
-        public static int Right = 3;
+        public static readonly int Up = 0;
+        public static readonly int Down = 1;
+        public static readonly int Left = 2;
+        public static readonly int Right = 3;
 
         public static Direction[] Directions = {
-            new Direction(new Point(0, -1), Up),
-            new Direction(new Point(0, 1), Down),
-            new Direction(new Point(-1, 0), Left),
-            new Direction(new Point(1, 0), Right)
+            new Direction(new Point(0, -1), "Up"),
+            new Direction(new Point(0, 1), "Down"),
+            new Direction(new Point(-1, 0), "Left"),
+            new Direction(new Point(1, 0), "Right")
         };
 
         public static readonly Direction DefaultDirection = Directions[Left];
 
-        private static readonly string[] DirectionNames = {
-            "Up",
-            "Down",
-            "Left",
-            "Right"
-        };
-
         public string GetName() {
-            return DirectionNames[_id];
+            return _name;
         }
 
 

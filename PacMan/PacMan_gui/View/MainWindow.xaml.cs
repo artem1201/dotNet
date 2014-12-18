@@ -4,7 +4,7 @@ using PacMan_gui.Annotations;
 
 namespace PacMan_gui.View {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow {
         public MainWindow() {
@@ -14,10 +14,8 @@ namespace PacMan_gui.View {
     }
 
     public static class WindowUtil {
-        public static void ShowMessage(this Window window, [NotNull] string message)
-        {
-            if (null == message)
-            {
+        public static void ShowMessage(this Window window, [NotNull] string message) {
+            if (null == message) {
                 throw new ArgumentNullException("message");
             }
 
@@ -29,18 +27,13 @@ namespace PacMan_gui.View {
                 Application.Current.Dispatcher.Invoke(
                     () => { MessageBox.Show(message); });
             }
-
-
         }
 
-        public static void ShowMessage(this Window window, [NotNull] string message, [NotNull] string title)
-        {
-            if (null == message)
-            {
+        public static void ShowMessage(this Window window, [NotNull] string message, [NotNull] string title) {
+            if (null == message) {
                 throw new ArgumentNullException("message");
             }
-            if (null == title)
-            {
+            if (null == title) {
                 throw new ArgumentNullException("title");
             }
 
@@ -51,7 +44,6 @@ namespace PacMan_gui.View {
             else {
                 MessageBox.Show(message, title);
             }
-
         }
     }
 }

@@ -9,16 +9,15 @@ using PacMan_model.util;
 
 namespace PacMan_gui.View.Level {
     /// <summary>
-    /// Interaction logic for GameView.xaml
+    ///     Interaction logic for GameView.xaml
     /// </summary>
-    public partial class GameView {
-        public event EventHandler GameViewSizeChanged;
-
-        public MainWindow MainWindow { get; private set; }
-
+    public sealed partial class GameView {
         public GameView() {
             InitializeComponent();
         }
+
+        public MainWindow MainWindow { get; private set; }
+        public event EventHandler GameViewSizeChanged;
 
         public Canvas GetGameFieldCanvas() {
             return GameCanvas;
@@ -54,24 +53,6 @@ namespace PacMan_gui.View.Level {
                 });
         }
 
-        #region Events
-
-        private void GameView_OnSizeChanged(object o, SizeChangedEventArgs e) {
-            /*
-            if (null == o) {
-                throw new ArgumentNullException("o");
-            }
-            if (null == e) {
-                throw new ArgumentNullException("e");
-            }
-            */
-
-
-            EventArgs.Empty.Raise(this, ref GameViewSizeChanged);
-        }
-
-        #endregion
-
         private void GameView_OnLoaded(object sender, RoutedEventArgs e) {
             MainWindow = Window.GetWindow(this) as MainWindow;
 
@@ -79,6 +60,14 @@ namespace PacMan_gui.View.Level {
                 throw new Exception("only window of class MainWindow is able to hadle game view");
             }
         }
+
+        #region Events
+
+        private void GameView_OnSizeChanged(object o, SizeChangedEventArgs e) {
+            EventArgs.Empty.Raise(this, ref GameViewSizeChanged);
+        }
+
+        #endregion
     }
 
     public class ControlEventArs : EventArgs {

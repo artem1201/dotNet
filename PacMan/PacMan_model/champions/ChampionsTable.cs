@@ -7,7 +7,7 @@ using PacMan_model.util;
 namespace PacMan_model.champions {
     public sealed class ChampionsTable : IChampionsTableObserverable {
         private static readonly string RootDir = Directory.GetCurrentDirectory();
-        private static readonly string PathToChampions = RootDir + "\\" /*+ "\\Champions"*/;
+        private static readonly string PathToChampions = RootDir + "\\";
         private static readonly string ChampionsFileName = PathToChampions + "Champions.txt";
 
         private const int MaxRecords = 10;
@@ -172,7 +172,6 @@ namespace PacMan_model.champions {
         #region Getters
 
         public int GetBestScore() {
-
             if (0 == _championsRecords.Count) {
                 return 0;
             }
@@ -221,7 +220,7 @@ namespace PacMan_model.champions {
         #endregion
     }
 
-    public class InvalidChampionsSource : Exception {
+    public sealed class InvalidChampionsSource : Exception {
         private readonly string _message;
 
         public InvalidChampionsSource(string message) {

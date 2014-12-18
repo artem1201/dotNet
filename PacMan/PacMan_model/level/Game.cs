@@ -5,7 +5,6 @@ using System.Timers;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
 using PacMan_model.util;
-using Timer = System.Timers.Timer;
 
 namespace PacMan_model.level {
     public sealed class Game : IGame {
@@ -64,8 +63,6 @@ namespace PacMan_model.level {
             _isWon = false;
             _isFinished = false;
 
-//            _observers.Clear();
-
             _bestScore = bestScore;
             _currentScore = 0;
             _currentLevelScore = 0;
@@ -122,7 +119,8 @@ namespace PacMan_model.level {
                     _currentLevel = _levelLoader.LoadFromSource(nextLevelSource);
                 }
                 catch (InvalidLevelSource e) {
-                    throw new CannotPlayGameException("Invalid level source: " + _levelFiles[_currentLevelNumber] + ", cause " + e.GetMessage());
+                    throw new CannotPlayGameException(
+                        "Invalid level source: " + _levelFiles[_currentLevelNumber] + ", cause " + e.GetMessage());
                 }
 
 
@@ -142,16 +140,10 @@ namespace PacMan_model.level {
         #region Start Stop
 
         public void Start() {
-//            if (null != _currentLevel) {
-//                _currentLevel.Resume();
-//            }
             _ticker.Start();
         }
 
         public void Pause() {
-//            if (null != _currentLevel) {
-//                _currentLevel.Pause();
-//            }
             _ticker.Stop();
         }
 

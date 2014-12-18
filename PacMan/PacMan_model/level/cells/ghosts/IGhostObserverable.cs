@@ -3,14 +3,12 @@ using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
     public interface IGhostObserverable : IDisposable {
-
         event EventHandler<GhostStateChangedEventArgs> GhostState;
         void ForceNotify();
     }
 
 
-    public class GhostStateChangedEventArgs : EventArgs {
-
+    public sealed class GhostStateChangedEventArgs : EventArgs {
         private readonly string _name;
 
         public GhostStateChangedEventArgs(string name, Point position) {
@@ -25,7 +23,7 @@ namespace PacMan_model.level.cells.ghosts {
         }
 
         public string Name {
-            get {return _name;}
+            get { return _name; }
         }
 
         public Point Position { get; private set; }

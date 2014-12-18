@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,20 +13,20 @@ using PacMan_gui.View.Settings;
 using PacMan_model.util;
 using OnFirstKeyChangingByActionName = System.Action<string>;
 
+#endregion
+
 namespace PacMan_gui.ViewModel.settings {
     internal sealed class SettingsViewModel : INotifyPropertyChanged {
-        public IDictionary<Key, Direction> KeysToDirection { get; private set; }
-        public ISet<Key> PauseKeys { get; private set; }
-        public bool IsChanged { get; private set; }
-
         private const string PauseActionName = "Pause";
-        public ObservableCollection<KeySettingsItem> KeySettingsItems { get; private set; }
-
-        private readonly SettingsView _settingsView;
 
         private const string ViewState = "";
         private const string ChangeState = "press some key";
+        private readonly SettingsView _settingsView;
         private string _settingsState;
+        public IDictionary<Key, Direction> KeysToDirection { get; private set; }
+        public ISet<Key> PauseKeys { get; private set; }
+        public bool IsChanged { get; private set; }
+        public ObservableCollection<KeySettingsItem> KeySettingsItems { get; private set; }
 
         public string SettingsState {
             get { return _settingsState; }
@@ -48,16 +50,12 @@ namespace PacMan_gui.ViewModel.settings {
 
             KeysToDirection = new Dictionary<Key, Direction> {
                 {Key.Up, Direction.Directions[Direction.Up]},
-//                {Key.W, Direction.Directions[Direction.Up]},
                 {Key.Left, Direction.Directions[Direction.Left]},
-//                {Key.A, Direction.Directions[Direction.Left]} ,
                 {Key.Down, Direction.Directions[Direction.Down]},
-//                {Key.S, Direction.Directions[Direction.Down]},
                 {Key.Right, Direction.Directions[Direction.Right]},
-//                {Key.D, Direction.Directions[Direction.Right]}
             };
 
-            PauseKeys = new HashSet<Key> {Key.Space, /*Key.P*/};
+            PauseKeys = new HashSet<Key> {Key.Space};
 
 
             KeySettingsItems = new ObservableCollection<KeySettingsItem>();
@@ -82,7 +80,7 @@ namespace PacMan_gui.ViewModel.settings {
         private void InitKeysContainersFromObserverableCollection() {
             PauseKeys.Clear();
             KeysToDirection.Clear();
-            
+
             foreach (var keySettingsItem in KeySettingsItems) {
                 //  Add pause
                 if (PauseActionName.Equals(keySettingsItem.ActionName)) {
@@ -91,7 +89,9 @@ namespace PacMan_gui.ViewModel.settings {
                     continue;
                 }
                 var item = keySettingsItem;
-                foreach (var direction in Direction.Directions.Where(direction => direction.GetName().Equals(item.ActionName))) {
+                foreach (
+                    var direction in
+                        Direction.Directions.Where(direction => direction.GetName().Equals(item.ActionName))) {
                     KeysToDirection.Add(keySettingsItem.FirstKey, direction);
                 }
             }
@@ -103,7 +103,7 @@ namespace PacMan_gui.ViewModel.settings {
 
         public ICommand OnFirstKeyChangingCommand { get; private set; }
 
-        private class OnSomeActionButtonCommand : ICommand {
+        private sealed class OnSomeActionButtonCommand : ICommand {
             private readonly OnFirstKeyChangingByActionName _action;
 
             public OnSomeActionButtonCommand([NotNull] OnFirstKeyChangingByActionName action) {
@@ -161,11 +161,10 @@ namespace PacMan_gui.ViewModel.settings {
                     }
 
                     currentItem.FirstKey = key;
+                    IsChanged = true;
 
                     _settingsView.StopListenToKeys();
                     SettingsState = ViewState;
-
-                    IsChanged = true;
                 });
         }
 
@@ -175,9 +174,27 @@ namespace PacMan_gui.ViewModel.settings {
 
         #endregion
 
-        internal sealed class KeySettingsItem : INotifyPropertyChanged {
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
+            var handler = PropertyChanged;
+            if (handler != null) {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        internal sealed class KeySettingsItem : INotifyPropertyChanged {
             private Key _firstKey;
+
+            public KeySettingsItem([NotNull] string action, Key firstKey) {
+                if (null == action) {
+                    throw new ArgumentNullException("action");
+                }
+                _firstKey = firstKey;
+                ActionName = action;
+            }
+
             public Key FirstKey {
                 get { return _firstKey; }
                 set {
@@ -190,53 +207,18 @@ namespace PacMan_gui.ViewModel.settings {
             }
 
 
-//            private Key _secondKey;
-//            public Key SecondKey
-//            {
-//                get { return _secondKey; }
-//                set
-//                {
-//                    if (value.Equals(_secondKey))
-//                    {
-//                        return;
-//                    }
-//                    _secondKey = value;
-//                    OnPropertyChanged1("SecondKeyName");
-//                }
-//            }
-
             public string ActionName { get; private set; }
 
             public string FirstKeyName {
                 get { return FirstKey.ToString(); }
             }
-//            public string SecondKeyName
-//            {
-//                get { return SecondKey.ToString(); }
-//            }
 
-            
-
-            public KeySettingsItem([NotNull] string action, Key firstKey/*, Key secondKey*/) {
-                if (null == action) {
-                    throw new ArgumentNullException("action");
-                }
-                _firstKey = firstKey;
-//                _secondKey = secondKey;
-                ActionName = action;
-            }
-
-            
-
-            public bool ContainsKey(Key key) {
-                if (_firstKey.Equals(key)) {
-                    return true;
-                }
-
-                return false;
-            }
 
             public event PropertyChangedEventHandler PropertyChanged;
+
+            public bool ContainsKey(Key key) {
+                return _firstKey == key;
+            }
 
             [NotifyPropertyChangedInvocator]
             private void OnPropertyChanged1([CallerMemberName] string propertyName = null) {
@@ -244,16 +226,6 @@ namespace PacMan_gui.ViewModel.settings {
                 if (handler != null) {
                     handler(this, new PropertyChangedEventArgs(propertyName));
                 }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) {
-                handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

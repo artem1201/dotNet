@@ -19,7 +19,7 @@ namespace Pinky {
                 this,
                 field,
                 target,
-                extraBehavior:new GhostRandomBehavior(this, field, target));
+                new GhostRandomBehavior(this, field, target));
             _behaviorWhenTargetIsOutOfArea = new GhostRandomBehavior(this, field, target);
         }
 

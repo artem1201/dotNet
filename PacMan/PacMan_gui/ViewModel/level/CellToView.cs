@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -10,14 +11,12 @@ using PacMan_model.level.cells.ghosts;
 
 namespace PacMan_gui.ViewModel.level {
     internal static class CellToView {
-
         private static readonly IDictionary<StaticCellType, Func<double, double, Shape>> CellsCreateor;
         private static readonly IDictionary<string, Func<double, double, Shape>> GhostsCreator;
 
         #region Initialization
 
         static CellToView() {
-
             CellsCreateor = new Dictionary<StaticCellType, Func<double, double, Shape>> {
                 {StaticCellType.FreeSpace, CreateFreeSpace},
                 {StaticCellType.Wall, CreateWall},
@@ -28,9 +27,7 @@ namespace PacMan_gui.ViewModel.level {
 
             GhostsCreator = new Dictionary<string, Func<double, double, Shape>>();
 
-            //TODO: solve ghost names and functions in some other way
             foreach (var ghostName in GhostsInfo.OrderedPossibleGhostNames) {
-
                 if (ghostName.Equals("Blinky")) {
                     GhostsCreator.Add(ghostName, CreateBlinky);
                 }
@@ -44,61 +41,69 @@ namespace PacMan_gui.ViewModel.level {
                     GhostsCreator.Add(ghostName, CreateClyde);
                 }
                 else {
-                    GhostsCreator.Add(ghostName, CreateDefaultGhost);    
+                    GhostsCreator.Add(ghostName, CreateDefaultGhost);
                 }
             }
         }
 
         #endregion
 
-
         #region Static Cells
 
         private static Shape CreateFreeSpace(double width, double height) {
             return new Rectangle {Width = width, Height = height};
         }
+
         private static Shape CreateWall(double width, double height) {
-            return new Rectangle {Fill = Brushes.Black, Width = width, Height = height };
+            return new Rectangle {Fill = Brushes.Black, Width = width, Height = height};
         }
+
         private static Shape CreatePacDot(double width, double height) {
             return new Ellipse {Width = width / 3, Height = height / 3, Fill = Brushes.White};
         }
+
         private static Shape CreateEnergizer(double width, double height) {
             return new Ellipse {Width = width / 2, Height = height / 2, Fill = Brushes.White};
         }
+
         private static Shape CreateFruit(double width, double height) {
-            //TODO:
-            return CreateEnergizer(width, height);
+            return new Polygon {
+                Fill = Brushes.OrangeRed,
+                Points = new PointCollection {
+                    new Point(width / 4, height / 2),
+                    new Point(width / 2, (3 * height) / 4),
+                    new Point((3 * width) / 4, height / 2),
+                    new Point(width / 4, height / 4)
+                }
+            };
         }
 
 
-        public static Shape StaticCellToShape(StaticCell cell, double widthOnCanvas, double heightOnCanvas, double x, double y, string name = null)
-        {
-
-            if (null == cell)
-            {
+        public static Shape StaticCellToShape(
+            StaticCell cell,
+            double widthOnCanvas,
+            double heightOnCanvas,
+            double x,
+            double y,
+            string name = null) {
+            if (null == cell) {
                 throw new ArgumentNullException("cell");
             }
-            if (widthOnCanvas <= 0)
-            {
+            if (widthOnCanvas <= 0) {
                 throw new ArgumentOutOfRangeException("widthOnCanvas");
             }
-            if (heightOnCanvas <= 0)
-            {
+            if (heightOnCanvas <= 0) {
                 throw new ArgumentOutOfRangeException("heightOnCanvas");
             }
-            if (x < 0)
-            {
+            if (x < 0) {
                 throw new ArgumentOutOfRangeException("x");
             }
-            if (y < 0)
-            {
+            if (y < 0) {
                 throw new ArgumentOutOfRangeException("y");
             }
 
 
-            if (!CellsCreateor.ContainsKey(cell.GetCellType()))
-            {
+            if (!CellsCreateor.ContainsKey(cell.GetCellType())) {
                 throw new ArgumentException("unknown cell type: " + cell.GetCellType());
             }
             var result = CellsCreateor[cell.GetCellType()](widthOnCanvas, heightOnCanvas);
@@ -106,8 +111,7 @@ namespace PacMan_gui.ViewModel.level {
 
             SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
 
-            if (null != name)
-            {
+            if (null != name) {
                 result.Name = name;
             }
 
@@ -122,15 +126,17 @@ namespace PacMan_gui.ViewModel.level {
             return new Ellipse {Width = width, Height = height, Fill = Brushes.Yellow};
         }
 
-        public static Shape PacmanToShape(double widthOnCanvas, double heightOnCanvas, double x, double y, string name = null)
-        {
-
+        public static Shape PacmanToShape(
+            double widthOnCanvas,
+            double heightOnCanvas,
+            double x,
+            double y,
+            string name = null) {
             var result = CreatePacMan(widthOnCanvas, heightOnCanvas);
 
             SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
 
-            if (null != name)
-            {
+            if (null != name) {
                 result.Name = name;
             }
 
@@ -142,27 +148,36 @@ namespace PacMan_gui.ViewModel.level {
         #region Ghosts
 
         private static Shape CreateBlinky(double width, double height) {
-            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Red };
+            return new Ellipse {Width = width, Height = height / 2, Fill = Brushes.Red};
         }
+
         private static Shape CreatePinky(double width, double height) {
-            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Pink };
+            return new Ellipse {Width = width, Height = height / 2, Fill = Brushes.Pink};
         }
+
         private static Shape CreateInky(double width, double height) {
-            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Blue };
+            return new Ellipse {Width = width, Height = height / 2, Fill = Brushes.Blue};
         }
+
         private static Shape CreateClyde(double width, double height) {
-            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Orange };
+            return new Ellipse {Width = width, Height = height / 2, Fill = Brushes.Orange};
         }
+
         private static Shape CreateDefaultGhost(double width, double height) {
-            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.Green };
+            return new Ellipse {Width = width, Height = height / 2, Fill = Brushes.Green};
         }
 
 
         private static Shape CreateFrightedGhost(double width, double height) {
-            return new Ellipse { Width = width, Height = height / 2, Fill = Brushes.LightSkyBlue };
+            return new Ellipse {Width = width, Height = height / 2, Fill = Brushes.LightSkyBlue};
         }
 
-        private static void SetPositionOnCanvas(Shape shape, double widthOnCanvas, double heightOnCanvas, double x, double y) {
+        private static void SetPositionOnCanvas(
+            Shape shape,
+            double widthOnCanvas,
+            double heightOnCanvas,
+            double x,
+            double y) {
             double dx = 0;
             double dy = 0;
             //  put ellipse in center of canvas's cell
@@ -175,15 +190,21 @@ namespace PacMan_gui.ViewModel.level {
             Canvas.SetTop(shape, heightOnCanvas * y + dy);
         }
 
-        public static Shape GhostToShape([NotNull] string name, LevelCondition condition, double widthOnCanvas, double heightOnCanvas, double x, double y)
-        {
-            if (null == name)
-            {
+        public static Shape GhostToShape(
+            [NotNull] string name,
+            LevelCondition condition,
+            double widthOnCanvas,
+            double heightOnCanvas,
+            double x,
+            double y) {
+            if (null == name) {
                 throw new ArgumentNullException("name");
             }
 
 
-            var result = condition == LevelCondition.Fright ? CreateFrightedGhost(widthOnCanvas, heightOnCanvas) : GhostsCreator[name](widthOnCanvas, heightOnCanvas);
+            var result = condition == LevelCondition.Fright
+                ? CreateFrightedGhost(widthOnCanvas, heightOnCanvas)
+                : GhostsCreator[name](widthOnCanvas, heightOnCanvas);
 
 
             SetPositionOnCanvas(result, widthOnCanvas, heightOnCanvas, x, y);
@@ -192,8 +213,5 @@ namespace PacMan_gui.ViewModel.level {
         }
 
         #endregion
-
     }
-
-    
 }

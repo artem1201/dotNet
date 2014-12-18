@@ -7,23 +7,29 @@ using PacMan_gui.Annotations;
 using PacMan_model.level;
 
 namespace PacMan_gui.ViewModel.level {
-
     internal static class ColorResolver {
-        public static Brush PauseColor { get { return Brushes.Gray; } }
-        public static Brush StalkingColor { get { return Brushes.DarkSlateBlue; } }
-        public static Brush FrightedColor { get { return Brushes.Red; } }
+        public static Brush PauseColor {
+            get { return Brushes.Gray; }
+        }
+
+        public static Brush StalkingColor {
+            get { return Brushes.DarkSlateBlue; }
+        }
+
+        public static Brush FrightedColor {
+            get { return Brushes.Red; }
+        }
 
         private static readonly IDictionary<LevelCondition, Brush> LevelConditionariesBrushes;
 
         static ColorResolver() {
-                LevelConditionariesBrushes = new Dictionary<LevelCondition, Brush> {
-                    {LevelCondition.Stalking, StalkingColor},
-                    {LevelCondition.Fright, FrightedColor}
-                };
+            LevelConditionariesBrushes = new Dictionary<LevelCondition, Brush> {
+                {LevelCondition.Stalking, StalkingColor},
+                {LevelCondition.Fright, FrightedColor}
+            };
         }
 
-        public class LevelConditionToColorConverter : IValueConverter {
-
+        public sealed class LevelConditionToColorConverter : IValueConverter {
             public object Convert([NotNull] object value, Type targetType, object parameter, CultureInfo culture) {
                 if (null == value) {
                     throw new ArgumentNullException("value");
@@ -33,13 +39,11 @@ namespace PacMan_gui.ViewModel.level {
                 if (null == condition) {
                     throw new ArgumentException("convert value is not LevelCondition");
                 }
-                
-                return LevelConditionariesBrushes[(LevelCondition) condition];
 
+                return LevelConditionariesBrushes[(LevelCondition) condition];
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-
                 var color = value as Brush;
 
                 if (null == color) {
@@ -56,6 +60,4 @@ namespace PacMan_gui.ViewModel.level {
             }
         }
     }
-
-    
 }

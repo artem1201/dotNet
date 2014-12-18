@@ -6,6 +6,6 @@
         MinWidth="600"
         Title="{StaticResource ApplicationTitle}">
     <Window.Background>CornflowerBlue</Window.Background>
-    <ContentControl Name="ContentControl"/>
-    
+    <ContentControl Name="ContentControl" />
+
 </Window>

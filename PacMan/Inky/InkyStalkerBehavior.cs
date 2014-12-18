@@ -33,17 +33,16 @@ namespace Inky {
             if (Target.GetPosition().IsPointInsideSquare(currentPoint, InkyArea)) {
                 return _insideInkyAreaBehavior.GetNextPoint(currentPoint);
             }
-            
+
             var nextPoint = Target.GetCurrentDirection().GetNearWithDistance(Target.GetPosition(), InkyArea);
-            
+
             if (!Field.GetCell(nextPoint).IsFreeForMoving()) {
                 return currentPoint;
             }
 
             var neigbors = currentPoint.GetOrderedClosesNeighbors(Target.GetPosition(), Field);
 
-            if (_previousPoints.Count.Equals(_sizeOfRememberedPath))
-            {
+            if (_previousPoints.Count.Equals(_sizeOfRememberedPath)) {
                 _previousPoints.Clear();
             }
             var result = neigbors.FirstOrDefault(neigbor => !_previousPoints.Contains(neigbor, Comparer));

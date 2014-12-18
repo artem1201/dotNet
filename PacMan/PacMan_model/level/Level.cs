@@ -89,11 +89,10 @@ namespace PacMan_model.level {
         #region Ticking
 
         public void DoATick() {
-
             if (null != _currentDirection) {
-                _pacman.Move(_currentDirection);    
+                _pacman.Move(_currentDirection);
             }
-            
+
 
             CheckDeath();
 

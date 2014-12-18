@@ -3,10 +3,8 @@ using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.level.field;
 using PacMan_model.util;
 
-namespace Blinky
-{
+namespace Blinky {
     public sealed class BlinkyFrightedBehavior : GhostFrightedBehavior {
-
         private const int Speed = 14;
         private readonly GhostBehavior _behavior;
 

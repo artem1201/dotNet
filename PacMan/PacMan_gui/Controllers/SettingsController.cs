@@ -6,12 +6,12 @@ using PacMan_gui.View.Settings;
 using PacMan_gui.ViewModel.settings;
 
 namespace PacMan_gui.Controllers {
-    internal class SettingsController {
+    internal sealed class SettingsController {
+        private readonly Action _onExit;
         private readonly SettingsView _settingsView;
         private readonly SettingsViewModel _settingsViewModel;
 
         //  is called when settings view has been closed
-        private readonly Action _onExit;
 
         public SettingsController([NotNull] Action onExit) {
             if (null == onExit) {
@@ -32,7 +32,7 @@ namespace PacMan_gui.Controllers {
 
         #region Bindings
 
-        private class OnBackButtonCommand : ICommand {
+        private sealed class OnBackButtonCommand : ICommand {
             private readonly Action _onBackAction;
 
             public OnBackButtonCommand([NotNull] Action onBackAction) {
@@ -70,11 +70,12 @@ namespace PacMan_gui.Controllers {
         #region Actions
 
         private void OnBackToMainWindow() {
-            
-
             if (_settingsViewModel.IsChanged) {
-
-                var result = MessageBox.Show(_settingsView.MainWindow, "save changes?", "", MessageBoxButton.YesNoCancel);
+                var result = MessageBox.Show(
+                    _settingsView.MainWindow,
+                    "save changes?",
+                    "",
+                    MessageBoxButton.YesNoCancel);
 
                 if (MessageBoxResult.Cancel.Equals(result)) {
                     return;

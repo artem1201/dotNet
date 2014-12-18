@@ -2,7 +2,6 @@
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells {
-
     /// <summary>
     ///     main class of all cells 
     ///     on level's field
@@ -21,5 +20,4 @@ namespace PacMan_model.level.cells {
             return Position;
         }
     }
-
 }

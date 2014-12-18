@@ -4,17 +4,16 @@ using PacMan_model.util;
 
 namespace PacMan_gui.View.Champions {
     /// <summary>
-    /// Interaction logic for ChampionsTable.xaml
+    ///     Interaction logic for ChampionsTable.xaml
     /// </summary>
-    public partial class ChampionsTableView {
-        public MainWindow MainWindow { get; private set; }
+    public sealed partial class ChampionsTableView {
+        public EventHandler ChampionsTableExit;
+
         public ChampionsTableView() {
             InitializeComponent();
         }
 
-
-
-        public EventHandler ChampionsTableExit;
+        public MainWindow MainWindow { get; private set; }
 
         private void ExitButton_OnClick(object sender, RoutedEventArgs e) {
             NotifyExit();

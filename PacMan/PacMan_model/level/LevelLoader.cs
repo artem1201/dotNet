@@ -98,11 +98,8 @@ namespace PacMan_model.level {
                         //   add new cell
                         fieldCells.Add(
                             StaticCellFactory.CreateStaticCell(
-                                CharStaticCellToStaticCellType[levelLine[x]]
-                                ,
-                                new Point(x, height)
-                                )
-                            );
+                                CharStaticCellToStaticCellType[levelLine[x]],
+                                new Point(x, height)));
                     }
 
                     //  increase field's height
@@ -120,7 +117,6 @@ namespace PacMan_model.level {
             //  pacman was not set to ghosts as target - do it
             foreach (var ghost in ghosts) {
                 ghost.SetTarget(pacman.AsMovingCell());
-                //ghost.SetField(field);
                 ghost.MakeStalker();
             }
 
@@ -190,7 +186,7 @@ namespace PacMan_model.level {
     }
 
 
-    public class InvalidLevelSource : CannotPlayGameException {
+    public sealed class InvalidLevelSource : CannotPlayGameException {
         private readonly int _line = -1;
         private readonly int _column = -1;
 

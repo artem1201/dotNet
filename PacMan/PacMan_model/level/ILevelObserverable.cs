@@ -16,7 +16,7 @@ namespace PacMan_model.level {
     }
 
 
-    public class LevelStateChangedEventArgs : EventArgs {
+    public sealed class LevelStateChangedEventArgs : EventArgs {
 
         public LevelStateChangedEventArgs(LevelCondition condition) {
             Condition = condition;

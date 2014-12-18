@@ -8,14 +8,6 @@ namespace PacMan_model.util {
         private readonly int _y;
 
         public Point(int x, int y) {
-//            if (x < 0) {
-//                throw new ArgumentOutOfRangeException("x");
-//            }
-//
-//            if (y < 0) {
-//                throw new ArgumentOutOfRangeException("y");
-//            }
-
             _x = x;
             _y = y;
         }
@@ -91,9 +83,7 @@ namespace PacMan_model.util {
             public Point LeftBottomPoint { get; private set; }
             public Point RightTopPoint { get; private set; }
 
-            private Point CenterPoint { get; set; }
-
-            private CornersOfSquareAroundPoint(Point leftBottomPoint, Point rightTopPoint, Point centerPoint)
+            private CornersOfSquareAroundPoint(Point leftBottomPoint, Point rightTopPoint)
                 : this() {
                 if (null == leftBottomPoint) {
                     throw new ArgumentNullException("leftBottomPoint");
@@ -101,12 +91,8 @@ namespace PacMan_model.util {
                 if (null == rightTopPoint) {
                     throw new ArgumentNullException("rightTopPoint");
                 }
-                if (null == centerPoint) {
-                    throw new ArgumentNullException("centerPoint");
-                }
                 LeftBottomPoint = leftBottomPoint;
                 RightTopPoint = rightTopPoint;
-                CenterPoint = centerPoint;
             }
 
             public static CornersOfSquareAroundPoint GetCornersOfSquareAroundPoint(Point center, int radius) {
@@ -121,14 +107,12 @@ namespace PacMan_model.util {
 
                 return new CornersOfSquareAroundPoint(
                     new Point(xx.Min(), yy.Min()),
-                    new Point(xx.Max(), yy.Max()),
-                    center);
+                    new Point(xx.Max(), yy.Max()));
             }
         }
     }
 
-    //TODO: remove if it is default
-    public class PointComparer : IEqualityComparer<Point> {
+    public sealed class PointComparer : IEqualityComparer<Point> {
         public bool Equals(Point x, Point y) {
             if (null == x) {
                 throw new ArgumentNullException("x");
