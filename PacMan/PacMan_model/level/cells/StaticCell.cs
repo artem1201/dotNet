@@ -197,7 +197,7 @@ namespace PacMan_model.level.cells {
         }
 
         public override StaticCellType GetCellType() {
-            return StaticCellType.PacDot;
+            return StaticCellType.Fruit;
         }
 
         internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
