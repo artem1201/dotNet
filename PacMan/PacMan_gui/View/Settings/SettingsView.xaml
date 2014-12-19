@@ -21,9 +21,11 @@
                 <DataGridTemplateColumn Header="FirstKey">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
+                            <!-- ReSharper disable Xaml.BindingWithContextNotResolved -->
                             <Button Style="{StaticResource CommonButtonStyle}" Content="{Binding FirstKeyName}"
                                     Command="{Binding DataContext.OnFirstKeyChangingCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"
                                     CommandParameter="{Binding ActionName}" />
+                            <!-- ReSharper restore Xaml.BindingWithContextNotResolved -->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
