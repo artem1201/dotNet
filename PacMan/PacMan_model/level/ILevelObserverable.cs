@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.Collections.Generic;
 using PacMan_model.level.cells.ghosts;
 using PacMan_model.level.cells.pacman;
@@ -6,7 +8,6 @@ using PacMan_model.level.field;
 
 namespace PacMan_model.level {
     public interface ILevelObserverable : IDisposable {
-
         event EventHandler<LevelStateChangedEventArgs> LevelState;
         void ForceNotify();
 
@@ -17,7 +18,6 @@ namespace PacMan_model.level {
 
 
     public sealed class LevelStateChangedEventArgs : EventArgs {
-
         public LevelStateChangedEventArgs(LevelCondition condition) {
             Condition = condition;
         }

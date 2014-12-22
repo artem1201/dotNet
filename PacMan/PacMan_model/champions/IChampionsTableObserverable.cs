@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.Collections.Generic;
 
 namespace PacMan_model.champions {

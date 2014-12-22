@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.Linq;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.level.field;

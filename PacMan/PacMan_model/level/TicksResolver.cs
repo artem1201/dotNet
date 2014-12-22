@@ -1,4 +1,6 @@
-﻿namespace PacMan_model.level {
+﻿//  author: Artem Sumanev
+
+namespace PacMan_model.level {
     internal static class TicksResolver {
         public static readonly int PacmanTicksPerMove = 12;
 

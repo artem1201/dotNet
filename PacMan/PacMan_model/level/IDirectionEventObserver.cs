@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using PacMan_model.util;
 
 namespace PacMan_model.level {

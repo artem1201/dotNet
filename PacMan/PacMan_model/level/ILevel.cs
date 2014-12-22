@@ -1,4 +1,6 @@
-﻿namespace PacMan_model.level {
+﻿//  author: Artem Sumanev
+
+namespace PacMan_model.level {
     internal interface ILevel : ILevelObserverable {
         LevelCondition GetLevelCondition();
 

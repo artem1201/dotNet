@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 
 namespace PacMan_model.level.field {
     public interface IFieldObserverable : IDisposable {

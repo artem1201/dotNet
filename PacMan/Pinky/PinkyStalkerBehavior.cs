@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
 using PacMan_model.level.field;

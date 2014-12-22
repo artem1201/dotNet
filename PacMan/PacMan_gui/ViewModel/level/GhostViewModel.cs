@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Threading;

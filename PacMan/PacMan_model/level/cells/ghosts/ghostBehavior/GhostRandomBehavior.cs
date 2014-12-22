@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using PacMan_model.level.field;
 using PacMan_model.level.pathFinding;
 using PacMan_model.util;

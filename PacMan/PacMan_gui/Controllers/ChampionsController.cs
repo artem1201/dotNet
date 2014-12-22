@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using PacMan_gui.Annotations;
 using PacMan_gui.View.Champions;
 using PacMan_gui.ViewModel.champions;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using PacMan_gui.Annotations;

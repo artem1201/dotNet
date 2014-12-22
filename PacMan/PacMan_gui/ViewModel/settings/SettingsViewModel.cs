@@ -1,4 +1,6 @@
-﻿#region
+﻿//  author: Artem Sumanev
+
+#region
 
 using System;
 using System.Collections.Generic;
@@ -148,6 +150,7 @@ namespace PacMan_gui.ViewModel.settings {
         }
 
         private bool _alreadyListening;
+
         private void OnFirstKeyChanging(string actionName) {
             var currentItem = KeySettingsItems.SingleOrDefault(item => item.ActionName.Equals(actionName));
 
@@ -159,7 +162,6 @@ namespace PacMan_gui.ViewModel.settings {
                 SettingsState = ChangeState;
                 _settingsView.StartListenToKeys(
                     key => {
-
                         if (CancelListenToKey != key && !currentItem.ContainsKey(key)) {
                             if (IsKeyAlreadyInUse(key)) {
                                 _settingsView.MainWindow.ShowMessage("key " + key + " is occupied, try another");
@@ -178,7 +180,6 @@ namespace PacMan_gui.ViewModel.settings {
 
                 _alreadyListening = true;
             }
-
         }
 
         private bool IsKeyAlreadyInUse(Key key) {

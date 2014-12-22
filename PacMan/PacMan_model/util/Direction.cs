@@ -1,3 +1,5 @@
+//  author: Artem Sumanev
+
 using System;
 
 namespace PacMan_model.util {

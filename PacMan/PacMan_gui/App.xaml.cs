@@ -1,4 +1,6 @@
-﻿namespace PacMan_gui {
+﻿//  author: Artem Sumanev
+
+namespace PacMan_gui {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.ComponentModel;
 using PacMan_model.level.cells.pacman;
 using PacMan_model.level.field;

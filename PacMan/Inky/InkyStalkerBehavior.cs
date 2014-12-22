@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿//  author: Artem Sumanev
+
+using System.Collections.Generic;
 using System.Linq;
 using PacMan_model.level.cells;
 using PacMan_model.level.cells.ghosts.ghostBehavior;
