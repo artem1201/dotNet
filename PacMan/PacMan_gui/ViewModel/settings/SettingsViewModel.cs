@@ -104,7 +104,9 @@ namespace PacMan_gui.ViewModel.settings {
         #endregion
 
         #region Commands
+
         private readonly OnSomeActionButtonCommand _onFirstKeyChangingCommand;
+
         public ICommand OnFirstKeyChangingCommand {
             get { return _onFirstKeyChangingCommand; }
 //            private set { _onFirstKeyChangingCommand = value; }
@@ -159,7 +161,7 @@ namespace PacMan_gui.ViewModel.settings {
         }
 
         private bool _alreadyListening;
-        
+
         private void OnFirstKeyChanging(string actionName) {
             var currentItem = KeySettingsItems.SingleOrDefault(item => item.ActionName.Equals(actionName));
 

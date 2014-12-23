@@ -5,7 +5,7 @@ using PacMan_model.level.cells;
 using PacMan_model.util;
 
 namespace PacMan_model.level.field {
-    public interface INotChanebleableField {
+    public interface INotChanebleableField : IFieldObserverable {
         int GetWidth();
         int GetHeight();
 

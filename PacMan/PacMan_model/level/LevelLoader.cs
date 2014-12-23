@@ -24,7 +24,7 @@ namespace PacMan_model.level {
         private const char CharSuperDot = '*';
         private const char CharFruit = '%';
 
-        private static IGhostFactory _ghostFactory;
+        private static GhostFactory _ghostFactory;
 
         #region Initialization
 
@@ -38,7 +38,7 @@ namespace PacMan_model.level {
             };
         }
 
-        public LevelLoader(IGhostFactory ghostFactory) {
+        public LevelLoader(GhostFactory ghostFactory) {
             if (null == ghostFactory) {
                 throw new ArgumentNullException("ghostFactory");
             }
@@ -49,13 +49,13 @@ namespace PacMan_model.level {
 
         #region Loading
 
-        public ILevel LoadFromSource(Stream source) {
+        public Level LoadFromSource(Stream source) {
             if (null == source) {
                 throw new ArgumentNullException("source");
             }
-            IPacMan pacman = null;
-            var ghosts = new List<IGhost>();
-            IField field = new Field();
+            PacMan pacman = null;
+            var ghosts = new List<Ghost>();
+            var field = new Field();
 
             var width = 0;
             var height = 0;
@@ -131,7 +131,7 @@ namespace PacMan_model.level {
 
         //  searchs for Pacman
         //  if it is found changes it on freeSpace
-        private static IPacMan FindPacMan(ref string levelLine, int y, IField field) {
+        private static PacMan FindPacMan(ref string levelLine, int y, Field field) {
             if (null == levelLine) {
                 throw new ArgumentNullException("levelLine");
             }
@@ -139,7 +139,7 @@ namespace PacMan_model.level {
                 throw new ArgumentNullException("field");
             }
 
-            IPacMan pacman = null;
+            PacMan pacman = null;
 
             var x = levelLine.IndexOf(CharPacMan);
 
@@ -157,7 +157,7 @@ namespace PacMan_model.level {
 
         //  searchs for Pacman
         //  if it is found changes it on freeSpace
-        private static void FindGhosts(ref string levelLine, List<IGhost> ghosts, int y, IField field) {
+        private static void FindGhosts(ref string levelLine, List<Ghost> ghosts, int y, Field field) {
             if (null == levelLine) {
                 throw new ArgumentNullException("levelLine");
             }

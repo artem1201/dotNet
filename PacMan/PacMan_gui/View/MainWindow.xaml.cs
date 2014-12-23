@@ -13,7 +13,6 @@ namespace PacMan_gui.View {
             InitializeComponent();
 
 
-
             try {
                 ContentControl.Content = new MainWindowContent(this);
             }

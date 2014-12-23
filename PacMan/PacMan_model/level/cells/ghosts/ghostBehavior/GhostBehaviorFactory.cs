@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using PacMan_model.level.field;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
-    internal sealed class GhostBehaviorFactory : IGhostBehaviorFactory {
+    internal sealed class GhostBehaviorFactory {
         //  key is ghost name, pair is two ghost's behaviors - staking and frightening
         private readonly IDictionary<string, Tuple<Type, Type>> _ghostsBehaviors =
             new Dictionary<string, Tuple<Type, Type>>();
@@ -162,9 +162,6 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             if (null == behaviorFiles) {
                 throw new ArgumentNullException("behaviorFiles");
             }
-//            if (0 == behaviorFiles.Length) {
-//                throw new InvalidBehaviorsLoading(_pathToGhostsBehaviors);
-//            }
 
             foreach (var behaviorFile in behaviorFiles.Where(IsAssemblyVerified)) {
                 try {
@@ -246,5 +243,21 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         }
 
         #endregion
+    }
+
+    public sealed class UnknownGhostName : Exception {
+        public UnknownGhostName(string name) {
+            GhostName = name;
+        }
+
+        public string GhostName { get; private set; }
+    }
+
+    public sealed class InvalidBehaviorsDirectory : Exception {
+        public InvalidBehaviorsDirectory(string directoryName) {
+            DirectoryName = directoryName;
+        }
+
+        public string DirectoryName { get; private set; }
     }
 }

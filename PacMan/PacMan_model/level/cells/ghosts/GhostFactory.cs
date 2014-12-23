@@ -5,14 +5,14 @@ using PacMan_model.level.field;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
-    internal sealed class GhostFactory : IGhostFactory {
-        private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
+    internal sealed class GhostFactory {
+        private readonly GhostBehaviorFactory _ghostBehaviorFactory;
 
         public GhostFactory(string pathToGhostsBehaviors) {
             _ghostBehaviorFactory = new GhostBehaviorFactory(pathToGhostsBehaviors);
         }
 
-        public IGhost CreateGhost(
+        public Ghost CreateGhost(
             int numberOfGhost,
             Point position,
             INotChanebleableField field = null,
@@ -24,5 +24,9 @@ namespace PacMan_model.level.cells.ghosts {
                 target,
                 field);
         }
+    }
+
+    public static class GhostsInfo {
+        public static readonly string[] OrderedPossibleGhostNames = {"Blinky", "Pinky", "Inky", "Clyde"};
     }
 }

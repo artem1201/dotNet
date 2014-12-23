@@ -46,7 +46,7 @@ namespace PacMan_gui.View.Settings {
             }
 
             if (null != _onKeyPressedAction) {
-                _onKeyPressedAction(e.Key);    
+                _onKeyPressedAction(e.Key);
             }
         }
 

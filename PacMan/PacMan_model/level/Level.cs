@@ -10,16 +10,16 @@ using PacMan_model.level.field;
 using PacMan_model.util;
 
 namespace PacMan_model.level {
-    internal sealed class Level : ILevel {
-        private readonly IPacMan _pacman;
+    internal sealed class Level : ILevelObserverable {
+        private readonly PacMan _pacman;
 
         //  depends on user input
         //  determines pacman's direction
         private Direction _currentDirection;
 
-        private readonly IField _field;
+        private readonly Field _field;
 
-        private readonly IList<IGhost> _ghosts;
+        private readonly IList<Ghost> _ghosts;
 
 
         //  if Stalking is set - ghost stalks pacman
@@ -32,7 +32,7 @@ namespace PacMan_model.level {
 
         #region Initialization
 
-        public Level(IPacMan pacman, IField field, IList<IGhost> ghosts) {
+        public Level(PacMan pacman, Field field, IList<Ghost> ghosts) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }

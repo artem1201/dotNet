@@ -7,7 +7,7 @@ using PacMan_model.level.field;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.ghosts {
-    internal sealed class Ghost : IGhost {
+    internal sealed class Ghost : IGhostObserverable, ICellWithCost {
         private const int Cost = 400;
 
 
@@ -21,7 +21,7 @@ namespace PacMan_model.level.cells.ghosts {
         private Point _nextPosition;
 
 
-        private readonly IGhostBehaviorFactory _ghostBehaviorFactory;
+        private readonly GhostBehaviorFactory _ghostBehaviorFactory;
         private GhostBehavior _currentBehavior;
 
         private void SetCurrentBehavior(GhostBehavior behavior) {
@@ -42,7 +42,7 @@ namespace PacMan_model.level.cells.ghosts {
         public Ghost(
             Point startPosition,
             string name,
-            IGhostBehaviorFactory ghostBehaviorFactory,
+            GhostBehaviorFactory ghostBehaviorFactory,
             MovingCell target,
             INotChanebleableField field) {
             if (null == startPosition) {

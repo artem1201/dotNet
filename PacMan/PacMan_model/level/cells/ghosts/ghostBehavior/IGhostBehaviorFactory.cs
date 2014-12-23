@@ -1,5 +1,4 @@
-﻿//  author: Artem Sumanev
-
+﻿using System;
 using System.Collections.Generic;
 using PacMan_model.level.field;
 
@@ -28,11 +27,5 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
             bool isFrightModeEnabled = false);
     }
 
-    public sealed class UnknownGhostName : CannotPlayGameException {
-        public UnknownGhostName(string name) {
-            GhostName = name;
-        }
-
-        public string GhostName { get; private set; }
-    }
+    
 }

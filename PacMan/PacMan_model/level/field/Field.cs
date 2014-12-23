@@ -7,7 +7,7 @@ using PacMan_model.level.cells;
 using PacMan_model.util;
 
 namespace PacMan_model.level.field {
-    internal sealed class Field : IField {
+    internal sealed class Field : INotChanebleableField {
         private int _width;
         private int _height;
 
@@ -211,5 +211,17 @@ namespace PacMan_model.level.field {
         }
 
         #endregion
+    }
+
+    internal class CellOutOfField : Exception {
+        private readonly Point _where;
+
+        public CellOutOfField(Point where) {
+            _where = where;
+        }
+
+        public string GetMessage() {
+            return "at " + _where.GetX() + ":" + _where.GetY();
+        }
     }
 }

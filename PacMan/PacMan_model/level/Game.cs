@@ -16,7 +16,7 @@ namespace PacMan_model.level {
         private Ticker _ticker;
 
         //  current level of company
-        private ILevel _currentLevel;
+        private Level _currentLevel;
         private readonly ILevelLoader _levelLoader;
 
         //  best score of current company

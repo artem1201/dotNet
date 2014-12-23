@@ -22,7 +22,7 @@ namespace PacMan_model.level.cells {
         /// </summary>
         /// <param name="pacman">pacman which is moved</param>
         /// <param name="field">field where pacman is moved</param>
-        internal abstract void HandlePacmanMovement(IPacMan pacman, IField field);
+        internal abstract void HandlePacmanMovement(PacMan pacman, Field field);
 
 
         public abstract bool IsFreeForMoving();
@@ -69,7 +69,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.FreeSpace;
         }
 
-        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(PacMan pacman, Field field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -89,7 +89,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.Wall;
         }
 
-        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {}
+        internal override void HandlePacmanMovement(PacMan pacman, Field field) {}
 
         public override bool IsFreeForMoving() {
             return false;
@@ -124,7 +124,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.PacDot;
         }
 
-        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(PacMan pacman, Field field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -161,7 +161,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.Energizer;
         }
 
-        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(PacMan pacman, Field field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }
@@ -202,7 +202,7 @@ namespace PacMan_model.level.cells {
             return StaticCellType.Fruit;
         }
 
-        internal override void HandlePacmanMovement(IPacMan pacman, IField field) {
+        internal override void HandlePacmanMovement(PacMan pacman, Field field) {
             if (null == pacman) {
                 throw new ArgumentNullException("pacman");
             }

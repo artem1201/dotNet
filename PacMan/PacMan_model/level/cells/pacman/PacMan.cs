@@ -5,7 +5,7 @@ using PacMan_model.level.field;
 using PacMan_model.util;
 
 namespace PacMan_model.level.cells.pacman {
-    internal sealed class PacMan : IPacMan {
+    internal sealed class PacMan : IPacManObserverable {
         private const int MaxLives = 3;
         // cell with position, lives and current speed
         private readonly PacManCell _pacman;
@@ -16,7 +16,7 @@ namespace PacMan_model.level.cells.pacman {
         private int _lives = MaxLives;
 
         //  field where pacman is able to move
-        private IField _field;
+        private Field _field;
 
         //  last direction where pacman was moved
         private Direction _currentDirection = Direction.DefaultDirection;
@@ -30,7 +30,7 @@ namespace PacMan_model.level.cells.pacman {
 
         #region Initialization
 
-        public PacMan(IField field, Point startPosition) {
+        public PacMan(Field field, Point startPosition) {
             if (null == field) {
                 throw new ArgumentNullException("field");
             }
@@ -42,7 +42,7 @@ namespace PacMan_model.level.cells.pacman {
             _pacman = new PacManCell(startPosition, TicksResolver.PacmanTicksPerMove, GetCurrentDirection);
         }
 
-        public PacMan(IField field, Point startPosition, int lives) : this(field, startPosition) {
+        public PacMan(Field field, Point startPosition, int lives) : this(field, startPosition) {
             if (lives < 1) {
                 throw new ArgumentOutOfRangeException("lives");
             }
