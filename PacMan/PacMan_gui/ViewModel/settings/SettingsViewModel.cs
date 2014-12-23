@@ -65,7 +65,7 @@ namespace PacMan_gui.ViewModel.settings {
             KeySettingsItems = new ObservableCollection<KeySettingsItem>();
             InitObserverableCollectionFromKeysContainers();
 
-            OnFirstKeyChangingCommand = new OnSomeActionButtonCommand(OnFirstKeyChanging);
+            _onFirstKeyChangingCommand = new OnSomeActionButtonCommand(OnFirstKeyChanging);
             _settingsState = ViewState;
 
             IsChanged = false;
@@ -104,21 +104,30 @@ namespace PacMan_gui.ViewModel.settings {
         #endregion
 
         #region Commands
-
-        public ICommand OnFirstKeyChangingCommand { get; private set; }
+        private readonly OnSomeActionButtonCommand _onFirstKeyChangingCommand;
+        public ICommand OnFirstKeyChangingCommand {
+            get { return _onFirstKeyChangingCommand; }
+//            private set { _onFirstKeyChangingCommand = value; }
+        }
 
         private sealed class OnSomeActionButtonCommand : ICommand {
             private readonly OnFirstKeyChangingByActionName _action;
+            private bool _canExecute;
 
-            public OnSomeActionButtonCommand([NotNull] OnFirstKeyChangingByActionName action) {
+            public OnSomeActionButtonCommand([NotNull] OnFirstKeyChangingByActionName action, bool canExecute = true) {
                 if (null == action) {
                     throw new ArgumentNullException("action");
                 }
                 _action = action;
+                _canExecute = canExecute;
             }
 
             public bool CanExecute(object parameter) {
-                return true;
+                return _canExecute;
+            }
+
+            public void SetExecute(bool canExecute) {
+                _canExecute = canExecute;
             }
 
             public void Execute([NotNull] object parameter) {
@@ -150,7 +159,7 @@ namespace PacMan_gui.ViewModel.settings {
         }
 
         private bool _alreadyListening;
-
+        
         private void OnFirstKeyChanging(string actionName) {
             var currentItem = KeySettingsItems.SingleOrDefault(item => item.ActionName.Equals(actionName));
 
@@ -160,6 +169,7 @@ namespace PacMan_gui.ViewModel.settings {
 
             if (!_alreadyListening) {
                 SettingsState = ChangeState;
+                _onFirstKeyChangingCommand.SetExecute(false);
                 _settingsView.StartListenToKeys(
                     key => {
                         if (CancelListenToKey != key && !currentItem.ContainsKey(key)) {
@@ -175,6 +185,7 @@ namespace PacMan_gui.ViewModel.settings {
 
                         _settingsView.StopListenToKeys();
                         SettingsState = ViewState;
+                        _onFirstKeyChangingCommand.SetExecute(true);
                         _alreadyListening = false;
                     });
 

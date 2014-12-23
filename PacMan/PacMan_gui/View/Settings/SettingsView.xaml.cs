@@ -1,6 +1,7 @@
 ﻿//  author: Artem Sumanev
 
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using PacMan_gui.Annotations;
@@ -44,7 +45,24 @@ namespace PacMan_gui.View.Settings {
                 throw new ArgumentNullException("e");
             }
 
-            _onKeyPressedAction(e.Key);
+            if (null != _onKeyPressedAction) {
+                _onKeyPressedAction(e.Key);    
+            }
+        }
+
+        private static readonly ISet<Key> NavigatonKeys = new HashSet<Key> {
+            Key.Up,
+            Key.Down,
+            Key.Left,
+            Key.Right,
+            Key.Space
+        };
+
+        private void KeysSettingsDataGrid_OnPreviewKeyDown(object sender, KeyEventArgs e) {
+            if (NavigatonKeys.Contains(e.Key)) {
+                e.Handled = true;
+            }
+            SettingsView_OnKeyDown(sender, e);
         }
     }
 }

@@ -11,7 +11,16 @@ namespace PacMan_gui.View {
     public partial class MainWindow {
         public MainWindow() {
             InitializeComponent();
-            ContentControl.Content = new MainWindowContent(this);
+
+
+
+            try {
+                ContentControl.Content = new MainWindowContent(this);
+            }
+            catch (Exception) {
+                this.ShowMessage("Unknown error occurs");
+                Close();
+            }
         }
     }
 

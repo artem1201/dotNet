@@ -10,8 +10,6 @@ using PacMan_model.level.field;
 
 namespace PacMan_model.level.cells.ghosts.ghostBehavior {
     internal sealed class GhostBehaviorFactory : IGhostBehaviorFactory {
-        private readonly string _pathToGhostsBehaviors;
-
         //  key is ghost name, pair is two ghost's behaviors - staking and frightening
         private readonly IDictionary<string, Tuple<Type, Type>> _ghostsBehaviors =
             new Dictionary<string, Tuple<Type, Type>>();
@@ -23,13 +21,11 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         #region Initialization
 
         public GhostBehaviorFactory(string pathToGhostsBehaviors) {
-            _pathToGhostsBehaviors = pathToGhostsBehaviors;
-
             try {
                 LoadBehaviorsFromFiles(Directory.GetFiles(pathToGhostsBehaviors, "*.dll"));
             }
-            catch (DirectoryNotFoundException) {
-                throw new InvalidBehaviorsDirectory(pathToGhostsBehaviors);
+            catch (Exception) {
+                throw new CannotPlayGameException("cannot access ghosts directory: " + pathToGhostsBehaviors);
             }
         }
 
@@ -44,6 +40,10 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
         public string GetGhostNameByNumber(int ghostNumber) {
             if (ghostNumber < 0) {
                 throw new ArgumentOutOfRangeException("ghostNumber");
+            }
+
+            if (0 == _orderedLoadedGhostNames.Length) {
+                throw new CannotPlayGameException("there is no behavior to create");
             }
 
             return _orderedLoadedGhostNames[ghostNumber % _orderedLoadedGhostNames.Length];
@@ -158,10 +158,13 @@ namespace PacMan_model.level.cells.ghosts.ghostBehavior {
 
         #region Loading from file
 
-        private void LoadBehaviorsFromFiles(string[] behaviorFiles) {
-            if (0 == behaviorFiles.Length) {
-                throw new InvalidBehaviorsDirectory(_pathToGhostsBehaviors);
+        private void LoadBehaviorsFromFiles(IEnumerable<string> behaviorFiles) {
+            if (null == behaviorFiles) {
+                throw new ArgumentNullException("behaviorFiles");
             }
+//            if (0 == behaviorFiles.Length) {
+//                throw new InvalidBehaviorsLoading(_pathToGhostsBehaviors);
+//            }
 
             foreach (var behaviorFile in behaviorFiles.Where(IsAssemblyVerified)) {
                 try {
