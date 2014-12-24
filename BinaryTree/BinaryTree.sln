@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryTree_gui", "BinaryTree_gui\BinaryTree_gui.csproj", "{CFDB7EB7-3772-49ED-A490-17124B595DE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryTree_console", "BinaryTree_console\BinaryTree_console.csproj", "{A096CAF0-57EE-440F-9233-44E6BFF29059}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryTree_model", "BinaryTree_model\BinaryTree_model.csproj", "{DEC0FB9B-BBB0-49BB-969F-3C8B132C0FCE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFDB7EB7-3772-49ED-A490-17124B595DE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFDB7EB7-3772-49ED-A490-17124B595DE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFDB7EB7-3772-49ED-A490-17124B595DE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFDB7EB7-3772-49ED-A490-17124B595DE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A096CAF0-57EE-440F-9233-44E6BFF29059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A096CAF0-57EE-440F-9233-44E6BFF29059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A096CAF0-57EE-440F-9233-44E6BFF29059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A096CAF0-57EE-440F-9233-44E6BFF29059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEC0FB9B-BBB0-49BB-969F-3C8B132C0FCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEC0FB9B-BBB0-49BB-969F-3C8B132C0FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEC0FB9B-BBB0-49BB-969F-3C8B132C0FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEC0FB9B-BBB0-49BB-969F-3C8B132C0FCE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
