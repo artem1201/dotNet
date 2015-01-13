@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using BinaryTree.util;
 
 namespace BinaryTree.BinaryTree {
     /// <summary>
@@ -22,21 +23,10 @@ namespace BinaryTree.BinaryTree {
         //  set of current node's attributes
         private readonly IDictionary<string, string> _attributes;
 
-        //  current node's position on net
-        private Position _position;
-
-        //  height of tree with current node as root
-        private int _height;
-
-        //  reference to child which has the most left position
-        private BinaryTreeNode _mostLeftNodeOfTree;
-        //  reference to child which has the most left position
-        private BinaryTreeNode _mostRightNodeOfTree;
-
         public BinaryTreeNode() {
             _attributes = new Dictionary<string, string>();
-            _mostLeftNodeOfTree = this;
-            _mostRightNodeOfTree = this;
+
+            Position = new Point();
         }
 
         public BinaryTreeNode(string name, string content) : this() {
@@ -64,10 +54,7 @@ namespace BinaryTree.BinaryTree {
             }
 
             _leftChild = leftChild;
-            _leftChild.SetParent(this);
-
-            _height = CalculateHeightWithSubtree(_leftChild);
-            FindBorderChild(_leftChild);
+            _leftChild._parent = this;
 
             return this;
         }
@@ -84,45 +71,7 @@ namespace BinaryTree.BinaryTree {
             }
 
             _rightChild = rightChild;
-            _rightChild.SetParent(this);
-
-            _height = CalculateHeightWithSubtree(_rightChild);
-            FindBorderChild(_rightChild);
-
-            return this;
-        }
-
-        private int CalculateHeightWithSubtree(BinaryTreeNode subtree) {
-            if (subtree.GetHeight() + 1 > _height) {
-                return subtree.GetHeight() + 1;
-            }
-            return _height;
-        }
-
-        private void FindBorderChild(BinaryTreeNode child) {
-            if (null == child) {
-                throw new ArgumentNullException("child");
-            }
-            if (child._mostLeftNodeOfTree.Position.IsToTheLeftOf(_mostLeftNodeOfTree.Position)) {
-                _mostLeftNodeOfTree = child._mostLeftNodeOfTree;
-            }
-
-            if (child._mostRightNodeOfTree.Position.IsToTheRightOf(_mostRightNodeOfTree.Position)) {
-                _mostRightNodeOfTree = child._mostRightNodeOfTree;
-            }
-        }
-
-        /// <summary>
-        /// sets current node's parent node
-        /// </summary>
-        /// <param name="parent">parent of current node</param>
-        /// <returns>current node</returns>
-        public BinaryTreeNode SetParent(BinaryTreeNode parent) {
-            if (null == parent) {
-                throw new ArgumentNullException("parent");
-            }
-
-            _parent = parent;
+            _rightChild._parent = this;
 
             return this;
         }
@@ -166,12 +115,6 @@ namespace BinaryTree.BinaryTree {
             return this;
         }
 
-        public BinaryTreeNode SetPosition(Position position) {
-            _position = position;
-
-            return this;
-        }
-
         #endregion
 
         #region Getters
@@ -200,104 +143,105 @@ namespace BinaryTree.BinaryTree {
             return _attributes;
         }
 
-        public int GetHeight() {
-            return _height;
-        }
-
-        public BinaryTreeNode GetMostLeftNode() {
-            return _mostLeftNodeOfTree;
-        }
-
-        public BinaryTreeNode GetMostRightNode() {
-            return _mostRightNodeOfTree;
-        }
-
         #endregion
 
         public bool IsLeaf() {
             return null == _leftChild && null == _rightChild;
         }
 
-        public Position Position {
-            get { return _position; }
-            set { _position = value; }
-        }
-        /// <summary>
-        /// moves from current position on sent number of position to left
-        /// </summary>
-        /// <param name="position">number of position</param>
-        public void MoveToLeft(int position) {
-            if (position < 0) {
-                throw new ArgumentOutOfRangeException("position");
+        #region Displaying
+
+        public Point Position { get; private set; }
+
+        public BinaryTreeNode GetMostLeftOfChildrens() {
+            if (IsLeaf()) {
+                return this;
             }
 
-            _position.MoveHorizontalRelatively(-position);
+            var result = this;
             if (null != _leftChild) {
-                _leftChild.MoveToLeft(position);
+                var mostLeftOfSubtree = _leftChild.GetMostLeftOfChildrens();
+                if (mostLeftOfSubtree.Position.X < result.Position.X) {
+                    result = mostLeftOfSubtree;
+                }
             }
+
             if (null != _rightChild) {
-                _rightChild.MoveToLeft(position);
+                var mostLeftOfSubtree = _rightChild.GetMostLeftOfChildrens();
+                if (mostLeftOfSubtree.Position.X < result.Position.X) {
+                    result = mostLeftOfSubtree;
+                }
             }
+
+            return result;
         }
 
-        /// <summary>
-        /// moves from current position on sent number of position to right
-        /// </summary>
-        /// <param name="position">number of position</param>
-        public void MoveToRight(int position) {
-            if (position < 0) {
-                throw new ArgumentOutOfRangeException("position");
+        public BinaryTreeNode GetMostRightOfChildrens() {
+            if (IsLeaf()) {
+                return this;
             }
 
-            _position.MoveHorizontalRelatively(position);
+            var result = this;
             if (null != _leftChild) {
-                _leftChild.MoveToRight(position);
+                var mostLeftOfSubtree = _leftChild.GetMostRightOfChildrens();
+                if (mostLeftOfSubtree.Position.X > result.Position.X) {
+                    result = mostLeftOfSubtree;
+                }
             }
+
             if (null != _rightChild) {
-                _rightChild.MoveToRight(position);
+                var mostLeftOfSubtree = _rightChild.GetMostRightOfChildrens();
+                if (mostLeftOfSubtree.Position.X > result.Position.X) {
+                    result = mostLeftOfSubtree;
+                }
             }
+
+            return result;
         }
+
+        #endregion
     }
 
-    /// <summary>
-    /// Coordinates of binary tree node on net
-    /// </summary>
-    public struct Position
-    {
-        public int X { get; private set; }
-
-        public int Y { get; private set; }
-
-        public Position(int x, int y)
-            : this()
-        {
-            X = x;
-            Y = y;
-        }
-
-        public void MoveHorizontalRelatively(int steps)
-        {
-            X += steps;
-        }
-
-        public bool IsToTheLeftOf(Position other)
-        {
-            if (X < other.X)
-            {
-                return true;
+    public static class BinaryTreeTraveral {
+        public static IEnumerable<BinaryTreeNode> PostOrder(this BinaryTreeNode root) {
+            if (null == root) {
+                throw new ArgumentNullException("root");
             }
 
-            return false;
+            //  bool is flag for visiting
+            var nodeStack = new Stack<BinaryTreeForVisiting>();
+            nodeStack.Push(new BinaryTreeForVisiting(root));
+
+            while (0 != nodeStack.Count) {
+                var currentNode = nodeStack.Peek();
+                if (null != currentNode.Node.GetLeftChild() && !currentNode.LeftChildVisited) {
+                    nodeStack.Push(new BinaryTreeForVisiting(currentNode.Node.GetLeftChild()));
+                    currentNode.LeftChildVisited = true;
+                }
+                else if (null != currentNode.Node.GetRightChild() && !currentNode.RightChildVisited) {
+                    nodeStack.Push(new BinaryTreeForVisiting(currentNode.Node.GetRightChild()));
+                    currentNode.RightChildVisited = true;
+                }
+                else {
+                    nodeStack.Pop();
+                    yield return currentNode.Node;
+                }
+            }
         }
 
-        public bool IsToTheRightOf(Position other)
-        {
-            if (X < other.X)
-            {
-                return true;
-            }
+        private class BinaryTreeForVisiting {
+            public BinaryTreeNode Node { get; private set; }
+            public bool LeftChildVisited { get; set; }
+            public bool RightChildVisited { get; set; }
 
-            return false;
+            public BinaryTreeForVisiting(BinaryTreeNode node) {
+                if (null == node) {
+                    throw new ArgumentNullException("node");
+                }
+                Node = node;
+                LeftChildVisited = false;
+                RightChildVisited = false;
+            }
         }
     }
 }

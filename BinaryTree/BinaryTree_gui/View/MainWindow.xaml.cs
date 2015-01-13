@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace BinaryTree_gui.View
 {

@@ -1,9 +1,17 @@
-﻿using System;
+﻿//  author: Artem Sumanev
+
+using System;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace BinaryTree.BinaryTree.Loaders {
-    internal static class BinaryTreeLoader {
+    public static class BinaryTreeLoader {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path">path to file with xml tree</param>
+        /// <returns>loaded binary tree</returns>
+        /// throws: InvalidBinaryTreeFile, ArgumentNullException
         public static BinaryTreeNode LoadTreeFrom(string path) {
             if (null == path) {
                 throw new ArgumentNullException("path");
@@ -13,7 +21,6 @@ namespace BinaryTree.BinaryTree.Loaders {
                 throw new InvalidBinaryTreeFile(path, InvalidBinaryTreeFile.InvalidFileMessage);
             }
 
-            //TODO: rewrite without recursion
             try {
                 //  load xml from file
                 var input = XDocument.Load(path);
@@ -23,13 +30,8 @@ namespace BinaryTree.BinaryTree.Loaders {
                     throw new InvalidBinaryTreeFile(path, InvalidBinaryTreeFile.InvalidFileMessage);
                 }
 
-                //  check if there is only one root element
-                if (1 != input.Root.Elements().Count()) {
-                    throw new InvalidBinaryTreeFile(path, InvalidBinaryTreeFile.TooManyRootElementsMessage);
-                }
-
                 //  proccess root element to binary tree
-                return XmlElementToBinaryTreeNode(path, input.Root.Elements().Single());
+                return XmlElementToBinaryTreeNode(path, input.Root);
             }
             catch (InvalidBinaryTreeFile) {
                 throw;
@@ -46,8 +48,8 @@ namespace BinaryTree.BinaryTree.Loaders {
             if (null == rootElement) {
                 throw new ArgumentNullException("rootElement");
             }
-            //  check if sent element has only two or none child elements
-            if (2 != rootElement.Elements().Count() || 0 != rootElement.Elements().Count()) {
+            //  check if sent element has more than two elements
+            if (rootElement.Elements().Count() > 2) {
                 throw new InvalidBinaryTreeFile(path, "element has not two children: " + rootElement);
             }
 
@@ -60,7 +62,17 @@ namespace BinaryTree.BinaryTree.Loaders {
                 result.AddAtribute(attribute.Name.ToString(), attribute.Value);
             }
 
+            if (!rootElement.Elements().Any()) {
+                return result;
+            }
+
             var firstElement = rootElement.Elements().First();
+
+            if (1 == rootElement.Elements().Count()) {
+                return result
+                    .SetLeftChild(XmlElementToBinaryTreeNode(path, firstElement));
+            }
+
             var secondElement = rootElement.Elements().Last();
 
             return result
@@ -69,7 +81,7 @@ namespace BinaryTree.BinaryTree.Loaders {
         }
     }
 
-    internal sealed class InvalidBinaryTreeFile : Exception {
+    public sealed class InvalidBinaryTreeFile : Exception {
         public const string TooManyRootElementsMessage = "root element is not unique";
         public const string InvalidFileMessage = "input file is invalid";
 
