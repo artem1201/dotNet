@@ -66,8 +66,9 @@ namespace BinaryTree_console {
                 ToFile = args[1];
 
                 if (!ToFile.EndsWith(OutputFileExtension)) {
-                    throw new InvalidInputParameters(InvalidInputParameters
-                        .GetInvalidOutputFileMessage(ToFile, "invalid extenstion, expected: " + OutputFileExtension));
+                    throw new InvalidInputParameters(
+                        InvalidInputParameters
+                            .GetInvalidOutputFileMessage(ToFile, "invalid extenstion, expected: " + OutputFileExtension));
                 }
             }
         }

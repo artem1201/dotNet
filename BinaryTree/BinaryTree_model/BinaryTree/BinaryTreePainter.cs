@@ -18,20 +18,14 @@ namespace BinaryTree.BinaryTree {
             }
 
 
-            var numberOfNodesInHorizontal = rootNode.GetMostRightOfChildrens().Position.X;
-            var horisontalOffsetsNumber = numberOfNodesInHorizontal + 1;
-           
-            var numberOfNodesInVertical = rootNode.Position.Y;
-            var verticalOffsetsNumber = rootNode.Position.Y + 1;
-            
-            var width = numberOfNodesInHorizontal * NodeSize + horisontalOffsetsNumber * LengthBetweenColumns;
-            var height = numberOfNodesInVertical * NodeSize + verticalOffsetsNumber * LengthBetweenLayers;
+            var width = rootNode.GetWidth(NodeSize, LengthBetweenColumns);
+            var height = rootNode.GetHeight(NodeSize, LengthBetweenLayers);
 
             var bitmap = new Bitmap(width, height);
 
 
             using (var graphics = Graphics.FromImage(bitmap)) {
-                foreach (var node in rootNode.PostOrder()) {
+                foreach (var node in rootNode.PostOrderTravel()) {
                     var currentPoint = new Point(
                         CalculateXCoordinate(node, width),
                         CalculateYCoordinate(node, height));

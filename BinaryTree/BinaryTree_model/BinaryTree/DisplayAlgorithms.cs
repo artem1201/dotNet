@@ -9,7 +9,7 @@ namespace BinaryTree.BinaryTree {
                 throw new ArgumentNullException("rootNode");
             }
 
-            foreach (var node in rootNode.PostOrder()) {
+            foreach (var node in rootNode.PostOrderTravel()) {
                 node.CalculateBinaryTreeNodeCoordinates();
             }
         }
@@ -72,7 +72,7 @@ namespace BinaryTree.BinaryTree {
                 throw new ArgumentNullException("rootNode");
             }
 
-            foreach (var node in rootNode.PostOrder()) {
+            foreach (var node in rootNode.PostOrderTravel()) {
                 node.Position.X += xOffset;
                 node.Position.Y += yOffset;
             }

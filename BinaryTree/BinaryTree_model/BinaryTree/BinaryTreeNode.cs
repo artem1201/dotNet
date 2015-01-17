@@ -23,13 +23,14 @@ namespace BinaryTree.BinaryTree {
         //  set of current node's attributes
         private readonly IDictionary<string, string> _attributes;
 
-        public BinaryTreeNode() {
+        internal BinaryTreeNode() {
             _attributes = new Dictionary<string, string>();
 
             Position = new Point();
         }
 
-        public BinaryTreeNode(string name, string content) : this() {
+        internal BinaryTreeNode(string name, string content)
+            : this() {
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
@@ -48,7 +49,7 @@ namespace BinaryTree.BinaryTree {
         /// </summary>
         /// <param name="leftChild">left subtree's root</param>
         /// <returns>current node</returns>
-        public BinaryTreeNode SetLeftChild(BinaryTreeNode leftChild) {
+        internal BinaryTreeNode SetLeftChild(BinaryTreeNode leftChild) {
             if (null == leftChild) {
                 throw new ArgumentNullException("leftChild");
             }
@@ -65,7 +66,7 @@ namespace BinaryTree.BinaryTree {
         /// </summary>
         /// <param name="rightChild">right subtree's root</param>
         /// <returns>current node</returns>
-        public BinaryTreeNode SetRightChild(BinaryTreeNode rightChild) {
+        internal BinaryTreeNode SetRightChild(BinaryTreeNode rightChild) {
             if (null == rightChild) {
                 throw new ArgumentNullException("rightChild");
             }
@@ -76,7 +77,7 @@ namespace BinaryTree.BinaryTree {
             return this;
         }
 
-        public BinaryTreeNode SetName(string name) {
+        internal BinaryTreeNode SetName(string name) {
             if (null == name) {
                 throw new ArgumentNullException("name");
             }
@@ -86,7 +87,7 @@ namespace BinaryTree.BinaryTree {
             return this;
         }
 
-        public BinaryTreeNode SetContent(string content) {
+        internal BinaryTreeNode SetContent(string content) {
             if (null == content) {
                 throw new ArgumentNullException("content");
             }
@@ -96,7 +97,7 @@ namespace BinaryTree.BinaryTree {
             return this;
         }
 
-        public BinaryTreeNode AddAtribute(string attributeName, string value) {
+        internal BinaryTreeNode AddAtribute(string attributeName, string value) {
             if (null == attributeName) {
                 throw new ArgumentNullException("attributeName");
             }
@@ -109,7 +110,7 @@ namespace BinaryTree.BinaryTree {
             return this;
         }
 
-        public BinaryTreeNode ClearAttributes() {
+        internal BinaryTreeNode ClearAttributes() {
             _attributes.Clear();
 
             return this;
@@ -202,8 +203,8 @@ namespace BinaryTree.BinaryTree {
         #endregion
     }
 
-    public static class BinaryTreeTraveral {
-        public static IEnumerable<BinaryTreeNode> PostOrder(this BinaryTreeNode root) {
+    public static class BinaryTreeUtil {
+        public static IEnumerable<BinaryTreeNode> PostOrderTravel(this BinaryTreeNode root) {
             if (null == root) {
                 throw new ArgumentNullException("root");
             }
@@ -227,6 +228,51 @@ namespace BinaryTree.BinaryTree {
                     yield return currentNode.Node;
                 }
             }
+        }
+
+        public static int GetWidth(
+            this BinaryTreeNode root,
+            int nodeSize,
+            int distanceBetweenColumns) {
+            if (null == root) {
+                throw new ArgumentNullException("root");
+            }
+
+            if (nodeSize <= 0) {
+                throw new ArgumentOutOfRangeException("nodeSize");
+            }
+
+            if (distanceBetweenColumns <= 0) {
+                throw new ArgumentOutOfRangeException("distanceBetweenColumns");
+            }
+
+            var numberOfNodesInHorizontal = root.GetMostRightOfChildrens().Position.X;
+            var horisontalOffsetsNumber = numberOfNodesInHorizontal + 1;
+
+
+            return numberOfNodesInHorizontal * nodeSize + horisontalOffsetsNumber * distanceBetweenColumns;
+        }
+
+        public static int GetHeight(
+            this BinaryTreeNode root,
+            int nodeSize,
+            int distanceBetweenRows) {
+            if (null == root) {
+                throw new ArgumentNullException("root");
+            }
+
+            if (nodeSize <= 0) {
+                throw new ArgumentOutOfRangeException("nodeSize");
+            }
+
+            if (distanceBetweenRows <= 0) {
+                throw new ArgumentOutOfRangeException("distanceBetweenRows");
+            }
+
+            var numberOfNodesInVertical = root.Position.Y;
+            var verticalOffsetsNumber = root.Position.Y + 1;
+
+            return numberOfNodesInVertical * nodeSize + verticalOffsetsNumber * distanceBetweenRows;
         }
 
         private class BinaryTreeForVisiting {
